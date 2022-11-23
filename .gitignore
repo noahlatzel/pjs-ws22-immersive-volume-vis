@@ -95,3 +95,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# DataFiles
+/[Aa]ssets/DataFiles/Temperature/*
+/[Aa]ssets/DataFiles/Testing/*
+/[Aa]ssets/DataFiles/Pressure/*
+
+![Aa]ssets/DataFiles/Temperature/.gitkeep
+![Aa]ssets/DataFiles/Testing/.gitkeep
+![Aa]ssets/DataFiles/Pressure/.gitkeep
