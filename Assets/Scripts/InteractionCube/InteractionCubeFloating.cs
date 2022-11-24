@@ -77,7 +77,7 @@ public class InteractionCubeFloating : MonoBehaviour
         }
         else
         {
-            if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive &&
+            if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
                 rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
             {
                 previouslyGrabbed = true;
