@@ -36,6 +36,8 @@ public class InteractionCubeFloating : MonoBehaviour
         interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
         interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         interactionCube.GetComponent<Rigidbody>().useGravity = false;
+        
+        Destroy(GetComponent<Rigidbody>());
 
         Renderer rendCube = interactionCube.GetComponent<Renderer>();
         rendCube.material = Resources.Load<Material>("Red");
