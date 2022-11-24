@@ -65,7 +65,7 @@ public class InteractionCubeFloating : MonoBehaviour
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 120);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300);
             if (interactionCube.transform.position == bobFrom)
             {
                 previouslyGrabbed = false;
