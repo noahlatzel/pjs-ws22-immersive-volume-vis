@@ -48,17 +48,19 @@ public class InteractionCubeFloating : MonoBehaviour
         
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
-        lowerScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        lowerScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
         var interCubeScale = interactionCube.transform.localScale;
         lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
+        lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
         rendLowerScale.material = Resources.Load<Material>("Green");
         
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
-        upperScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        upperScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
+        upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Green");
@@ -103,7 +105,9 @@ public class InteractionCubeFloating : MonoBehaviour
         {
             if (!handsInArea)
             {
-            
+                upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
+                lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
+                
                 if (interactionCube.transform.position == bobFrom)
                 {
                     bobbingDestination = bobTo;
@@ -118,6 +122,9 @@ public class InteractionCubeFloating : MonoBehaviour
             }
             else
             {
+                upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                
                 if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
                     rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
                 {
