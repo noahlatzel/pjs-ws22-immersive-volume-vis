@@ -14,6 +14,7 @@ public class InteractionCubeFloating : MonoBehaviour
     private bool rightHandInArea;
     private GameObject leftHand;
     private GameObject rightHand;
+    bool previouslyGrabbed;
     
     // Start is called before the first frame update
     void Start()
@@ -59,7 +60,6 @@ public class InteractionCubeFloating : MonoBehaviour
             Mathf.Abs(rightHandPos.z - curPos.z) < curScale.z / 2 && rightHandPos.y - curPos.y > curScale.y / 2;
         
         bool handsInArea = leftHandInArea || rightHandInArea;
-        bool previouslyGrabbed = false;
         
         if (previouslyGrabbed)
         {
