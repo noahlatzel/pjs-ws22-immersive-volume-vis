@@ -29,7 +29,7 @@ public class InteractionCubeFloating : MonoBehaviour
         interactionCube.AddComponent<XRGrabInteractable>();
         interactionCube.AddComponent<XRSingleGrabFreeTransformer>();
         interactionCube.GetComponent<XRGrabInteractable>().movementType =
-            XRBaseInteractable.MovementType.Kinematic;
+            XRBaseInteractable.MovementType.Instantaneous;
         interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
         interactionCube.GetComponent<Rigidbody>().useGravity = false;
 
