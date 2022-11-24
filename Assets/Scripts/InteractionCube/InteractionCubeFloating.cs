@@ -22,8 +22,7 @@ public class InteractionCubeFloating : MonoBehaviour
     void Start()
     {
         interactionCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-
+        
         interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
         interactionCube.transform.localScale = new Vector3(0.1f, 0.1f * 4 / 3, 0.1f);
@@ -46,6 +45,23 @@ public class InteractionCubeFloating : MonoBehaviour
         rightHand = GameObject.Find("RightHand");
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
+        
+        lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        lowerScaleCube.transform.SetParent(interactionCube.transform);
+        lowerScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        var interCubeScale = interactionCube.transform.localScale;
+        lowerScaleCube.transform.localPosition = new Vector3(interCubeScale.x / 2, 0, interCubeScale.z / 2);
+        
+        Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
+        rendLowerScale.material = Resources.Load<Material>("Green");
+        
+        upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        upperScaleCube.transform.SetParent(interactionCube.transform);
+        upperScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        upperScaleCube.transform.localPosition = new Vector3(interCubeScale.x / 2, interCubeScale.y / 2, -interCubeScale.z / 2);
+        
+        Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
+        rendUpperScale.material = Resources.Load<Material>("Green");
     }
 
     // Update is called once per frame
