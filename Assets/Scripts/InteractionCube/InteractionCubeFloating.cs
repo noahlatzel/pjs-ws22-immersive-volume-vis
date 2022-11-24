@@ -25,7 +25,7 @@ public class InteractionCubeFloating : MonoBehaviour
         
         interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
-        interactionCube.transform.localScale = new Vector3(0.1f, 0.1f * 4 / 3, 0.1f);
+        interactionCube.transform.localScale = new Vector3(0.1f, 0.1f , 0.1f);
         interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
         interactionCube.AddComponent<Rigidbody>();
         interactionCube.AddComponent<XRGrabInteractable>();
@@ -120,21 +120,30 @@ public class InteractionCubeFloating : MonoBehaviour
                 interactionCube.transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
                 interactionCube.transform.position = Vector3.MoveTowards(interactionCube.transform.position, bobbingDestination, moveSpeed);
             }
-            else
+            else // hands are now within the 'table-area'
             {
+                // display scaling cubes
                 upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
                 lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
                 
+                interactionCube.transform.position =
+                    Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed*20);
+                
+                // if interaction is grabbed by either hand, set previously grabbed to true
                 if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
                     rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
                 {
                     previouslyGrabbed = true;
                 }
+                else
+                {
+                    
+                }
             
                 if (interactionCube.transform.rotation != Quaternion.identity)
                 {
                     interactionCube.transform.rotation =
-                        Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 1.5f);
+                        Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 2.5f);
                 }
             }
         }
