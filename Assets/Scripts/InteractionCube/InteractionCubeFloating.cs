@@ -61,10 +61,11 @@ public class InteractionCubeFloating : MonoBehaviour
         
         bool handsInArea = leftHandInArea || rightHandInArea;
         
+        //reset cube position
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, 1);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 120);
             if (interactionCube.transform.position == bobFrom)
             {
                 previouslyGrabbed = false;
