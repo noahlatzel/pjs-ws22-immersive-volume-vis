@@ -49,13 +49,13 @@ public class InteractionCubeFloating : MonoBehaviour
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
         lowerScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-        var interCubeScale = interactionCube.transform.localScale;
         lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
         lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
-        rendLowerScale.material = Resources.Load<Material>("Green");
+        rendLowerScale.material = Resources.Load<Material>("Indigo");
         
+        // create lower cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -63,7 +63,7 @@ public class InteractionCubeFloating : MonoBehaviour
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
-        rendUpperScale.material = Resources.Load<Material>("Green");
+        rendUpperScale.material = Resources.Load<Material>("Indigo");
     }
 
     // Update is called once per frame
