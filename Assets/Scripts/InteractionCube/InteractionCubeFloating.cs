@@ -58,6 +58,7 @@ public class InteractionCubeFloating : MonoBehaviour
             Mathf.Abs(rightHandPos.z - curPos.z) < curScale.z / 2 && rightHandPos.y - curPos.y > curScale.y / 2;
         
         bool handsInArea = leftHandInArea || rightHandInArea;
+        bool previouslyGrabbed = false;
         
         if (!handsInArea)
         {
@@ -79,9 +80,18 @@ public class InteractionCubeFloating : MonoBehaviour
             if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive &&
                 rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
             {
-                
+                previouslyGrabbed = true;
             }
 
+            if (previouslyGrabbed)
+            {
+                interactionCube.transform.position =
+                    Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 3);
+                if (interactionCube.transform.position == bobFrom)
+                {
+                    previouslyGrabbed = false;
+                }
+            }
             if (interactionCube.transform.rotation != Quaternion.identity)
             {
                 interactionCube.transform.rotation =
