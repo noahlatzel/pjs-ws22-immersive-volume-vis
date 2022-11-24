@@ -6,15 +6,16 @@ using UnityEngine;
 using UnityVolumeRendering;
 
 public class ImportVolumeObject : MonoBehaviour
-{   
+{
     IImageFileImporter importer;
 
     private VolumeRenderedObject renderedObject;
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
     Vector3 volumePosition = new Vector3(2.5f, 0.75f, 2.5f);
     private int counter = 0;
+    [SerializeField]
     private bool cycle = false;
-    
+
     // Start is called before the first frame update
     void Start2()
     {
@@ -26,7 +27,7 @@ public class ImportVolumeObject : MonoBehaviour
 
     void Start()
     {
-        string[] fileEntries = Directory.GetFiles("Assets/DataFiles/Testing/", "*.nii"); 
+        string[] fileEntries = Directory.GetFiles("Assets/DataFiles/Testing/", "*.nii");
         importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
         foreach (string filePath in fileEntries)
         {
@@ -36,24 +37,31 @@ public class ImportVolumeObject : MonoBehaviour
             obj.GetComponentInChildren<MeshRenderer>().enabled = false;
             volumeRenderedObjects.Add(obj);
         }
+
         volumeRenderedObjects[0].GetComponentInChildren<MeshRenderer>().enabled = true;
     }
 
     // Update is called once per frame
+    private int countFrames;
+
     void Update()
     {
-        /*if (cycle)
+        if (countFrames % 20 == 0)
         {
-            renderedObject.meshRenderer.enabled = false;
-            if (counter == volumeRenderedObjects.Count() - 1)
-                counter = 0;
-            }
-            else
+            if (cycle)
             {
-                counter++;
+                volumeRenderedObjects[counter].GetComponentInChildren<MeshRenderer>().enabled = false;
+                if (counter == volumeRenderedObjects.Count() - 1)
+                {
+                    counter = 0;
+                }
+                else
+                {
+                    counter++;
+                }
+                volumeRenderedObjects[counter].GetComponentInChildren<MeshRenderer>().enabled = true;
             }
-            renderedObject = volumeRenderedObjects[counter];
-            renderedObject.meshRenderer.enabled = true;
-        }*/
+        }
+        countFrames++;
     }
 }
