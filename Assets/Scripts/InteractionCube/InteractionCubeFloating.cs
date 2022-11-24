@@ -5,6 +5,8 @@ using UnityEngine.XR.Interaction.Toolkit.Transformers;
 public class InteractionCubeFloating : MonoBehaviour
 {
     private GameObject interactionCube;
+    private GameObject upperScaleCube;
+    private GameObject lowerScaleCube;
     private Vector3 bobFrom;
     private Vector3 bobTo;
     private Vector3 bobbingDestination;
@@ -68,7 +70,15 @@ public class InteractionCubeFloating : MonoBehaviour
                 Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300);
             if (interactionCube.transform.position == bobFrom)
             {
-                previouslyGrabbed = false;
+                if (interactionCube.transform.rotation != Quaternion.identity)
+                {
+                    interactionCube.transform.rotation =
+                        Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 1.5f);
+                }
+                else
+                {
+                    previouslyGrabbed = false;
+                }
             }
         }
         else
