@@ -33,17 +33,18 @@ public class ImportVolumeObject : MonoBehaviour
             VolumeDataset dataset = importer.Import(filePath);
             VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
             obj.transform.position = volumePosition;
+            obj.GetComponentInChildren<MeshRenderer>().enabled = false;
             volumeRenderedObjects.Add(obj);
         }
-
-        renderedObject = volumeRenderedObjects[0];
+        volumeRenderedObjects[0].GetComponentInChildren<MeshRenderer>().enabled = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (cycle)
+        /*if (cycle)
         {
+            renderedObject.meshRenderer.enabled = false;
             if (counter == volumeRenderedObjects.Count() - 1)
                 counter = 0;
             }
@@ -52,5 +53,7 @@ public class ImportVolumeObject : MonoBehaviour
                 counter++;
             }
             renderedObject = volumeRenderedObjects[counter];
-        }
+            renderedObject.meshRenderer.enabled = true;
+        }*/
+    }
 }
