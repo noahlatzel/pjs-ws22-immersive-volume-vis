@@ -50,7 +50,7 @@ public class InteractionCubeFloating : MonoBehaviour
         lowerScaleCube.transform.SetParent(interactionCube.transform);
         lowerScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         var interCubeScale = interactionCube.transform.localScale;
-        lowerScaleCube.transform.localPosition = new Vector3(interCubeScale.x / 2, 0, interCubeScale.z / 2);
+        lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
         rendLowerScale.material = Resources.Load<Material>("Green");
@@ -58,7 +58,7 @@ public class InteractionCubeFloating : MonoBehaviour
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        upperScaleCube.transform.localPosition = new Vector3(interCubeScale.x / 2, interCubeScale.y / 2, -interCubeScale.z / 2);
+        upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
         
         Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Green");
