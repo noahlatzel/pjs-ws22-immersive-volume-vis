@@ -31,6 +31,7 @@ public class InteractionCubeFloating : MonoBehaviour
         interactionCube.GetComponent<XRGrabInteractable>().movementType =
             XRBaseInteractable.MovementType.Instantaneous;
         interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         interactionCube.GetComponent<Rigidbody>().useGravity = false;
 
         Renderer rendCube = interactionCube.GetComponent<Renderer>();
@@ -60,44 +61,47 @@ public class InteractionCubeFloating : MonoBehaviour
         bool handsInArea = leftHandInArea || rightHandInArea;
         bool previouslyGrabbed = false;
         
-        if (!handsInArea)
+        if (previouslyGrabbed)
         {
-            
+            interactionCube.transform.position =
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 5);
             if (interactionCube.transform.position == bobFrom)
             {
-                bobbingDestination = bobTo;
+                previouslyGrabbed = false;
             }
-            if (interactionCube.transform.position == bobTo)
-            {
-                bobbingDestination = bobFrom;
-            }
-        
-            interactionCube.transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
-            interactionCube.transform.position = Vector3.MoveTowards(interactionCube.transform.position, bobbingDestination, moveSpeed);
         }
         else
         {
-            if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
-                rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
+            if (!handsInArea)
             {
-                previouslyGrabbed = true;
-            }
-
-            if (previouslyGrabbed)
-            {
-                interactionCube.transform.position =
-                    Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 3);
+            
                 if (interactionCube.transform.position == bobFrom)
                 {
-                    previouslyGrabbed = false;
+                    bobbingDestination = bobTo;
+                }
+                if (interactionCube.transform.position == bobTo)
+                {
+                    bobbingDestination = bobFrom;
+                }
+        
+                interactionCube.transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
+                interactionCube.transform.position = Vector3.MoveTowards(interactionCube.transform.position, bobbingDestination, moveSpeed);
+            }
+            else
+            {
+                if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
+                    rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
+                {
+                    previouslyGrabbed = true;
+                }
+            
+                if (interactionCube.transform.rotation != Quaternion.identity)
+                {
+                    interactionCube.transform.rotation =
+                        Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 1.5f);
                 }
             }
-            if (interactionCube.transform.rotation != Quaternion.identity)
-            {
-                interactionCube.transform.rotation =
-                    Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 1.5f);
-            }
         }
-       
+
     }
 }
