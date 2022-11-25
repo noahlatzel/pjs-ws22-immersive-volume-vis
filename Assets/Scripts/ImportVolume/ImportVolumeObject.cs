@@ -11,7 +11,7 @@ public class ImportVolumeObject : MonoBehaviour
 
     private VolumeRenderedObject renderedObject;
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
-    Vector3 volumePosition = new Vector3(2.5f, 0.75f, 2.5f);
+    Vector3 volumePosition = new Vector3(0f, 1f, 0f);
     private int counter = 0;
     [SerializeField]
     private bool cycle = false;
@@ -34,6 +34,8 @@ public class ImportVolumeObject : MonoBehaviour
             VolumeDataset dataset = importer.Import(filePath);
             VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
             obj.transform.position = volumePosition;
+            obj.transform.SetParent(transform);
+            obj.transform.rotation = Quaternion.identity;
             obj.GetComponentInChildren<MeshRenderer>().enabled = false;
             volumeRenderedObjects.Add(obj);
         }
