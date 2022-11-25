@@ -33,8 +33,8 @@ public class ImportVolumeObject : MonoBehaviour
         lastVolume = lastVolume > fileEntries.Length ? fileEntries.Length : lastVolume;
         for (int i = firstVolume - 1; i < lastVolume ; i++)     // i = firstVolume - 1 because array starts at index 0
         {
-            VolumeDataset dataset = importer.Import(fileEntries[i]);
-            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+            VolumeDataset dataset = importer.Import(fileEntries[i]);                // ~1.9s per Object
+            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);   // ~2.8s per Object
             obj.transform.SetParent(transform);
             obj.transform.rotation = Quaternion.identity;
             obj.GetComponentInChildren<MeshRenderer>().enabled = false;
