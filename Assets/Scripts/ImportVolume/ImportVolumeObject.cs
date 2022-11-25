@@ -21,14 +21,19 @@ public class ImportVolumeObject : MonoBehaviour
     [SerializeField]
     private int timesPerSecond = 1;
 
+    [SerializeField] private int firstVolume = 1;
+    [SerializeField] private int lastVolume = 10;
+
     // Start is called before the first frame update
     void Start()
     {
         string[] fileEntries = Directory.GetFiles("Assets/DataFiles/Testing/", "*.nii");
         importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-        foreach (string filePath in fileEntries)
+        
+        lastVolume = lastVolume > fileEntries.Length ? fileEntries.Length : lastVolume;
+        for (int i = firstVolume - 1; i < lastVolume ; i++)     // i = firstVolume - 1 because array starts at index 0
         {
-            VolumeDataset dataset = importer.Import(filePath);
+            VolumeDataset dataset = importer.Import(fileEntries[i]);
             VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
             obj.transform.position = volumePosition;
             obj.transform.SetParent(transform);
@@ -48,7 +53,6 @@ public class ImportVolumeObject : MonoBehaviour
         timePassed += Time.deltaTime;
         if (timePassed >= dur)
         {
-            Debug.Log("Function executed!");
             timePassed -= dur;
             if (cycle)
             {
