@@ -13,6 +13,7 @@ public class ImportVolumeObject : MonoBehaviour
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
     Vector3 volumePosition = new Vector3(0f, 1f, 0f);
     private int counter = 0;
+
     [SerializeField]
     private bool cycle = false;
 
