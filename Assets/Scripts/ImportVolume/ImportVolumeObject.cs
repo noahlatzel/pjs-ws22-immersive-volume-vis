@@ -12,20 +12,16 @@ public class ImportVolumeObject : MonoBehaviour
     private VolumeRenderedObject renderedObject;
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
     Vector3 volumePosition = new Vector3(0f, 1f, 0f);
-    private int counter = 0;
+    private int counter;
+    private float timePassed;
 
     [SerializeField]
-    private bool cycle = false;
+    private bool cycle;
+    
+    [SerializeField]
+    private int timesPerSecond = 1;
 
     // Start is called before the first frame update
-    void Start2()
-    {
-        importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-        VolumeDataset dataset = importer.Import("Assets/DataFiles/Testing/tev_051.nii");
-        renderedObject = VolumeObjectFactory.CreateObject(dataset);
-        renderedObject.transform.position = volumePosition;
-    }
-
     void Start()
     {
         string[] fileEntries = Directory.GetFiles("Assets/DataFiles/Testing/", "*.nii");
@@ -42,15 +38,18 @@ public class ImportVolumeObject : MonoBehaviour
         }
 
         volumeRenderedObjects[0].GetComponentInChildren<MeshRenderer>().enabled = true;
+        timePassed = 0f;
     }
 
     // Update is called once per frame
-    private int countFrames;
-
     void Update()
     {
-        if (countFrames % 20 == 0)
+        float dur = 1f / timesPerSecond;
+        timePassed += Time.deltaTime;
+        if (timePassed >= dur)
         {
+            Debug.Log("Function executed!");
+            timePassed -= dur;
             if (cycle)
             {
                 volumeRenderedObjects[counter].GetComponentInChildren<MeshRenderer>().enabled = false;
@@ -65,6 +64,5 @@ public class ImportVolumeObject : MonoBehaviour
                 volumeRenderedObjects[counter].GetComponentInChildren<MeshRenderer>().enabled = true;
             }
         }
-        countFrames++;
     }
 }
