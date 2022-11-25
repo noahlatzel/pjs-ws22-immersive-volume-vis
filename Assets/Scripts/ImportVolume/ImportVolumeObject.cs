@@ -11,12 +11,12 @@ public class ImportVolumeObject : MonoBehaviour
 
     private VolumeRenderedObject renderedObject;
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
-    Vector3 volumePosition = new Vector3(0f, 1f, 0f);
+    private readonly Vector3 volumePosition = new Vector3(2, 0.5f,2.5f);
     private int counter;
     private float timePassed;
 
     [SerializeField]
-    private bool cycle;
+    private bool running;
     
     [SerializeField]
     private int timesPerSecond = 1;
@@ -35,7 +35,6 @@ public class ImportVolumeObject : MonoBehaviour
         {
             VolumeDataset dataset = importer.Import(fileEntries[i]);
             VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
-            obj.transform.position = volumePosition;
             obj.transform.SetParent(transform);
             obj.transform.rotation = Quaternion.identity;
             obj.GetComponentInChildren<MeshRenderer>().enabled = false;
@@ -43,6 +42,7 @@ public class ImportVolumeObject : MonoBehaviour
         }
 
         volumeRenderedObjects[0].GetComponentInChildren<MeshRenderer>().enabled = true;
+        transform.position = volumePosition;
         timePassed = 0f;
     }
 
@@ -54,7 +54,7 @@ public class ImportVolumeObject : MonoBehaviour
         if (timePassed >= dur)
         {
             timePassed -= dur;
-            if (cycle)
+            if (running)
             {
                 volumeRenderedObjects[counter].GetComponentInChildren<MeshRenderer>().enabled = false;
                 if (counter == volumeRenderedObjects.Count() - 1)
