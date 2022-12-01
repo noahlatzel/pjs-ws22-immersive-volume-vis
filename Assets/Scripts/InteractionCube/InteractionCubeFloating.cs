@@ -27,14 +27,7 @@ public class InteractionCubeFloating : MonoBehaviour
         interactionCube.name = "interactionCube";
         interactionCube.transform.localScale = new Vector3(0.1f, 0.1f , 0.1f);
         interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
-        interactionCube.AddComponent<Rigidbody>();
-        interactionCube.AddComponent<XRGrabInteractable>();
-        interactionCube.AddComponent<XRSingleGrabFreeTransformer>();
-        interactionCube.GetComponent<XRGrabInteractable>().movementType =
-            XRBaseInteractable.MovementType.Instantaneous;
-        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
-        interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
-        interactionCube.GetComponent<Rigidbody>().useGravity = false;
+        MakeGrabbable(interactionCube, true);
         
         Destroy(GetComponent<Rigidbody>());
 
@@ -54,6 +47,7 @@ public class InteractionCubeFloating : MonoBehaviour
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
         rendLowerScale.material = Resources.Load<Material>("Indigo");
+        MakeGrabbable(lowerScaleCube);
         
         // create lower cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -64,6 +58,7 @@ public class InteractionCubeFloating : MonoBehaviour
         
         Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Indigo");
+        MakeGrabbable(upperScaleCube);
     }
 
     // Update is called once per frame
@@ -147,6 +142,17 @@ public class InteractionCubeFloating : MonoBehaviour
                 }
             }
         }
+    }
 
+    private void MakeGrabbable(GameObject gameObject, bool boxCollider = false)
+    {
+        gameObject.GetComponent<BoxCollider>().enabled = boxCollider;
+        gameObject.AddComponent<Rigidbody>();
+        gameObject.AddComponent<XRGrabInteractable>();
+        gameObject.AddComponent<XRSingleGrabFreeTransformer>();
+        gameObject.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
+        gameObject.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        gameObject.GetComponent<XRGrabInteractable>().throwOnDetach = false;
+        gameObject.GetComponent<Rigidbody>().useGravity = false;
     }
 }
