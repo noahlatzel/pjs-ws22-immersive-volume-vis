@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
@@ -16,6 +17,7 @@ public class InteractionCubeFloating : MonoBehaviour
     private bool rightHandInArea;
     private GameObject leftHand;
     private GameObject rightHand;
+    private GameObject volumeRenderer;
     bool previouslyGrabbed;
     
     // Start is called before the first frame update
@@ -59,6 +61,8 @@ public class InteractionCubeFloating : MonoBehaviour
         Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Indigo");
         MakeGrabbable(upperScaleCube);
+        
+        volumeRenderer = GameObject.Find("VolumeScriptStarter (empty)");
     }
 
     // Update is called once per frame
@@ -134,6 +138,12 @@ public class InteractionCubeFloating : MonoBehaviour
                     
                     float lowerX = lowerScaleCube.transform.localPosition.x;
                     lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+
+                    float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
+
+                    transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);
+
+                    volumeRenderer.transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);
 
                     previouslyGrabbed = true;
                 }
