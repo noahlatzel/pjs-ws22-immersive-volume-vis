@@ -128,6 +128,13 @@ public class InteractionCubeFloating : MonoBehaviour
                 if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
                     rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
                 {
+                    // Move cube along axis 
+                    float upperX = upperScaleCube.transform.localPosition.x;
+                    upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
+                    
+                    float lowerX = lowerScaleCube.transform.localPosition.x;
+                    lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+
                     previouslyGrabbed = true;
                 }
                 else
