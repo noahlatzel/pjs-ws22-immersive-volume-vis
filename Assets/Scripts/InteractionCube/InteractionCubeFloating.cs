@@ -11,7 +11,7 @@ public class InteractionCubeFloating : MonoBehaviour
     private Vector3 bobFrom;
     private Vector3 bobTo;
     private Vector3 bobbingDestination;
-    float moveSpeed = 0.008f;
+    float moveSpeed = 0.00008f;
     private Vector3 offset = new Vector3(0,.25f, 0);
     private bool leftHandInArea;
     private bool rightHandInArea;
@@ -108,7 +108,7 @@ public class InteractionCubeFloating : MonoBehaviour
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300 * Time.deltaTime);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 30000 * Time.deltaTime);
             if (interactionCube.transform.position == bobFrom)
             {
                 if (interactionCube.transform.rotation != Quaternion.identity)
