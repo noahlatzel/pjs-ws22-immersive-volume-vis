@@ -48,6 +48,7 @@ public class InteractionCubeFloating : MonoBehaviour
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
         
+        //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
         lowerScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -65,7 +66,7 @@ public class InteractionCubeFloating : MonoBehaviour
         lowerScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         lowerScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
-        // create lower cube
+        // create upper cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -107,7 +108,7 @@ public class InteractionCubeFloating : MonoBehaviour
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 250);
             if (interactionCube.transform.position == bobFrom)
             {
                 if (interactionCube.transform.rotation != Quaternion.identity)
