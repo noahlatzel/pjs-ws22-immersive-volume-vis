@@ -11,7 +11,7 @@ public class InteractionCubeFloating : MonoBehaviour
     private Vector3 bobFrom;
     private Vector3 bobTo;
     private Vector3 bobbingDestination;
-    float moveSpeed = 0.00008f;
+    float moveSpeed = 0.008f;
     private Vector3 offset = new Vector3(0,.25f, 0);
     private bool leftHandInArea;
     private bool rightHandInArea;
@@ -166,9 +166,9 @@ public class InteractionCubeFloating : MonoBehaviour
 
                     transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);
 
-                    volumeRenderer.transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);
+                    volumeRenderer.transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);*/
 
-                    previouslyGrabbed = true;*/
+                    previouslyGrabbed = true;
                 }
                 else
                 {
