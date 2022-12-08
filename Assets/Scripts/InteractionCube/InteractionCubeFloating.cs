@@ -27,7 +27,7 @@ public class InteractionCubeFloating : MonoBehaviour
         
         interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
-        interactionCube.transform.localScale = new Vector3(0.1f, 0.1f , 0.1f);
+        interactionCube.transform.localScale = new Vector3(1, 1 , 1);
         interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
         interactionCube.GetComponent<BoxCollider>().enabled = true;
         interactionCube.AddComponent<Rigidbody>();
