@@ -108,7 +108,7 @@ public class InteractionCubeFloating : MonoBehaviour
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 250);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300 * Time.deltaTime);
             if (interactionCube.transform.position == bobFrom)
             {
                 if (interactionCube.transform.rotation != Quaternion.identity)
