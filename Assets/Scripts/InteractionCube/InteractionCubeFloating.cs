@@ -155,7 +155,7 @@ public class InteractionCubeFloating : MonoBehaviour
                 if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
                     rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
                 {
-                    /*
+                    
                     // Move cube along axis 
                     float upperX = upperScaleCube.transform.localPosition.x;
                     upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
@@ -165,9 +165,9 @@ public class InteractionCubeFloating : MonoBehaviour
 
                     float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
 
-                    transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);
+                    transform.localScale = scaleConst * scaleOfCube;
 
-                    volumeRenderer.transform.localScale = new Vector3(scaleOfCube, scaleOfCube, scaleOfCube);*/
+                    volumeRenderer.transform.localScale *= scaleOfCube;
 
                     previouslyGrabbed = true;
                 }
