@@ -34,7 +34,7 @@ public class ScalingCubes : MonoBehaviour
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
         lowerScaleCube.transform.localScale = scale;
-        lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
+        lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
         lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
@@ -52,7 +52,7 @@ public class ScalingCubes : MonoBehaviour
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = scale;
-        upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
+        upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendUpperScale = upperScaleCube.GetComponent<Renderer>();
