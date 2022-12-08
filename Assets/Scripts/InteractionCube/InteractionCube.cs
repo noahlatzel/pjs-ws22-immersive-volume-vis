@@ -87,7 +87,7 @@ public class InteractionCube : MonoBehaviour
                 }
             }
         }
-        else
+        else // if previously grabbed
         {
             // let cube bob, when hands not in area
             if (!handsInArea)
@@ -106,9 +106,7 @@ public class InteractionCube : MonoBehaviour
             }
             else // hands are now within the 'table-area'
             {
-                // display scaling cubes
-                // upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
-                // lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                
                 
                 interactionCube.transform.position =
                     Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed*20);

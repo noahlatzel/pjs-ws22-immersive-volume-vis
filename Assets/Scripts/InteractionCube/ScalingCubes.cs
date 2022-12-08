@@ -13,6 +13,18 @@ public class ScalingCubes : MonoBehaviour
     private GameObject upperScaleCube;
     private GameObject interactionCube;
     private Vector3 scale = new Vector3(0.3f, 0.3f, 0.3f);
+
+    private MeshRenderer lowerScaleCubeMeshRenderer;
+    private MeshRenderer upperScaleCubeMeshRenderer;
+    
+    // initalize hands
+    private bool leftHandInArea;
+    private bool rightHandInArea;
+    private GameObject leftHand;
+    private GameObject rightHand;
+    private XRDirectInteractor leftHandComponent;
+    private XRDirectInteractor rightHandComponent;
+    private bool handsInArea;
     
     void Start()
     {
@@ -54,12 +66,67 @@ public class ScalingCubes : MonoBehaviour
         upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
+        leftHand = GameObject.Find("LeftHand");
+        rightHand = GameObject.Find("RightHand");
+        leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
+        rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
+
+        lowerScaleCubeMeshRenderer = lowerScaleCube.GetComponent<MeshRenderer>();
+        upperScaleCubeMeshRenderer = upperScaleCube.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        Vector3 leftHandPos = leftHand.transform.position;
+        Vector3 rightHandPos = rightHand.transform.position;
+        Vector3 curPos = transform.position;
+        Vector3 curScale = transform.localScale;
         
+        leftHandInArea =
+            Mathf.Abs(leftHandPos.x - curPos.x) < curScale.x / 2 &&
+            Mathf.Abs(leftHandPos.z - curPos.z) < curScale.z / 2 && leftHandPos.y - curPos.y > curScale.y / 2;
+        rightHandInArea =
+            Mathf.Abs(rightHandPos.x - curPos.x) < curScale.x / 2 &&
+            Mathf.Abs(rightHandPos.z - curPos.z) < curScale.z / 2 && rightHandPos.y - curPos.y > curScale.y / 2;
+        
+        handsInArea = leftHandInArea || rightHandInArea;
+
+        if (handsInArea)
+        {
+            //display scaling cubes
+            upperScaleCubeMeshRenderer.enabled = true;
+            lowerScaleCubeMeshRenderer.enabled = true;
+        }
+        
+        // if interaction is grabbed by either hand, set previously grabbed to true
+        if (leftHandComponent.isSelectActive ||
+            rightHandComponent.isSelectActive)
+        {
+                    
+            // Move cube along axis 
+            // float upperX = upperScaleCube.transform.localPosition.x;
+            // upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
+            //
+            // float lowerX = lowerScaleCube.transform.localPosition.x;
+            // lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+            //
+            // float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
+            //
+            // transform.localScale = scaleConst * scaleOfCube;
+            //
+            // volumeRenderer.transform.localScale *= scaleOfCube;
+        }
+        else
+        {
+                    
+        }
+            
+        if (interactionCube.transform.rotation != Quaternion.identity)
+        {
+            interactionCube.transform.rotation =
+                Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 2.5f);
+        }
     }
 }
 
