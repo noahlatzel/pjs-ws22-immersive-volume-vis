@@ -29,7 +29,14 @@ public class InteractionCubeFloating : MonoBehaviour
         interactionCube.name = "interactionCube";
         interactionCube.transform.localScale = new Vector3(0.1f, 0.1f , 0.1f);
         interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
-        MakeGrabbable(interactionCube, true);
+        interactionCube.GetComponent<BoxCollider>().enabled = true;
+        interactionCube.AddComponent<Rigidbody>();
+        interactionCube.AddComponent<XRGrabInteractable>();
+        interactionCube.AddComponent<XRSingleGrabFreeTransformer>();
+        interactionCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
+        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
+        interactionCube.GetComponent<Rigidbody>().useGravity = false;
         
         Destroy(GetComponent<Rigidbody>());
 
@@ -49,7 +56,14 @@ public class InteractionCubeFloating : MonoBehaviour
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
         rendLowerScale.material = Resources.Load<Material>("Indigo");
-        MakeGrabbable(lowerScaleCube);
+        lowerScaleCube.GetComponent<BoxCollider>().enabled = false;
+        lowerScaleCube.AddComponent<Rigidbody>();
+        lowerScaleCube.AddComponent<XRGrabInteractable>();
+        lowerScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
+        lowerScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
+        lowerScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        lowerScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
+        lowerScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
         // create lower cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -58,9 +72,16 @@ public class InteractionCubeFloating : MonoBehaviour
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
-        Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
+        Renderer rendUpperScale = upperScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Indigo");
-        MakeGrabbable(upperScaleCube);
+        upperScaleCube.GetComponent<BoxCollider>().enabled = false;
+        upperScaleCube.AddComponent<Rigidbody>();
+        upperScaleCube.AddComponent<XRGrabInteractable>();
+        upperScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
+        upperScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
+        upperScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
+        upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
         volumeRenderer = GameObject.Find("VolumeScriptStarter (empty)");
     }
@@ -160,17 +181,5 @@ public class InteractionCubeFloating : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void MakeGrabbable(GameObject gameObject, bool boxCollider = false)
-    {
-        gameObject.GetComponent<BoxCollider>().enabled = boxCollider;
-        gameObject.AddComponent<Rigidbody>();
-        gameObject.AddComponent<XRGrabInteractable>();
-        gameObject.AddComponent<XRSingleGrabFreeTransformer>();
-        gameObject.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        gameObject.GetComponent<XRGrabInteractable>().retainTransformParent = false;
-        gameObject.GetComponent<XRGrabInteractable>().throwOnDetach = false;
-        gameObject.GetComponent<Rigidbody>().useGravity = false;
     }
 }
