@@ -6,20 +6,19 @@ using UnityEngine.XR.Interaction.Toolkit.Transformers;
 public class InteractionCubeFloating : MonoBehaviour
 {
     private GameObject interactionCube;
-    private GameObject upperScaleCube;
-    private GameObject lowerScaleCube;
     private Vector3 bobFrom;
     private Vector3 bobTo;
     private Vector3 bobbingDestination;
-    float moveSpeed = 0.00008f;
+    protected float moveSpeed = 0.00008f;
+    protected Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
     private Vector3 offset = new Vector3(0,.25f, 0);
-    Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
     private bool leftHandInArea;
     private bool rightHandInArea;
     private GameObject leftHand;
     private GameObject rightHand;
-    private GameObject volumeRenderer;
-    bool previouslyGrabbed;
+    private XRDirectInteractor leftHandComponent;
+    private XRDirectInteractor rightHandComponent;
+    protected bool previouslyGrabbed;
     
     // Start is called before the first frame update
     void Start()
@@ -46,46 +45,10 @@ public class InteractionCubeFloating : MonoBehaviour
         
         leftHand = GameObject.Find("LeftHand");
         rightHand = GameObject.Find("RightHand");
+        leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
+        rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
-        
-        //create lower cube
-        lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        lowerScaleCube.transform.SetParent(interactionCube.transform);
-        lowerScaleCube.transform.localScale = scaleConst * 3;
-        lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
-        lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
-        
-        Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
-        rendLowerScale.material = Resources.Load<Material>("Indigo");
-        lowerScaleCube.GetComponent<BoxCollider>().enabled = false;
-        lowerScaleCube.AddComponent<Rigidbody>();
-        lowerScaleCube.AddComponent<XRGrabInteractable>();
-        lowerScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
-        lowerScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        lowerScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
-        lowerScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
-        lowerScaleCube.GetComponent<Rigidbody>().useGravity = false;
-        
-        // create upper cube
-        upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        upperScaleCube.transform.SetParent(interactionCube.transform);
-        upperScaleCube.transform.localScale = scaleConst * 3;
-        upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
-        upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
-        
-        Renderer rendUpperScale = upperScaleCube.GetComponent<Renderer>();
-        rendUpperScale.material = Resources.Load<Material>("Indigo");
-        upperScaleCube.GetComponent<BoxCollider>().enabled = false;
-        upperScaleCube.AddComponent<Rigidbody>();
-        upperScaleCube.AddComponent<XRGrabInteractable>();
-        upperScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
-        upperScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        upperScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
-        upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
-        upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
-        
-        volumeRenderer = GameObject.Find("VolumeScriptStarter (empty)");
     }
 
     // Update is called once per frame
@@ -127,8 +90,8 @@ public class InteractionCubeFloating : MonoBehaviour
         {
             if (!handsInArea)
             {
-                upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
-                lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
+                /*upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
+                lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;*/
                 
                 if (interactionCube.transform.position == bobFrom)
                 {
@@ -145,29 +108,29 @@ public class InteractionCubeFloating : MonoBehaviour
             else // hands are now within the 'table-area'
             {
                 // display scaling cubes
-                upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
-                lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                // upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                // lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
                 
                 interactionCube.transform.position =
                     Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed*20);
                 
                 // if interaction is grabbed by either hand, set previously grabbed to true
-                if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
-                    rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
+                if (leftHandComponent.isSelectActive ||
+                    rightHandComponent.isSelectActive)
                 {
                     
                     // Move cube along axis 
-                    float upperX = upperScaleCube.transform.localPosition.x;
-                    upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
-                    
-                    float lowerX = lowerScaleCube.transform.localPosition.x;
-                    lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
-
-                    float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
-
-                    transform.localScale = scaleConst * scaleOfCube;
-
-                    volumeRenderer.transform.localScale *= scaleOfCube;
+                    // float upperX = upperScaleCube.transform.localPosition.x;
+                    // upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
+                    //
+                    // float lowerX = lowerScaleCube.transform.localPosition.x;
+                    // lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+                    //
+                    // float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
+                    //
+                    // transform.localScale = scaleConst * scaleOfCube;
+                    //
+                    // volumeRenderer.transform.localScale *= scaleOfCube;
 
                     previouslyGrabbed = true;
                 }
