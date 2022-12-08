@@ -13,6 +13,7 @@ public class InteractionCubeFloating : MonoBehaviour
     private Vector3 bobbingDestination;
     float moveSpeed = 0.00008f;
     private Vector3 offset = new Vector3(0,.25f, 0);
+    Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
     private bool leftHandInArea;
     private bool rightHandInArea;
     private GameObject leftHand;
@@ -27,7 +28,7 @@ public class InteractionCubeFloating : MonoBehaviour
         
         interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
-        interactionCube.transform.localScale = new Vector3(1, 1 , 1);
+        interactionCube.transform.localScale = scaleConst;
         interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
         interactionCube.GetComponent<BoxCollider>().enabled = true;
         interactionCube.AddComponent<Rigidbody>();
@@ -48,11 +49,10 @@ public class InteractionCubeFloating : MonoBehaviour
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
         
-        const float scaleConst = 0.7f;
         //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
-        lowerScaleCube.transform.localScale = new Vector3(scaleConst, scaleConst, scaleConst);
+        lowerScaleCube.transform.localScale = scaleConst * 3;
         lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
         lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
@@ -70,7 +70,7 @@ public class InteractionCubeFloating : MonoBehaviour
         // create upper cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
-        upperScaleCube.transform.localScale = new Vector3(scaleConst, scaleConst, scaleConst);
+        upperScaleCube.transform.localScale = scaleConst * 3;
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
