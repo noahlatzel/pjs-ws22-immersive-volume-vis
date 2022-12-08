@@ -48,10 +48,11 @@ public class InteractionCubeFloating : MonoBehaviour
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
         
+        const float scaleConst = 0.7f;
         //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
-        lowerScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        lowerScaleCube.transform.localScale = new Vector3(scaleConst, scaleConst, scaleConst);
         lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
         lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
@@ -69,7 +70,7 @@ public class InteractionCubeFloating : MonoBehaviour
         // create upper cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         upperScaleCube.transform.SetParent(interactionCube.transform);
-        upperScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        upperScaleCube.transform.localScale = new Vector3(scaleConst, scaleConst, scaleConst);
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
