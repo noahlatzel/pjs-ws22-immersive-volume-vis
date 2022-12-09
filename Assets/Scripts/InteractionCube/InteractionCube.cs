@@ -1,69 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
 
-public class InteractionCubeFloating : MonoBehaviour
+public class InteractionCube : MonoBehaviour
 {
     private GameObject interactionCube;
-    private GameObject upperScaleCube;
-    private GameObject lowerScaleCube;
     private Vector3 bobFrom;
     private Vector3 bobTo;
     private Vector3 bobbingDestination;
-    float moveSpeed = 0.00008f;
+    protected float moveSpeed = 0.00008f;
+    protected Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
     private Vector3 offset = new Vector3(0,.25f, 0);
     private bool leftHandInArea;
     private bool rightHandInArea;
     private GameObject leftHand;
     private GameObject rightHand;
-    bool previouslyGrabbed;
+    private XRDirectInteractor leftHandComponent;
+    private XRDirectInteractor rightHandComponent;
+    protected bool previouslyGrabbed;
     
     // Start is called before the first frame update
     void Start()
     {
+        //create interaction cube
         interactionCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        
-        interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
-        interactionCube.transform.localScale = new Vector3(0.1f, 0.1f , 0.1f);
-        interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
+        interactionCube.transform.localScale = scaleConst;
+        interactionCube.transform.position = new Vector3(transform.localPosition.x, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2 + .25f, transform.localPosition.z);
+        interactionCube.GetComponent<BoxCollider>().enabled = true;
         interactionCube.AddComponent<Rigidbody>();
         interactionCube.AddComponent<XRGrabInteractable>();
         interactionCube.AddComponent<XRSingleGrabFreeTransformer>();
-        interactionCube.GetComponent<XRGrabInteractable>().movementType =
-            XRBaseInteractable.MovementType.Instantaneous;
-        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        interactionCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
+        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = true;
         interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         interactionCube.GetComponent<Rigidbody>().useGravity = false;
-        
-        Destroy(GetComponent<Rigidbody>());
 
         Renderer rendCube = interactionCube.GetComponent<Renderer>();
         rendCube.material = Resources.Load<Material>("Red");
         
         leftHand = GameObject.Find("LeftHand");
         rightHand = GameObject.Find("RightHand");
+        leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
+        rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
         bobFrom = interactionCube.transform.position;
         bobTo = interactionCube.transform.position + offset;
-        
-        lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        lowerScaleCube.transform.SetParent(interactionCube.transform);
-        lowerScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-        lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f);
-        lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
-        
-        Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
-        rendLowerScale.material = Resources.Load<Material>("Indigo");
-        
-        // create lower cube
-        upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        upperScaleCube.transform.SetParent(interactionCube.transform);
-        upperScaleCube.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-        upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f);
-        upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
-        
-        Renderer rendUpperScale = lowerScaleCube.GetComponent<Renderer>();
-        rendUpperScale.material = Resources.Load<Material>("Indigo");
     }
 
     // Update is called once per frame
@@ -87,7 +71,7 @@ public class InteractionCubeFloating : MonoBehaviour
         if (previouslyGrabbed)
         {
             interactionCube.transform.position =
-                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 300);
+                Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed * 30000 * Time.deltaTime);
             if (interactionCube.transform.position == bobFrom)
             {
                 if (interactionCube.transform.rotation != Quaternion.identity)
@@ -101,13 +85,11 @@ public class InteractionCubeFloating : MonoBehaviour
                 }
             }
         }
-        else
+        else // if previously grabbed
         {
+            // let cube bob, when hands not in area
             if (!handsInArea)
             {
-                upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
-                lowerScaleCube.GetComponent<MeshRenderer>().enabled = false;
-                
                 if (interactionCube.transform.position == bobFrom)
                 {
                     bobbingDestination = bobTo;
@@ -122,17 +104,29 @@ public class InteractionCubeFloating : MonoBehaviour
             }
             else // hands are now within the 'table-area'
             {
-                // display scaling cubes
-                upperScaleCube.GetComponent<MeshRenderer>().enabled = true;
-                lowerScaleCube.GetComponent<MeshRenderer>().enabled = true;
+                
                 
                 interactionCube.transform.position =
                     Vector3.MoveTowards(interactionCube.transform.position, bobFrom, moveSpeed*20);
                 
                 // if interaction is grabbed by either hand, set previously grabbed to true
-                if (leftHand.GetComponent<XRDirectInteractor>().isSelectActive ||
-                    rightHand.GetComponent<XRDirectInteractor>().isSelectActive)
+                if (leftHandComponent.isSelectActive ||
+                    rightHandComponent.isSelectActive)
                 {
+                    
+                    // Move cube along axis 
+                    // float upperX = upperScaleCube.transform.localPosition.x;
+                    // upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
+                    //
+                    // float lowerX = lowerScaleCube.transform.localPosition.x;
+                    // lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+                    //
+                    // float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
+                    //
+                    // transform.localScale = scaleConst * scaleOfCube;
+                    //
+                    // volumeRenderer.transform.localScale *= scaleOfCube;
+
                     previouslyGrabbed = true;
                 }
                 else
@@ -147,6 +141,6 @@ public class InteractionCubeFloating : MonoBehaviour
                 }
             }
         }
-
     }
 }
+
