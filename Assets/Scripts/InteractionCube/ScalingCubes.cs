@@ -57,7 +57,7 @@ public class ScalingCubes : MonoBehaviour
         lowerScaleCube.AddComponent<XRGrabInteractable>();
         lowerScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
         lowerScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        lowerScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        lowerScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = true;
         lowerScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         lowerScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
@@ -67,6 +67,7 @@ public class ScalingCubes : MonoBehaviour
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = scale;
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
+        //upperScaleCube.transform.position = new Vector3(interactionCube.transform.position.x + interactionCube.transform.localScale.x, interactionCube.transform.position.y + interactionCube.transform.localScale.y, interactionCube.transform.position.z - interactionCube.transform.localScale.z);
         upperScaleCube.GetComponent<MeshRenderer>().enabled = false;
         
         Renderer rendUpperScale = upperScaleCube.GetComponent<Renderer>();
@@ -77,7 +78,7 @@ public class ScalingCubes : MonoBehaviour
         upperScaleCube.AddComponent<XRGrabInteractable>();
         upperScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
         upperScaleCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        upperScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        upperScaleCube.GetComponent<XRGrabInteractable>().retainTransformParent = true;
         upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
         
@@ -137,14 +138,15 @@ public class ScalingCubes : MonoBehaviour
                 upperScaleCollider.enabled = false;
                 lowerScaleCollider.enabled = false;
 
-                upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
-                lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
+                //upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
+                //lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
 
                 upperScaleCube.transform.rotation = Quaternion.identity;
                 lowerScaleCube.transform.rotation = Quaternion.identity;
             }
         }
         // if interaction is grabbed by both hands, set previously grabbed to true
+        // Both hands are grabbing -> must grab scaleCubes or rotationCubes
         if (leftHandComponent.isSelectActive &&
             rightHandComponent.isSelectActive)
         {
@@ -162,7 +164,12 @@ public class ScalingCubes : MonoBehaviour
         }
         else
         {
-                    
+            // Only one hand is grabbing -> must grab interactionCube
+            if (leftHandComponent.isSelectActive ^
+            rightHandComponent.isSelectActive) {
+                upperScaleCubeMeshRenderer.enabled = false;
+                lowerScaleCubeMeshRenderer.enabled = false;
+            }
         }
     }
 }

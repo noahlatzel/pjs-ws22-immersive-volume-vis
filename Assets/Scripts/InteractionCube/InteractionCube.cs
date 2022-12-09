@@ -27,16 +27,15 @@ public class InteractionCube : MonoBehaviour
     {
         //create interaction cube
         interactionCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
         interactionCube.transform.localScale = scaleConst;
-        interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2 + .25f, 0f);
+        interactionCube.transform.position = new Vector3(transform.localPosition.x, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2 + .25f, transform.localPosition.z);
         interactionCube.GetComponent<BoxCollider>().enabled = true;
         interactionCube.AddComponent<Rigidbody>();
         interactionCube.AddComponent<XRGrabInteractable>();
         interactionCube.AddComponent<XRSingleGrabFreeTransformer>();
         interactionCube.GetComponent<XRGrabInteractable>().movementType = XRBaseInteractable.MovementType.Instantaneous;
-        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = false;
+        interactionCube.GetComponent<XRGrabInteractable>().retainTransformParent = true;
         interactionCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
         interactionCube.GetComponent<Rigidbody>().useGravity = false;
 
