@@ -10,6 +10,7 @@ public class ScalingCubes : MonoBehaviour
     private GameObject lowerScaleCube;
     private GameObject upperScaleCube;
     private GameObject interactionCube;
+    private GameObject volumeRenderer;
     private Vector3 scale = new Vector3(0.3f, 0.3f, 0.3f);
     private float initialDistance;
 
@@ -18,7 +19,6 @@ public class ScalingCubes : MonoBehaviour
 
     private BoxCollider lowerScaleCollider;
     private BoxCollider upperScaleCollider;
-    private BoxCollider interactionCubeCollider;
 
     protected Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
 
@@ -32,14 +32,17 @@ public class ScalingCubes : MonoBehaviour
     private bool handsInArea;
 
     // interactionCube data
-    private Vector3 initialScale;
-    
+    private Vector3 initialScaleInteractionCube;
+    private BoxCollider interactionCubeCollider;
+
     void Start()
     {
 
         interactionCube = GameObject.Find("interactionCube");
-        initialScale = interactionCube.transform.localScale;
+        initialScaleInteractionCube = interactionCube.transform.localScale;
         interactionCubeCollider = interactionCube.GetComponent<BoxCollider>();
+
+        volumeRenderer = GameObject.Find("VolumeScriptStarter (empty)");
 
         //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -158,9 +161,9 @@ public class ScalingCubes : MonoBehaviour
             
             float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance; 
 
-            interactionCube.transform.localScale = initialScale * scaleOfCube;
+            interactionCube.transform.localScale = initialScaleInteractionCube * scaleOfCube;
             
-            //volumeRenderer.transform.localScale *= scaleOfCube;
+            volumeRenderer.transform.localScale *= scaleOfCube;
         }
         else
         {
