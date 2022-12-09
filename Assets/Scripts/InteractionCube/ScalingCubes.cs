@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
 
@@ -13,12 +11,14 @@ public class ScalingCubes : MonoBehaviour
     private GameObject upperScaleCube;
     private GameObject interactionCube;
     private Vector3 scale = new Vector3(0.3f, 0.3f, 0.3f);
+    private float initialDistance;
 
     private MeshRenderer lowerScaleCubeMeshRenderer;
     private MeshRenderer upperScaleCubeMeshRenderer;
 
     private BoxCollider lowerScaleCollider;
     private BoxCollider upperScaleCollider;
+    private BoxCollider interactionCubeCollider;
 
     protected Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
 
@@ -39,8 +39,11 @@ public class ScalingCubes : MonoBehaviour
 
         interactionCube = GameObject.Find("interactionCube");
         initialScale = interactionCube.transform.localScale;
+        interactionCubeCollider = interactionCube.GetComponent<BoxCollider>();
+
         //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        lowerScaleCube.name = "lowerScaleCube";
         lowerScaleCube.transform.SetParent(interactionCube.transform);
         lowerScaleCube.transform.localScale = scale;
         lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
@@ -60,6 +63,7 @@ public class ScalingCubes : MonoBehaviour
         
         // create upper cube
         upperScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        upperScaleCube.name = "upperScaleCube";
         upperScaleCube.transform.SetParent(interactionCube.transform);
         upperScaleCube.transform.localScale = scale;
         upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
@@ -84,6 +88,8 @@ public class ScalingCubes : MonoBehaviour
 
         lowerScaleCubeMeshRenderer = lowerScaleCube.GetComponent<MeshRenderer>();
         upperScaleCubeMeshRenderer = upperScaleCube.GetComponent<MeshRenderer>();
+
+        initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
     }
 
     // Update is called once per frame
@@ -109,8 +115,18 @@ public class ScalingCubes : MonoBehaviour
             upperScaleCubeMeshRenderer.enabled = true;
             lowerScaleCubeMeshRenderer.enabled = true;
 
+            upperScaleCube.transform.rotation = Quaternion.RotateTowards(upperScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+            lowerScaleCube.transform.rotation = Quaternion.RotateTowards(lowerScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+
             upperScaleCollider.enabled = true;
             lowerScaleCollider.enabled = true;
+
+
+            //enable interactionCube
+            if (!interactionCubeCollider.enabled)
+            {
+                interactionCubeCollider.enabled = true;
+            }
         }
         else {
             if (!leftHandComponent.isSelectActive && !rightHandComponent.isSelectActive)
@@ -118,6 +134,8 @@ public class ScalingCubes : MonoBehaviour
                 //disable scaling cubes
                 upperScaleCubeMeshRenderer.enabled = false;
                 lowerScaleCubeMeshRenderer.enabled = false;
+                upperScaleCollider.enabled = false;
+                lowerScaleCollider.enabled = false;
 
                 upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
                 lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
@@ -130,15 +148,13 @@ public class ScalingCubes : MonoBehaviour
         if (leftHandComponent.isSelectActive &&
             rightHandComponent.isSelectActive)
         {
-                    
+            if (interactionCubeCollider.enabled) {
+                interactionCubeCollider.enabled = false;
+            }
+
             // Move cube along axis 
-            float upperX = upperScaleCube.transform.localPosition.x;
-            upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
-           
-            float lowerX = lowerScaleCube.transform.localPosition.x;
-            lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
             
-            float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX); 
+            float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance; 
 
             interactionCube.transform.localScale = initialScale * scaleOfCube;
             
