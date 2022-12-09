@@ -16,7 +16,12 @@ public class ScalingCubes : MonoBehaviour
 
     private MeshRenderer lowerScaleCubeMeshRenderer;
     private MeshRenderer upperScaleCubeMeshRenderer;
-    
+
+    private BoxCollider lowerScaleCollider;
+    private BoxCollider upperScaleCollider;
+
+    protected Vector3 scaleConst = new Vector3(0.1f, 0.1f, 0.1f);
+
     // initalize hands
     private bool leftHandInArea;
     private bool rightHandInArea;
@@ -25,11 +30,15 @@ public class ScalingCubes : MonoBehaviour
     private XRDirectInteractor leftHandComponent;
     private XRDirectInteractor rightHandComponent;
     private bool handsInArea;
+
+    // interactionCube data
+    private Vector3 initialScale;
     
     void Start()
     {
 
         interactionCube = GameObject.Find("interactionCube");
+        initialScale = interactionCube.transform.localScale;
         //create lower cube
         lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         lowerScaleCube.transform.SetParent(interactionCube.transform);
@@ -39,7 +48,8 @@ public class ScalingCubes : MonoBehaviour
         
         Renderer rendLowerScale = lowerScaleCube.GetComponent<Renderer>();
         rendLowerScale.material = Resources.Load<Material>("Indigo");
-        lowerScaleCube.GetComponent<BoxCollider>().enabled = false;
+        lowerScaleCollider = lowerScaleCube.GetComponent<BoxCollider>();
+        lowerScaleCollider.enabled = false;
         lowerScaleCube.AddComponent<Rigidbody>();
         lowerScaleCube.AddComponent<XRGrabInteractable>();
         lowerScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
@@ -57,7 +67,8 @@ public class ScalingCubes : MonoBehaviour
         
         Renderer rendUpperScale = upperScaleCube.GetComponent<Renderer>();
         rendUpperScale.material = Resources.Load<Material>("Indigo");
-        upperScaleCube.GetComponent<BoxCollider>().enabled = false;
+        upperScaleCollider = upperScaleCube.GetComponent<BoxCollider>();
+        upperScaleCollider.enabled = false;
         upperScaleCube.AddComponent<Rigidbody>();
         upperScaleCube.AddComponent<XRGrabInteractable>();
         upperScaleCube.AddComponent<XRSingleGrabFreeTransformer>();
@@ -97,35 +108,45 @@ public class ScalingCubes : MonoBehaviour
             //display scaling cubes
             upperScaleCubeMeshRenderer.enabled = true;
             lowerScaleCubeMeshRenderer.enabled = true;
+
+            upperScaleCollider.enabled = true;
+            lowerScaleCollider.enabled = true;
         }
-        
-        // if interaction is grabbed by either hand, set previously grabbed to true
-        if (leftHandComponent.isSelectActive ||
+        else {
+            if (!leftHandComponent.isSelectActive && !rightHandComponent.isSelectActive)
+            {
+                //disable scaling cubes
+                upperScaleCubeMeshRenderer.enabled = false;
+                lowerScaleCubeMeshRenderer.enabled = false;
+
+                upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
+                lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
+
+                upperScaleCube.transform.rotation = Quaternion.identity;
+                lowerScaleCube.transform.rotation = Quaternion.identity;
+            }
+        }
+        // if interaction is grabbed by both hands, set previously grabbed to true
+        if (leftHandComponent.isSelectActive &&
             rightHandComponent.isSelectActive)
         {
                     
             // Move cube along axis 
-            // float upperX = upperScaleCube.transform.localPosition.x;
-            // upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
-            //
-            // float lowerX = lowerScaleCube.transform.localPosition.x;
-            // lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
-            //
-            // float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX) * 0.3f; // 0.3f scale of cube at start
-            //
-            // transform.localScale = scaleConst * scaleOfCube;
-            //
-            // volumeRenderer.transform.localScale *= scaleOfCube;
+            float upperX = upperScaleCube.transform.localPosition.x;
+            upperScaleCube.transform.localPosition = new Vector3(upperX, upperX, -upperX);
+           
+            float lowerX = lowerScaleCube.transform.localPosition.x;
+            lowerScaleCube.transform.localPosition = new Vector3(lowerX, lowerX, -lowerX);
+            
+            float scaleOfCube = Mathf.Abs(upperX) + Mathf.Abs(lowerX); 
+
+            interactionCube.transform.localScale = initialScale * scaleOfCube;
+            
+            //volumeRenderer.transform.localScale *= scaleOfCube;
         }
         else
         {
                     
-        }
-            
-        if (interactionCube.transform.rotation != Quaternion.identity)
-        {
-            interactionCube.transform.rotation =
-                Quaternion.RotateTowards(interactionCube.transform.rotation, Quaternion.identity, 2.5f);
         }
     }
 }

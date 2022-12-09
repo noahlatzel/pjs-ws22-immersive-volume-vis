@@ -31,7 +31,7 @@ public class InteractionCube : MonoBehaviour
         interactionCube.transform.SetParent(transform, true);
         interactionCube.name = "interactionCube";
         interactionCube.transform.localScale = scaleConst;
-        interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2, 0f);
+        interactionCube.transform.localPosition = new Vector3(0, transform.localPosition.y + transform.localScale.y / 2 + interactionCube.transform.localScale.y / 2 + .25f, 0f);
         interactionCube.GetComponent<BoxCollider>().enabled = true;
         interactionCube.AddComponent<Rigidbody>();
         interactionCube.AddComponent<XRGrabInteractable>();
