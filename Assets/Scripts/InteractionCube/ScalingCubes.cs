@@ -153,17 +153,21 @@ public class ScalingCubes : MonoBehaviour
         if (leftHandComponent.isSelectActive &&
             rightHandComponent.isSelectActive)
         {
-            if (interactionCubeCollider.enabled) {
+          
                 interactionCubeCollider.enabled = false;
-            }
+            
 
             // Move cube along axis 
             
-            float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance; 
+            float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
+
+            Debug.Log("scaleOfCube:" + scaleOfCube);
+            Debug.Log("initialDistance:" + initialDistance);
+
 
             interactionCube.transform.localScale = initialScaleInteractionCube * scaleOfCube;
-            
-            volumeRenderer.transform.localScale *= scaleOfCube;
+
+            volumeRenderer.transform.localScale = new Vector3(1,1,1) * scaleOfCube;
         }
         else
         {
