@@ -131,8 +131,10 @@ public class ScalingCubes : MonoBehaviour
             {
                 interactionCubeCollider.enabled = true;
             }
+
         }
-        else {
+        else 
+        {
             if (!leftHandComponent.isSelectActive && !rightHandComponent.isSelectActive)
             {
                 //disable scaling cubes
@@ -141,24 +143,27 @@ public class ScalingCubes : MonoBehaviour
                 upperScaleCollider.enabled = false;
                 lowerScaleCollider.enabled = false;
 
-                //upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
-                //lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
+                float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
+                Debug.Log(scaleOfCube);
+                upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
+                lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
 
                 upperScaleCube.transform.rotation = Quaternion.identity;
                 lowerScaleCube.transform.rotation = Quaternion.identity;
             }
         }
+
         // if interaction is grabbed by both hands, set previously grabbed to true
         // Both hands are grabbing -> must grab scaleCubes or rotationCubes
         if (leftHandComponent.isSelectActive &&
-            rightHandComponent.isSelectActive)
+            rightHandComponent.isSelectActive && handsInArea)
         {
-          
-                interactionCubeCollider.enabled = false;
-            
+
+            interactionCubeCollider.enabled = false;
+
 
             // Move cube along axis 
-            
+
             float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
 
             Debug.Log("scaleOfCube:" + scaleOfCube);
@@ -167,7 +172,7 @@ public class ScalingCubes : MonoBehaviour
 
             interactionCube.transform.localScale = initialScaleInteractionCube * scaleOfCube;
 
-            volumeRenderer.transform.localScale = new Vector3(1,1,1) * scaleOfCube;
+            volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
         }
         else
         {

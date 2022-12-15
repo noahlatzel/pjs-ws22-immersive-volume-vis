@@ -11,7 +11,7 @@ public class ImportVolumeObject : MonoBehaviour
 
     private VolumeRenderedObject renderedObject;
     private List<VolumeRenderedObject> volumeRenderedObjects = new List<VolumeRenderedObject>();
-    private readonly Vector3 volumePosition = new Vector3(2, 0.5f,2.5f);
+    private readonly Vector3 volumePosition = new Vector3(0f, 2f, 10f);
     private int counter;
     private float timePassed;
 
