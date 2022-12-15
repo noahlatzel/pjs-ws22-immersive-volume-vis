@@ -88,7 +88,7 @@ public class InteractionCube : MonoBehaviour
         else // if previously grabbed
         {
             // let cube bob, when hands not in area
-            if (!handsInArea)
+            if (!handsInArea && !(leftHandComponent.isSelectActive || rightHandComponent.isSelectActive))
             {
                 if (interactionCube.transform.position == bobFrom)
                 {

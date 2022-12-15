@@ -168,11 +168,11 @@ public class ScalingCubes : MonoBehaviour
         else
         {
             // Only one hand is grabbing -> must grab interactionCube
-            if (leftHandComponent.isSelectActive ^
-            rightHandComponent.isSelectActive) {
-                upperScaleCubeMeshRenderer.enabled = false;
-                lowerScaleCubeMeshRenderer.enabled = false;
-            }
+            //if (leftHandComponent.isSelectActive ^
+            //rightHandComponent.isSelectActive) {
+            //    upperScaleCubeMeshRenderer.enabled = false;
+            //    lowerScaleCubeMeshRenderer.enabled = false;
+            //}
         }
     }
 }
