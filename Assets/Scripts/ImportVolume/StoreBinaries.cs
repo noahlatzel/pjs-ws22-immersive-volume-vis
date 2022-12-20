@@ -27,7 +27,10 @@ public class StoreBinaries : MonoBehaviour
                 
                 // Create importer to import all .nii files
                 IImageFileImporter importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-
+                
+                // Counter to keep track of added files
+                int counter = 0;
+                
                 foreach (String file in fileEntries)
                 {
                     // Convert .nii to dataset and create object from it
@@ -43,9 +46,10 @@ public class StoreBinaries : MonoBehaviour
                     byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
                     
                     // Save pixel data to binary file
-                    File.WriteAllBytes(binaryPath, pixelData);
+                    File.WriteAllBytes(binaryPath + $"{counter++}.bin", pixelData);
                 }
                 
+                Debug.Log($"Added {counter} binary files from directory: {volumeAttributePath}");
             }
         }
     }
