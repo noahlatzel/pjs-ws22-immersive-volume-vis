@@ -40,7 +40,7 @@ public class StoreBinaries : MonoBehaviour
                     // Get Texture3D of rendered volume
                     // The volumeData is stored in the first Texture3D "_dataTex"
                     // Access by Integer is faster than by String.
-                    Texture3D texture = obj.GetComponentInChildren<MeshRenderer>().material.GetTexture(0);
+                    Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture(0);
                     
                     // Extract pixel data from texture to save it 
                     // mipLevel 0 according to implementation in IImageFileImporter.Import
@@ -48,6 +48,9 @@ public class StoreBinaries : MonoBehaviour
                     
                     // Save pixel data to binary file
                     File.WriteAllBytes(binaryPath + $"{counter++}.bin", pixelData);
+                    
+                    // Destroy created object
+                    Destroy(obj);
                 }
                 
                 Debug.Log($"Added {counter} binary files from directory: {volumeAttributePath}");
