@@ -4,6 +4,12 @@ using System.Linq;
 using UnityEngine;
 using UnityVolumeRendering;
 
+/// <summary>
+/// For the script to work you have to copy your dataset into the Datasets/ folder. Each dataset 
+/// should contain one directory for each attribute (e.g. Temperature/, Pressure/, ...) for 
+/// optimal use. The script generates the binary files and stores them in Datasets/DatasetName/AttributeName_bin/
+/// for further use.
+/// </summary>
 public class StoreBinaries : MonoBehaviour
 {
     // Start is called before the first frame update
