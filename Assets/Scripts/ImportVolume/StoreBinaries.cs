@@ -20,7 +20,8 @@ public class StoreBinaries : MonoBehaviour
             foreach (String volumeAttributePath in volumeAttributePaths)
             {
                 // Set path to store the binary files in separate directory
-                String binaryPath = volumeAttributePaths + "_bin";
+                // @ forces the String to be interpreted verbatim
+                String binaryPath = volumeAttributePath + @"_bin/";
                 
                 // Get all paths to .nii files for the given attribute
                 string[] fileEntries = Directory.GetFiles(volumeAttributePath, "*.nii");
@@ -33,27 +34,41 @@ public class StoreBinaries : MonoBehaviour
                 
                 foreach (String file in fileEntries)
                 {
-                    // Convert .nii to dataset and create object from it
-                    VolumeDataset dataset = importer.Import(file);
-                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+                                        
+                    // Extract fileName from path
+                    String fileName = Path.GetFileNameWithoutExtension(file) + ".bin";
+
+                    // Only convert to binary if it has not been converted already
+                    if (!File.Exists(binaryPath + fileName))
+                    {
+                        // Convert .nii to dataset and create object from it
+                        VolumeDataset dataset = importer.Import(file);
+                        VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
                     
-                    // Get Texture3D of rendered volume
-                    // The volumeData is stored in the first Texture3D "_dataTex"
-                    // Access by Integer is faster than by String.
-                    Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture(0);
+                        // Get Texture3D of rendered volume
+                        // The volumeData is stored in the first Texture3D "_DataTex"
+                        Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
                     
-                    // Extract pixel data from texture to save it 
-                    // mipLevel 0 according to implementation in IImageFileImporter.Import
-                    byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
+                        // Extract pixel data from texture to save it 
+                        // mipLevel 0 according to implementation in IImageFileImporter.Import
+                        byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
+
+                        // Save pixel data to binary file
+                        File.WriteAllBytes(binaryPath + fileName, pixelData);
+                        
+                        // Increment counter to keep track of added files
+                        counter++;
                     
-                    // Save pixel data to binary file
-                    File.WriteAllBytes(binaryPath + $"{counter++}.bin", pixelData);
-                    
-                    // Destroy created object
-                    Destroy(obj);
+                        // Destroy created object
+                        Destroy(obj);
+                    }
                 }
                 
-                Debug.Log($"Added {counter} binary files from directory: {volumeAttributePath}");
+                // Display success message when new files have been added
+                if (counter > 0)
+                {
+                    Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath}");
+                }
             }
         }
     }
