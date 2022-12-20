@@ -15,7 +15,7 @@ public class StoreBinaries : MonoBehaviour
         foreach (String dataSetPath in dataSetPaths)
         {
             // Get all paths to the (four) volume attributes for each dataset
-            string[] volumeAttributePaths = Directory.GetDirectories(dataSetPath).Where(name => !name.EndsWith("_bin")).ToArray();
+            string[] volumeAttributePaths = Directory.GetDirectories(dataSetPath).Where(path => !path.EndsWith("_bin")).ToArray();
 
             foreach (String volumeAttributePath in volumeAttributePaths)
             {
@@ -43,6 +43,7 @@ public class StoreBinaries : MonoBehaviour
                     Texture3D texture = obj.GetComponentInChildren<MeshRenderer>().material.GetTexture(0);
                     
                     // Extract pixel data from texture to save it 
+                    // mipLevel 0 according to implementation in IImageFileImporter.Import
                     byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
                     
                     // Save pixel data to binary file
@@ -52,11 +53,5 @@ public class StoreBinaries : MonoBehaviour
                 Debug.Log($"Added {counter} binary files from directory: {volumeAttributePath}");
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
