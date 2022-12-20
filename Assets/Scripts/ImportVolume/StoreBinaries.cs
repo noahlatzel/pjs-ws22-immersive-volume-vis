@@ -35,7 +35,9 @@ public class StoreBinaries : MonoBehaviour
                     VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
                     
                     // Get Texture3D of rendered volume
-                    Texture3D texture = obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_dataTex");
+                    // The volumeData is stored in the first Texture3D "_dataTex"
+                    // Access by Integer is faster than by String.
+                    Texture3D texture = obj.GetComponentInChildren<MeshRenderer>().material.GetTexture(0);
                     
                     // Extract pixel data from texture to save it 
                     byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
