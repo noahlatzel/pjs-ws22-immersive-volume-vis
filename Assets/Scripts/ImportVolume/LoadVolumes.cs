@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityVolumeRendering;
 
 public class LoadVolumes : MonoBehaviour
@@ -22,6 +21,20 @@ public class LoadVolumes : MonoBehaviour
     private Material[] materials = new Material[4];
     private MeshRenderer[] meshRenderers = new MeshRenderer[4];
 
+    public int bufferSize = 20;
+    private int futureBufferPointer = 0;
+    private int pastBufferPointer = 0;
+    
+    // Initialized in Start() with bufferSize
+    private Texture3D[] textureBuffer; 
+    private int currentTimeStep = 0;
+    private float timePassed = 0;
+    
+    [SerializeField]
+    private int timesPerSecond = 1;
+
+    [SerializeField] private bool play;
+
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -31,6 +44,9 @@ public class LoadVolumes : MonoBehaviour
         String[] directories = { temperatureDirectory, pressureDirectory, waterDirectory, meteoriteDirectory};
         String[] volumeAttributeNames = { "Temperature", "Pressure", "Water", "Meteorite"};
         String datasetPath = "Assets/Datasets/";
+        
+        // Initialize Texture3D buffer
+        textureBuffer = new Texture3D[bufferSize];
         
         // Create importer
         IImageFileImporter importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
@@ -72,6 +88,27 @@ public class LoadVolumes : MonoBehaviour
         meshRenderers[1].enabled = temperature;
         meshRenderers[2].enabled = water;
         meshRenderers[3].enabled = meteorite;
+        
+        
+        // Only execute the specified times per second
+        float dur = 1f / timesPerSecond;
+        timePassed += Time.deltaTime;
+        
+        if (timePassed >= dur)
+        {
+            timePassed -= dur;
+            if (play)
+            {
+                if (currentTimeStep == bufferSize - 1)
+                {
+                    currentTimeStep = 0;
+                }
+                else
+                {
+                    currentTimeStep++;
+                }
+            }
+        }
     }
     
     // Loads binaries in original size and in scaled down size.
@@ -79,7 +116,7 @@ public class LoadVolumes : MonoBehaviour
     //          "Assets/Datasets/Dataset1/Pressure_bin/prs_098.bin"));
     //        - materials[0].SetTexture("_DataTex",LoadBinaryToTexture3D(100, 100, 100,
     //          "Assets/Datasets/Dataset1/Pressure_bin/prs_098.bin"));
-    // TODO Slight offset when rendering the volume parts from the bottom are rendered at the top, needs fix
+    // TODO Slight offset when rendering the volume, parts from the bottom are rendered at the top, needs fix
     Texture3D LoadBinaryToTexture3D(int width, int height, int depth, String path)
     {
         // Copied from Importer
