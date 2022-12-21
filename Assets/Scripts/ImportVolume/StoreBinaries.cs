@@ -8,7 +8,7 @@ using UnityVolumeRendering;
 /// For the script to work you have to copy your dataset into the Datasets/ folder. Each dataset 
 /// should contain one directory for each attribute (e.g. Temperature/, Pressure/, ...) for 
 /// optimal use. The script generates the binary files and stores them in Datasets/DatasetName/AttributeName_bin/
-/// for further use.
+/// for further use. The down-sampled textures are stored with the postfix _sub.
 /// </summary>
 public class StoreBinaries : MonoBehaviour
 {
@@ -43,6 +43,7 @@ public class StoreBinaries : MonoBehaviour
                                         
                     // Extract fileName from path
                     String fileName = Path.GetFileNameWithoutExtension(file) + ".bin";
+                    String subFilename = Path.GetFileNameWithoutExtension(file) + "_sub.bin";
 
                     // Only convert to binary if it has not been converted already
                     if (!File.Exists(binaryPath + fileName))
@@ -55,14 +56,17 @@ public class StoreBinaries : MonoBehaviour
                         // The volumeData is stored in the first Texture3D "_DataTex"
                         Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
                         
-                        DownScaleTexture3D(texture, 150, 150, 150);
+                        // Downscale the Texture3D of the rendered volume
+                        Texture3D subTexture = DownScaleTexture3D(texture, 100, 100, 100);
                         
                         // Extract pixel data from texture to save it 
                         // mipLevel 0 according to implementation in IImageFileImporter.Import
                         byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
+                        byte[] subPixelData = subTexture.GetPixelData<byte>(0).ToArray();
 
                         // Save pixel data to binary file
                         File.WriteAllBytes(binaryPath + fileName, pixelData);
+                        File.WriteAllBytes(binaryPath + subFilename, subPixelData);
                         
                         // Increment counter to keep track of added files
                         counter++;
@@ -75,25 +79,28 @@ public class StoreBinaries : MonoBehaviour
                 // Display success message when new files have been added
                 if (counter > 0)
                 {
-                    Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath}");
+                    Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath} " +
+                              $"and down-sampled each texture.");
                 }
             }
         }
     }
 
-    void DownScaleTexture3D(Texture3D texture, int newWidth, int newHeight, int newDepth)
+    Texture3D DownScaleTexture3D(Texture3D texture, int newWidth, int newHeight, int newDepth)
     {
         // Retrieve the pixel data from the texture
         Color[] pixels = texture.GetPixels();
         
         // Use a scaling algorithm to reduce the size of the pixel data
         Color[] resampledPixels = ScaleTexture(pixels, texture.width, texture.height, texture.depth, newWidth, newHeight, newDepth);
-
+        
+        // Create new Texture3D with given size
         Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, TextureFormat.RGBA32, false);
         
         // Update the texture with the resampled pixel data
         texture3D.SetPixels(resampledPixels);
-        texture3D.Apply();
+        
+        return texture3D;
     }
     
     // Scales the given 3D texture data using bicubic interpolation
