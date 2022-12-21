@@ -21,20 +21,21 @@ public class LoadVolumes : MonoBehaviour
     private Material[] materials = new Material[4];
     private MeshRenderer[] meshRenderers = new MeshRenderer[4];
 
-    public int bufferSize = 20;
-    private int futureBufferPointer = 0;
-    private int pastBufferPointer = 0;
     
     // Initialized in Start() with bufferSize
     private Texture3D[] textureBuffer; 
     private int currentTimeStep = 0;
     private float timePassed = 0;
     
+    [SerializeField] private bool play;
+    
     [SerializeField]
     private int timesPerSecond = 1;
-
-    [SerializeField] private bool play;
-
+    
+    public int bufferSize = 20;
+    private int futureBufferPointer = 0;
+    private int pastBufferPointer = 0;
+    
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -89,8 +90,7 @@ public class LoadVolumes : MonoBehaviour
         meshRenderers[2].enabled = water;
         meshRenderers[3].enabled = meteorite;
         
-        
-        // Only execute the specified times per second
+        // Only execute as often as specified in timesPerSecond
         float dur = 1f / timesPerSecond;
         timePassed += Time.deltaTime;
         
