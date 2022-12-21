@@ -23,7 +23,7 @@ public class LoadVolumes : MonoBehaviour
 
     
     // Initialized in Start() with bufferSize
-    private Texture3D[] textureBuffer; 
+    // TODO Use Stack for future and Queue for past instead
     private int currentTimeStep = 0;
     private float timePassed = 0;
     
@@ -32,7 +32,8 @@ public class LoadVolumes : MonoBehaviour
     [SerializeField]
     private int timesPerSecond = 1;
     
-    public int bufferSize = 20;
+    public int bufferStackSize = 10;
+    public int bufferQueueSize = 10;
     private int futureBufferPointer = 0;
     private int pastBufferPointer = 0;
     
@@ -45,10 +46,7 @@ public class LoadVolumes : MonoBehaviour
         String[] directories = { temperatureDirectory, pressureDirectory, waterDirectory, meteoriteDirectory};
         String[] volumeAttributeNames = { "Temperature", "Pressure", "Water", "Meteorite"};
         String datasetPath = "Assets/Datasets/";
-        
-        // Initialize Texture3D buffer
-        textureBuffer = new Texture3D[bufferSize];
-        
+
         // Create importer
         IImageFileImporter importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
 
@@ -99,14 +97,14 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
-                if (currentTimeStep == bufferSize - 1)
+                /*if (currentTimeStep == bufferSize - 1)
                 {
                     currentTimeStep = 0;
                 }
                 else
                 {
                     currentTimeStep++;
-                }
+                }*/
             }
         }
     }
