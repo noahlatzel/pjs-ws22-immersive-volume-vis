@@ -12,7 +12,9 @@ public class LoadVolumes : MonoBehaviour
     public String temperatureDirectory = "Temperature";
     public String waterDirectory = "Water";
     public String meteoriteDirectory = "Meteorite";
-    
+
+    private Material[] materials = new Material[4];
+
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -46,6 +48,9 @@ public class LoadVolumes : MonoBehaviour
                 
                 // Disable MeshRenderer
                 obj.GetComponentInChildren<MeshRenderer>().enabled = false;
+                
+                // Save each Material property for later use
+                materials[i] = obj.GetComponentInChildren<MeshRenderer>().material;
             }
         }
     }
@@ -54,5 +59,26 @@ public class LoadVolumes : MonoBehaviour
     void Update()
     {
         
+    }
+    
+    // TODO: Texture difference UNORM -> SFLOAT volume is slightly off currently
+    // Usage: materials[0].SetTexture("_DataTex",LoadBinaryToTexture3D(300, 300, 300,
+    //          "Assets/Datasets/Dataset1/Pressure_bin/prs_098.bin"));
+    Texture3D LoadBinaryToTexture3D(int width, int height, int depth, String path)
+    {
+        // Create Texture3D object
+        Texture3D texture = new Texture3D(width, height, depth, TextureFormat.R16, false);
+        
+        // Load pixelData from binary file
+        byte[] pixelData = File.ReadAllBytes(path);
+        
+        // Set pixel data to loaded binary data with
+        // mipLevel 0 according to implementation in IImageFileImporter.Import
+        texture.SetPixelData(pixelData, 0);
+        
+        // Apply texture to load in GPU
+        texture.Apply();
+        
+        return texture;
     }
 }

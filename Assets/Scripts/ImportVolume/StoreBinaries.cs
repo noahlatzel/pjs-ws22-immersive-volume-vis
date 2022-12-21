@@ -107,7 +107,7 @@ public class StoreBinaries : MonoBehaviour
         Color[] resampledPixels = ScaleTexture(pixels, texture.width, texture.height, texture.depth, newWidth, newHeight, newDepth);
         
         // Create new Texture3D with given size
-        Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, TextureFormat.RGBA32, false);
+        Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, TextureFormat.R16, false);
         
         // Update the texture with the resampled pixel data
         // No need to call texture3D.Apply() because we don't use the texture directly.
