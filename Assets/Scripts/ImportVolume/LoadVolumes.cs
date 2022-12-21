@@ -61,13 +61,19 @@ public class LoadVolumes : MonoBehaviour
         
     }
     
-    // TODO: Texture difference UNORM -> SFLOAT volume is slightly off currently
-    // Usage: materials[0].SetTexture("_DataTex",LoadBinaryToTexture3D(300, 300, 300,
+    // Loads binaries in original size and in scaled down size.
+    // Usage: - materials[0].SetTexture("_DataTex",LoadBinaryToTexture3D(300, 300, 300,
     //          "Assets/Datasets/Dataset1/Pressure_bin/prs_098.bin"));
+    //        - materials[0].SetTexture("_DataTex",LoadBinaryToTexture3D(100, 100, 100,
+    //          "Assets/Datasets/Dataset1/Pressure_bin/prs_098.bin"));
+    // TODO Slight offset when rendering the volume parts from the bottom are rendered at the top, needs fix
     Texture3D LoadBinaryToTexture3D(int width, int height, int depth, String path)
     {
+        // Copied from Importer
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
         // Create Texture3D object
-        Texture3D texture = new Texture3D(width, height, depth, TextureFormat.R16, false);
+        Texture3D texture = new Texture3D(width, height, depth, texFormat, false);
         
         // Load pixelData from binary file
         byte[] pixelData = File.ReadAllBytes(path);

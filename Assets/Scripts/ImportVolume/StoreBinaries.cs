@@ -106,8 +106,11 @@ public class StoreBinaries : MonoBehaviour
         // Use a scaling algorithm to reduce the size of the pixel data
         Color[] resampledPixels = ScaleTexture(pixels, texture.width, texture.height, texture.depth, newWidth, newHeight, newDepth);
         
+        // Copied from Importer
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
         // Create new Texture3D with given size
-        Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, TextureFormat.R16, false);
+        Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, texFormat, false);
         
         // Update the texture with the resampled pixel data
         // No need to call texture3D.Apply() because we don't use the texture directly.
