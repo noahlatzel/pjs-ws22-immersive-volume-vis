@@ -14,7 +14,13 @@ public class LoadVolumes : MonoBehaviour
     public String waterDirectory = "Water";
     public String meteoriteDirectory = "Meteorite";
 
+    public bool pressure;
+    public bool temperature;
+    public bool water;
+    public bool meteorite;
+
     private Material[] materials = new Material[4];
+    private MeshRenderer[] meshRenderers = new MeshRenderer[4];
 
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
@@ -50,8 +56,9 @@ public class LoadVolumes : MonoBehaviour
                 // Disable MeshRenderer
                 obj.GetComponentInChildren<MeshRenderer>().enabled = false;
                 
-                // Save each Material property for later use
+                // Save each Material property and MeshRenderer for later use
                 materials[i] = obj.GetComponentInChildren<MeshRenderer>().material;
+                meshRenderers[i] = obj.GetComponentInChildren<MeshRenderer>();
             }
         }
     }
@@ -60,7 +67,11 @@ public class LoadVolumes : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // Update volume visibility according to public variables
+        meshRenderers[0].enabled = pressure;
+        meshRenderers[1].enabled = temperature;
+        meshRenderers[2].enabled = water;
+        meshRenderers[3].enabled = meteorite;
     }
     
     // Loads binaries in original size and in scaled down size.
