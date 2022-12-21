@@ -34,9 +34,9 @@ public class LoadVolumes : MonoBehaviour
     
     public int bufferStackSize = 10;
     public int bufferQueueSize = 10;
-    private int futureBufferPointer = 0;
-    private int pastBufferPointer = 0;
-    
+    private LimitedStack<Texture3D> pastStack;
+    private LimitedQueue<Texture3D> futureQueue;
+
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -49,7 +49,11 @@ public class LoadVolumes : MonoBehaviour
 
         // Create importer
         IImageFileImporter importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-
+        
+        // Initialize buffers
+        futureQueue = new LimitedQueue<Texture3D>(bufferQueueSize);
+        pastStack = new LimitedStack<Texture3D>(bufferStackSize);
+        
         for (int i = 0; i < directories.Length; i++)
         {
             // Get first volume
@@ -78,7 +82,7 @@ public class LoadVolumes : MonoBehaviour
         }
     }
 
-    // TODO Load binaries at runtime and use buffer
+    // TODO Load binaries at runtime and use buffer DropOutStack?
     // Update is called once per frame
     void Update()
     {
@@ -134,5 +138,53 @@ public class LoadVolumes : MonoBehaviour
         texture.Apply();
         
         return texture;
+    }
+}
+
+public class LimitedStack<T>
+{
+    private T[] items;
+    private int top = 0;
+
+    public LimitedStack(int capacity)
+    {
+        items = new T[capacity];
+    }
+
+    public void Push(T item)
+    {
+        items[top] = item;
+        top = (top + 1) % items.Length;
+    }
+
+    public T Pop()
+    {
+        top = (items.Length + top - 1) % items.Length;
+        return items[top];
+    }
+}
+
+public class LimitedQueue<T>
+{
+    private T[] items;
+    private int first = 0;
+    private int last = 0;
+
+    public LimitedQueue(int capacity)
+    {
+        items = new T[capacity];
+    }
+
+    public void Enqueue(T item)
+    {
+        items[last] = item;
+        last = (last + 1) % items.Length;
+    }
+
+    public T Dequeue()
+    {
+        int temp = first;
+        first = (first + 1) % items.Length;
+        return items[temp];
     }
 }
