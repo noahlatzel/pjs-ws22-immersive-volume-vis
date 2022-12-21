@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityVolumeRendering;
+using Debug = UnityEngine.Debug;
 
 /// <summary>
 /// For the script to work you have to copy your dataset into the Datasets/ folder. Each dataset 
@@ -25,9 +27,12 @@ public class StoreBinaries : MonoBehaviour
         {
             // Get all paths to the (four) volume attributes for each dataset
             string[] volumeAttributePaths = Directory.GetDirectories(dataSetPath).Where(path => !path.EndsWith("_bin")).ToArray();
-
+            
             foreach (String volumeAttributePath in volumeAttributePaths)
             {
+                // Create stopwatch for performance measures
+                Stopwatch stopWatch = Stopwatch.StartNew();
+                
                 // Set path to store the binary files in separate directory
                 // @ forces the String to be interpreted verbatim
                 String binaryPath = volumeAttributePath + @"_bin/";
@@ -79,12 +84,14 @@ public class StoreBinaries : MonoBehaviour
                         Destroy(obj);
                     }
                 }
+                stopWatch.Stop();
                 
-                // Display success message when new files have been added
+                // Display success message when new files have been added and measure the time
+                // Replace "\" with "/" for uniform look
                 if (counter > 0)
                 {
-                    Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath} " +
-                              $"and scaled down each texture.");
+                    Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath.Replace(@"\", "/")} " +
+                              $"and scaled down each texture in {stopWatch.Elapsed:m\\:ss\\.fff}.");
                 }
             }
         }
