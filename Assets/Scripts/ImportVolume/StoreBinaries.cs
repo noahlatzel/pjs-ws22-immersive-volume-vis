@@ -12,6 +12,9 @@ using UnityVolumeRendering;
 /// </summary>
 public class StoreBinaries : MonoBehaviour
 {
+    [Tooltip("Specify the side length for the scaled version of the volume.")]
+    public int sideLength = 100;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +60,8 @@ public class StoreBinaries : MonoBehaviour
                         Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
                         
                         // Scale down the Texture3D of the rendered volume
-                        Texture3D subTexture = DownScaleTexture3D(texture, 100, 100, 100);
+                        Texture3D subTexture = DownScaleTexture3D(texture, sideLength, 
+                            sideLength, sideLength);
                         
                         // Extract pixel data from texture to save it 
                         // mipLevel 0 according to implementation in IImageFileImporter.Import
