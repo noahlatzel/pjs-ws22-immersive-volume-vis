@@ -56,7 +56,7 @@ public class StoreBinaries : MonoBehaviour
                         // The volumeData is stored in the first Texture3D "_DataTex"
                         Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
                         
-                        // Downscale the Texture3D of the rendered volume
+                        // Scale down the Texture3D of the rendered volume
                         Texture3D subTexture = DownScaleTexture3D(texture, 100, 100, 100);
                         
                         // Extract pixel data from texture to save it 
@@ -71,7 +71,7 @@ public class StoreBinaries : MonoBehaviour
                         // Increment counter to keep track of added files
                         counter++;
                     
-                        // Destroy created object
+                        // Destroy created object 
                         Destroy(obj);
                     }
                 }
@@ -80,12 +80,13 @@ public class StoreBinaries : MonoBehaviour
                 if (counter > 0)
                 {
                     Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath} " +
-                              $"and down-sampled each texture.");
+                              $"and scaled down each texture.");
                 }
             }
         }
     }
-
+    
+    // Scales the given 3D texture down and returns a new 3D texture.
     Texture3D DownScaleTexture3D(Texture3D texture, int newWidth, int newHeight, int newDepth)
     {
         // Retrieve the pixel data from the texture
@@ -98,6 +99,8 @@ public class StoreBinaries : MonoBehaviour
         Texture3D texture3D = new Texture3D(newWidth, newHeight, newDepth, TextureFormat.RGBA32, false);
         
         // Update the texture with the resampled pixel data
+        // No need to call texture3D.Apply() because we don't use the texture directly.
+        // We just want the binary data.
         texture3D.SetPixels(resampledPixels);
         
         return texture3D;
