@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityVolumeRendering;
 
@@ -36,6 +37,8 @@ public class LoadVolumes : MonoBehaviour
     public int bufferQueueSize = 10;
     private LimitedStack<Texture3D> pastStack;
     private LimitedQueue<Texture3D> futureQueue;
+
+    public bool runBufferDebug;
 
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
@@ -101,15 +104,15 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
-                /*if (currentTimeStep == bufferSize - 1)
-                {
-                    currentTimeStep = 0;
-                }
-                else
-                {
-                    currentTimeStep++;
-                }*/
+                pastStack.Push((Texture3D)materials[0].GetTexture("_DataTex"));
+                Texture3D nextTexture = futureQueue.Dequeue();
+                materials[0].SetTexture("_DataTex", nextTexture);
             }
+        }
+
+        if (runBufferDebug)
+        {
+            LoadFutureBuffer("Assets/Datasets/Dataset1/Pressure_bin/");
         }
     }
     
@@ -138,6 +141,29 @@ public class LoadVolumes : MonoBehaviour
         texture.Apply();
         
         return texture;
+    }
+
+    void LoadFutureBuffer(String path, bool scaled = false)
+    {
+        // Only buffer next texture if buffer not full
+        if (!futureQueue.CheckBufferFull())
+        {
+            // Calculate path for binary TODO Later add scaled version
+            String calcPath = path + futureQueue.GetCurrentTexture() + ".bin";
+            
+            // Quick fix TODO delete later
+            calcPath = Directory.GetFiles(path, "*.bin").Where(path => !path.EndsWith("sub.bin")).ToArray()[futureQueue.GetCurrentTexture()];
+            Debug.Log(calcPath);
+                // Load bufferedTexture from binary TODO Later add scaled version
+            Texture3D bufferedTexture = LoadBinaryToTexture3D(300, 300, 300, calcPath);
+        
+            // Increment current texture count before enqueueing so other threads can load the next texture
+            futureQueue.IncrementCurrentTexture();
+            futureQueue.IncrementAlreadyBuffered();
+        
+            // Enqueue bufferedTexture TODO Check order of textures (threading)
+            futureQueue.Enqueue(bufferedTexture);
+        }
     }
 }
 
@@ -169,6 +195,8 @@ public class LimitedQueue<T>
     private T[] items;
     private int first = 0;
     private int last = 0;
+    private int currentTexture = 0;
+    private int alreadyBuffered = 0;
 
     public LimitedQueue(int capacity)
     {
@@ -179,12 +207,34 @@ public class LimitedQueue<T>
     {
         items[last] = item;
         last = (last + 1) % items.Length;
+        //currentTexture++; TODO review later
     }
 
     public T Dequeue()
     {
         int temp = first;
         first = (first + 1) % items.Length;
+        alreadyBuffered--;
         return items[temp];
+    }
+
+    public int GetCurrentTexture()
+    {
+        return currentTexture;
+    }
+    
+    public void IncrementCurrentTexture()
+    {
+        currentTexture++;
+    }
+
+    public void IncrementAlreadyBuffered()
+    {
+        alreadyBuffered++;
+    }
+
+    public bool CheckBufferFull()
+    {
+        return alreadyBuffered >= items.Length;
     }
 }
