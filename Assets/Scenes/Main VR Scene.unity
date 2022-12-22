@@ -152,7 +152,7 @@ MeshCollider:
   m_GameObject: {fileID: 47270107}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
@@ -402,8 +402,9 @@ GameObject:
   - component: {fileID: 132284388}
   - component: {fileID: 132284387}
   - component: {fileID: 132284391}
+  - component: {fileID: 132284392}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: uiCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -513,6 +514,31 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!114 &132284392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132284386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edae0ecc3577c194f973482866d378cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showMenu:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Show Menu
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: a54484ec-e4ce-41e7-9f0b-9a87046ec96c
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8489087321768123071, guid: c348712bda248c246b8c49b3db54643f,
+      type: 3}
 --- !u!1 &170880364
 GameObject:
   m_ObjectHideFlags: 0
@@ -2732,7 +2758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &960917539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2740,15 +2766,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960917538}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6be6e4b568813f41bf6d10d58262034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   running: 0
   timesPerSecond: 1
-  firstVolume: 1
-  lastVolume: 1
+  firstVolume: 2
+  lastVolume: 10
 --- !u!4 &960917540
 Transform:
   m_ObjectHideFlags: 0
