@@ -107,6 +107,7 @@ public class LoadVolumes : MonoBehaviour
                 pastStack.Push((Texture3D)materials[0].GetTexture("_DataTex"));
                 Texture3D nextTexture = futureQueue.Dequeue();
                 materials[0].SetTexture("_DataTex", nextTexture);
+                Debug.Log(futureQueue.GetCurrentTexture());
             }
         }
 
@@ -225,7 +226,7 @@ public class LimitedQueue<T>
     
     public void IncrementCurrentTexture()
     {
-        currentTexture++;
+        currentTexture = (currentTexture + 1) % 14;
     }
 
     public void IncrementAlreadyBuffered()
