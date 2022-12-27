@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityVolumeRendering;
 
@@ -38,7 +41,7 @@ public class LoadVolumes : MonoBehaviour
     private LimitedStack<Texture3D> pastStack;
     private LimitedQueue<Texture3D> futureQueue;
 
-    public bool runBufferDebug;
+    public bool isBuffering;
 
     // Load the first volume per attribute with the importer guarantee
     // correct configuration of Material properties etc.
@@ -110,11 +113,18 @@ public class LoadVolumes : MonoBehaviour
                 Debug.Log(futureQueue.GetCurrentTexture());
             }
         }
-
-        if (runBufferDebug)
+        
+        if (isBuffering)
         {
-            LoadFutureBuffer("Assets/Datasets/Dataset1/Pressure_bin/");
+            // Start the file buffering thread
+            StartBufferThread("Assets/Datasets/Dataset1/Pressure_bin/");
         }
+    }
+    
+    public Thread StartBufferThread(String path) {
+        var t = new Thread(() => LoadFutureBuffer(path));
+        t.Start();
+        return t;
     }
     
     // Loads binaries in original size and in scaled down size.
@@ -144,11 +154,15 @@ public class LoadVolumes : MonoBehaviour
         return texture;
     }
 
+    
     void LoadFutureBuffer(String path, bool scaled = false)
     {
         // Only buffer next texture if buffer not full
-        if (!futureQueue.CheckBufferFull())
+        if (!futureQueue.CheckBufferFull() || true)
         {
+            // Set the flag to indicate that the buffering operation is in progress
+            isBuffering = true;
+            
             // Calculate path for binary TODO Later add scaled version
             String calcPath = path + futureQueue.GetCurrentTexture() + ".bin";
             
@@ -164,6 +178,11 @@ public class LoadVolumes : MonoBehaviour
         
             // Enqueue bufferedTexture TODO Check order of textures (threading)
             futureQueue.Enqueue(bufferedTexture);
+            
+            // Clear the flag to indicate that the buffering operation has completed
+            isBuffering = false;
+
+            Debug.Log("Buffer loaded!");
         }
     }
 }
