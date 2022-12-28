@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,15 +12,29 @@ public class LoadVolumes : MonoBehaviour
 {
     [Tooltip("Specify the name of the dataset you want to use. The dataset needs to be stored in Assets/Datasets/")]
     public String datasetName = "Dataset1";
-
+    
+    [Tooltip("Specify the name of the pressure directory. The directory needs to be stored in Assets/Datasets/<DatasetName>")]
     public String pressureDirectory = "Pressure";
+    
+    [Tooltip("Specify the name of the temperature directory. The directory needs to be stored in Assets/Datasets/<DatasetName>")]
     public String temperatureDirectory = "Temperature";
+    
+    [Tooltip("Specify the name of the water directory. The directory needs to be stored in Assets/Datasets/<DatasetName>")]
     public String waterDirectory = "Water";
+    
+    [Tooltip("Specify the name of the meteorite directory. The directory needs to be stored in Assets/Datasets/<DatasetName>")]
     public String meteoriteDirectory = "Meteorite";
-
+    
+    [Tooltip("Show/Hide pressure volume.")]
     public bool pressure;
+    
+    [Tooltip("Show/Hide temperature volume.")]
     public bool temperature;
+    
+    [Tooltip("Show/Hide water volume.")]
     public bool water;
+    
+    [Tooltip("Show/Hide meteorite volume.")]
     public bool meteorite;
 
     private Material[] materials = new Material[4];
@@ -31,8 +46,10 @@ public class LoadVolumes : MonoBehaviour
     private int currentTimeStep = 0;
     private float timePassed = 0;
     
+    [Tooltip("Start/Stop the animation.")]
     [SerializeField] private bool play;
     
+    [Tooltip("Specify the frames per second of the animation.")]
     [SerializeField]
     private int timesPerSecond = 1;
     
@@ -41,6 +58,10 @@ public class LoadVolumes : MonoBehaviour
     private LimitedStack<Texture3D> pastStack;
     private LimitedQueue<Texture3D> futureQueue;
 
+    private Queue<byte[]> threadQueue;
+    private bool isReadingBinary;
+    
+    [Tooltip("Start/Stop the buffer.")]
     public bool isBuffering;
 
     // Load the first volume per attribute with the importer guarantee
@@ -59,6 +80,7 @@ public class LoadVolumes : MonoBehaviour
         // Initialize buffers
         futureQueue = new LimitedQueue<Texture3D>(bufferQueueSize);
         pastStack = new LimitedStack<Texture3D>(bufferStackSize);
+        threadQueue = new Queue<byte[]>();
         
         for (int i = 0; i < directories.Length; i++)
         {
@@ -107,22 +129,44 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
-                pastStack.Push((Texture3D)materials[0].GetTexture("_DataTex"));
-                Texture3D nextTexture = futureQueue.Dequeue();
-                materials[0].SetTexture("_DataTex", nextTexture);
-                Debug.Log(futureQueue.GetCurrentTexture());
+                //pastStack.Push((Texture3D)materials[0].GetTexture("_DataTex"));
+                //Texture3D nextTexture = futureQueue.Dequeue();
+                //materials[0].SetTexture("_DataTex", nextTexture);
+                ((Texture3D) materials[0].GetTexture("_DataTex")).SetPixelData(threadQueue.Dequeue(), 0);
+                //Debug.Log(futureQueue.GetCurrentTexture());
             }
         }
         
-        if (isBuffering)
+        if (!isReadingBinary && isBuffering)
         {
-            // Start the file buffering thread
-            StartBufferThread("Assets/Datasets/Dataset1/Pressure_bin/");
+            // Start the binary reading thread
+            StartBufferThread("Assets/Datasets/Dataset1/Pressure_bin/prs_001.bin");
         }
     }
     
+    // Loads the binary from the specified path and stores the loaded byte array in a queue.
+    // Loading the binary has to be separated from the main function because Unity functions classes
+    // may not be called in other threads than the main thread but we want to load our data in a separate 
+    // thread to reduce lag.
+    private void LoadAndStoreBinary(String path)
+    {
+        Debug.Log("Started thread!");
+        // Set the flag to indicate that the reading operation is in progress
+        isReadingBinary = true;
+        
+        // Load pixelData from binary file
+        byte[] pixelData = File.ReadAllBytes(path);
+        
+        // Store byte array in queue
+        threadQueue.Enqueue(pixelData);
+        
+        // Clear the flag to indicate that the reading operation has completed
+        isReadingBinary = false;
+        Debug.Log("Ended thread!");
+    }
+
     public Thread StartBufferThread(String path) {
-        var t = new Thread(() => LoadFutureBuffer(path));
+        var t = new Thread(() => LoadAndStoreBinary(path));
         t.Start();
         return t;
     }
@@ -169,7 +213,7 @@ public class LoadVolumes : MonoBehaviour
             // Quick fix TODO delete later
             calcPath = Directory.GetFiles(path, "*.bin").Where(path => !path.EndsWith("sub.bin")).ToArray()[futureQueue.GetCurrentTexture()];
             Debug.Log(calcPath);
-                // Load bufferedTexture from binary TODO Later add scaled version
+            // Load bufferedTexture from binary TODO Later add scaled version
             Texture3D bufferedTexture = LoadBinaryToTexture3D(300, 300, 300, calcPath);
         
             // Increment current texture count before enqueueing so other threads can load the next texture
@@ -184,6 +228,19 @@ public class LoadVolumes : MonoBehaviour
 
             Debug.Log("Buffer loaded!");
         }
+    }
+    
+    void LoadFutureBuffer(bool scaled = false)
+    {
+        // Get correct TextureFormat (copied from IImageFileImporter)
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+
+        // Create bufferedTexture from binary TODO Later add scaled version
+        Texture3D bufferedTexture = new Texture3D(300, 300, 300, texFormat, false);
+        bufferedTexture.SetPixelData(threadQueue.Dequeue(), 0);
+
+        Debug.Log("Buffer loaded!");
+        Debug.Log($"Binaries to buffer: {threadQueue.Count}");
     }
 }
 
