@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using UnityVolumeRendering;
@@ -24,6 +25,7 @@ public class LoadVolumes : MonoBehaviour
     public bool meteorite;
     
     private float timePassed = 0;
+    private float timePassedBuffer = 0;
     
     [Tooltip("Start/Stop the animation.")]
     [SerializeField] private bool play;
@@ -37,6 +39,9 @@ public class LoadVolumes : MonoBehaviour
 
     public bool useScaledVersion;
     
+    [Tooltip("Adjust the buffer speed (buffer per second)")]
+    public int bufferSpeed = 5;
+
     // Manager class
     private VolumeManager volumeManager;
     
@@ -66,7 +71,6 @@ public class LoadVolumes : MonoBehaviour
         if (timePassed >= dur)
         {
             timePassed -= dur;
-
             if (play)
             {
                 // Render the next frame through Volume Manager
@@ -74,13 +78,24 @@ public class LoadVolumes : MonoBehaviour
             }
         }
         
-        // Check if buffering is checked and Volume Manager is not reading
-        if (!volumeManager.IsReadingBinary() && isBuffering)
+        // Limit speed of loading the buffer to reduce lag
+        float durBuffer = 1f / bufferSpeed;
+        timePassedBuffer += Time.deltaTime;
+        if (timePassedBuffer >= durBuffer)
         {
-            // Start the binary reading thread
-            var t = new Thread(volumeManager.BufferNextFrame);
-            t.Start();
+            timePassedBuffer -= durBuffer;
+
+            // Check if buffering is checked and Volume Manager is not reading
+            if (!volumeManager.IsReadingBinary() && isBuffering)
+            {
+                // Start the binary reading thread
+                var t = new Thread(volumeManager.BufferNextFrame);
+                t.Start();
+            }
         }
+
+        
+
     }
 
     private void RenderOnStart(VolumeManager volumeManagerObject)
@@ -147,6 +162,7 @@ public class VolumeAttribute
     private readonly int count;
     private readonly String originalPath;
     private bool usingScaled = false;
+    private readonly Assembly dll;
 
     public VolumeAttribute(String path)
     {
@@ -157,6 +173,9 @@ public class VolumeAttribute
         count = filePaths.Length;
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
+        
+        // Load the DLL into the Assembly object
+        dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
     }
 
     private String GetVolumePath(int number)
@@ -226,14 +245,13 @@ public class VolumeAttribute
     public void BufferNextFrame(int currentTimeStep)
     {
         // Restrict buffer size
-        if (bufferQueue.Count < 10)
+        if (bufferQueue.Count <= 10)
         {
             // Load pixelData from binary file at next position
             int nextVolumeToBuffer = (currentTimeStep + 1 + bufferQueue.Count) % count;
-            byte[] pixelData = File.ReadAllBytes(GetVolumePath(nextVolumeToBuffer));
             
-            // Store byte array in queue
-            bufferQueue.Enqueue(pixelData);
+            dll.GetType("ThreadedBinaryReader.FileReader").GetMethod("ReadFileInThread")
+                .Invoke(null, new object[] { GetVolumePath(nextVolumeToBuffer), bufferQueue });
         }
     }
     
@@ -295,9 +313,8 @@ public class VolumeManager
             if (volumeAttribute.IsVisible())
             {
                 volumeAttribute.NextFrame();
+                active = true;
             }
-
-            active = true;
         }
 
         if (active)
