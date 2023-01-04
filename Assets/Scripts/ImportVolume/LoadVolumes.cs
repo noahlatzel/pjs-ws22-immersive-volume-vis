@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,9 +50,6 @@ public class LoadVolumes : MonoBehaviour
         
         // Render volumes on start 
         RenderOnStart(volumeManager);
-        
-        // Set if scaled version should be used
-        volumeManager.SetUsingScale(useScaledVersion);
     }
     
     // Update is called once per frame
@@ -61,6 +57,7 @@ public class LoadVolumes : MonoBehaviour
     {
         // Update volume visibility according to public variables
         volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
+        volumeManager.SetUsingScale(useScaledVersion);
         
         // Only execute as often as specified in timesPerSecond
         float dur = 1f / timesPerSecond;
@@ -116,7 +113,7 @@ public class LoadVolumes : MonoBehaviour
 
 public class LimitedStack<T>
 {
-    private T[] items;
+    private readonly T[] items;
     private int top = 0;
 
     public LimitedStack(int capacity)
@@ -200,22 +197,26 @@ public class VolumeAttribute
 
     public void NextFrame()
     {
-        // Get correct texture format analogue to the Volume Importer
-        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        // Check if textures are buffered
+        if (bufferQueue.Count > 0)
+        {
+            // Get correct texture format analogue to the Volume Importer
+            TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
         
-        // Set the current texture to the next texture in the buffer depended on usingScaled
-        Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
-            (Texture3D) material.GetTexture("_DataTex");
+            // Set the current texture to the next texture in the buffer depended on usingScaled
+            Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+                new Texture3D(300, 300, 300, texFormat, false);
         
-        // Set pixel data from bufferQueue
-        newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+            // Set pixel data from bufferQueue
+            newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
         
-        // Set _DataTex texture of material to newly loaded texture
-        material.SetTexture("_DataTex", newTexture);
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", newTexture);
         
-        // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
-        // a separate thread
-        newTexture.Apply();
+            // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+            // a separate thread
+            newTexture.Apply();
+        }
     }
 
     // Loads the binary from the specified path and stores the loaded byte array in a queue.

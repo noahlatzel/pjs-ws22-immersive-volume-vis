@@ -2782,7 +2782,7 @@ MonoBehaviour:
   play: 0
   timesPerSecond: 1
   isBuffering: 0
-  useScaledVersion: 1
+  useScaledVersion: 0
 --- !u!1001 &1008324072
 PrefabInstance:
   m_ObjectHideFlags: 0
