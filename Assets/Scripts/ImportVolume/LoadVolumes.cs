@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ public class LoadVolumes : MonoBehaviour
     
     [Tooltip("Start/Stop the buffer.")]
     public bool isBuffering;
+
+    public bool useScaledVersion;
     
     // Manager class
     private VolumeManager volumeManager;
@@ -48,6 +51,9 @@ public class LoadVolumes : MonoBehaviour
         
         // Render volumes on start 
         RenderOnStart(volumeManager);
+        
+        // Set if scaled version should be used
+        volumeManager.SetUsingScale(useScaledVersion);
     }
     
     // Update is called once per frame
@@ -66,17 +72,16 @@ public class LoadVolumes : MonoBehaviour
 
             if (play)
             {
+                // Render the next frame through Volume Manager
                 volumeManager.NextFrame();
-                Debug.Log("Next Frame!");
             }
         }
         
+        // Check if buffering is checked and Volume Manager is not reading
         if (!volumeManager.IsReadingBinary() && isBuffering)
         {
             // Start the binary reading thread
-            //StartBufferThread("Assets/Datasets/Dataset1/Pressure_bin");
-            
-            var t = new Thread(() => volumeManager.BufferNextFrame());
+            var t = new Thread(volumeManager.BufferNextFrame);
             t.Start();
         }
     }
@@ -106,8 +111,6 @@ public class LoadVolumes : MonoBehaviour
             volumeAttribute.SetMaterialReference(obj.GetComponentInChildren<MeshRenderer>().material);
             volumeAttribute.SetMeshRendererReference(obj.GetComponentInChildren<MeshRenderer>());
         }
-        
-
     }
 }
 
@@ -140,25 +143,28 @@ public class VolumeAttribute
     private readonly String name;
     private bool active;
     private readonly String[] filePaths;
+    private readonly String[] filePathsScaled;
     private Material material;
     private MeshRenderer meshRenderer;
     private readonly Queue<byte[]> bufferQueue;
     private readonly int count;
     private readonly String originalPath;
+    private bool usingScaled = false;
 
     public VolumeAttribute(String path)
     {
         name = new DirectoryInfo(path).Name;
         filePaths = Directory.GetFiles(path + "_bin/", "*.bin")
             .Where(filePath => !filePath.EndsWith("_sub.bin")).ToArray();
+        filePathsScaled = Directory.GetFiles(path + "_bin/", "*_sub.bin");
         count = filePaths.Length;
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
     }
 
-    public String GetVolumePath(int number)
+    private String GetVolumePath(int number)
     {
-        return filePaths[number];
+        return usingScaled ? filePathsScaled[number] : filePaths[number];
     }
 
     public String GetFirstVolumePathForStart()
@@ -194,8 +200,22 @@ public class VolumeAttribute
 
     public void NextFrame()
     {
-        // Set the current texture to the next texture in the buffer
-        ((Texture3D) material.GetTexture("_DataTex")).SetPixelData(bufferQueue.Dequeue(), 0);
+        // Get correct texture format analogue to the Volume Importer
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
+        // Set the current texture to the next texture in the buffer depended on usingScaled
+        Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+            (Texture3D) material.GetTexture("_DataTex");
+        
+        // Set pixel data from bufferQueue
+        newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+        
+        // Set _DataTex texture of material to newly loaded texture
+        material.SetTexture("_DataTex", newTexture);
+        
+        // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+        // a separate thread
+        newTexture.Apply();
     }
 
     // Loads the binary from the specified path and stores the loaded byte array in a queue.
@@ -204,15 +224,27 @@ public class VolumeAttribute
     // thread to reduce lag.
     public void BufferNextFrame(int currentTimeStep)
     {
-        if (bufferQueue.Count < 5)
+        // Restrict buffer size
+        if (bufferQueue.Count < 10)
         {
             // Load pixelData from binary file at next position
             int nextVolumeToBuffer = (currentTimeStep + 1 + bufferQueue.Count) % count;
-            byte[] pixelData = File.ReadAllBytes(filePaths[nextVolumeToBuffer]);
-        
+            byte[] pixelData = File.ReadAllBytes(GetVolumePath(nextVolumeToBuffer));
+            
             // Store byte array in queue
             bufferQueue.Enqueue(pixelData);
         }
+    }
+    
+    public void SetUsingScale(bool usage)
+    {
+        // Check if scale was changed during runtime
+        if (usingScaled != usage)
+        {
+            // Clear bufferQueue during runtime
+            bufferQueue.Clear();
+        }
+        usingScaled = usage;
     }
 }
 
@@ -222,6 +254,7 @@ public class VolumeManager
     private VolumeAttribute[] volumeAttributes;
     private int currentTimeStep;
     private bool isReadingBinary;
+    private bool usingScaled = false;
 
     public VolumeManager(String dataSetName)
     {
@@ -289,5 +322,14 @@ public class VolumeManager
     public bool IsReadingBinary()
     {
         return isReadingBinary;
+    }
+
+    public void SetUsingScale(bool usage)
+    {
+        usingScaled = usage;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            volumeAttribute.SetUsingScale(usingScaled);
+        }
     }
 }

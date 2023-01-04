@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2792,19 +2792,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   datasetName: Dataset1
-  pressureDirectory: Pressure
-  temperatureDirectory: Temperature
-  waterDirectory: Water
-  meteoriteDirectory: Meteorite
   pressure: 0
   temperature: 0
   water: 0
   meteorite: 0
   play: 0
   timesPerSecond: 1
-  bufferStackSize: 10
-  bufferQueueSize: 10
-  runBufferDebug: 0
+  isBuffering: 0
+  useScaledVersion: 1
 --- !u!1001 &1008324072
 PrefabInstance:
   m_ObjectHideFlags: 0
