@@ -47,7 +47,7 @@ public class InteractionCube : MonoBehaviour
         leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
         rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
         bobFrom = interactionCube.transform.position;
-        bobTo = interactionCube.transform.position + offset;
+        //bobTo = interactionCube.transform.position + offset;
     }
 
     // Update is called once per frame
@@ -99,8 +99,8 @@ public class InteractionCube : MonoBehaviour
                     bobbingDestination = bobFrom;
                 }
         
-                interactionCube.transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
-                interactionCube.transform.position = Vector3.MoveTowards(interactionCube.transform.position, bobbingDestination, moveSpeed);
+                //interactionCube.transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
+                //interactionCube.transform.position = Vector3.MoveTowards(interactionCube.transform.position, bobbingDestination, moveSpeed);
             }
             else // hands are now within the 'table-area'
             {
