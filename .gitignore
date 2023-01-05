@@ -104,3 +104,15 @@ $RECYCLE.BIN/
 ![Aa]ssets/DataFiles/Temperature/.gitkeep
 ![Aa]ssets/DataFiles/Testing/.gitkeep
 ![Aa]ssets/DataFiles/Pressure/.gitkeep
+
+# Datasets
+/[Aa]ssets/Datasets/
+
+![Aa]ssets/Datasets/Dataset1/Pressure/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Pressure_bin/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Temperature/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Temperature_bin/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Water/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Water_bin/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Meteorite/.gitkeep
+![Aa]ssets/Datasets/Dataset1/Meteorite_bin/.gitkeep
