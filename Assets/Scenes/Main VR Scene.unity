@@ -4451,7 +4451,7 @@ MonoBehaviour:
   m_Acceleration: 9.8
   m_AdditionalGroundHeight: 0.1
   m_AdditionalFlightTime: 0.5
-  m_EndPointDistance: 5
+  m_EndPointDistance: 10
   m_EndPointHeight: -7
   m_ControlPointDistance: 3
   m_ControlPointHeight: -0.3
