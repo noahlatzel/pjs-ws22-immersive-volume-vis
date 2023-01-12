@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityVolumeRendering;
 
 public class LoadVolumes : MonoBehaviour
@@ -45,6 +46,10 @@ public class LoadVolumes : MonoBehaviour
     // Manager class
     private VolumeManager volumeManager;
     
+    // command buffer
+    private CommandBuffer commandBuffer;
+    private bool isPaused;
+
     // Load the first volume per attribute with the importer; guarantees
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -55,8 +60,45 @@ public class LoadVolumes : MonoBehaviour
         
         // Render volumes on start 
         RenderOnStart(volumeManager);
+
+        commandBuffer = new CommandBuffer();
+        commandBuffer.name = "Load Texture3D";
+        
+        // execute command buffer
+        Camera.main.AddCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
+        
+        // Invoke ChangeTexture() method repeatedly every second
+        InvokeRepeating("ChangeTexture", 1, 1);
     }
-    
+
+    public void Pause()
+    {
+        isPaused = true;
+        CancelInvoke();
+    }
+
+    public void Resume()
+    {
+        isPaused = false;
+        InvokeRepeating("ChangeTexture", 1, 1);
+    }
+
+    private void ChangeTexture()
+    {
+        if (!isPaused)
+        {
+            Texture3D nextTexture = volumeManager.GetVolumeAttributes()[0].GetNextTexture();
+            // update command buffer with new texture
+            commandBuffer.SetGlobalTexture("_DataTex", nextTexture);
+            volumeManager.GetVolumeAttributes()[0].GetMaterialReference().SetTexture("_DataTex", nextTexture);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        Camera.main.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -236,6 +278,26 @@ public class VolumeAttribute
             // a separate thread
             newTexture.Apply();
         }
+    }
+
+    public Texture3D GetNextTexture()
+    {
+        // Get correct texture format analogue to the Volume Importer
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
+        // Set the current texture to the next texture in the buffer depended on usingScaled
+        Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+            new Texture3D(300, 300, 300, texFormat, false);
+        
+        // Set pixel data from bufferQueue
+        newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+
+        return newTexture;
+    }
+
+    public Material GetMaterialReference()
+    {
+        return material;
     }
 
     // Loads the binary from the specified path and stores the loaded byte array in a queue.
