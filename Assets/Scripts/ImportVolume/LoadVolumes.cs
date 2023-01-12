@@ -65,10 +65,10 @@ public class LoadVolumes : MonoBehaviour
         commandBuffer.name = "Load Texture3D";
         
         // execute command buffer
-        Camera.main.AddCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
+        //Camera.main.AddCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
         
         // Invoke ChangeTexture() method repeatedly every second
-        InvokeRepeating("ChangeTexture", 1, 1);
+        //InvokeRepeating("ChangeTexture", 1, 1);
     }
 
     public void Pause()
