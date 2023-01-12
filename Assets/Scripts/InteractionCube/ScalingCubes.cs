@@ -144,7 +144,7 @@ public class ScalingCubes : MonoBehaviour
                 lowerScaleCollider.enabled = false;
 
                 float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
-                Debug.Log(scaleOfCube);
+                //Debug.Log(scaleOfCube);
                 upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
                 lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
 
@@ -166,8 +166,8 @@ public class ScalingCubes : MonoBehaviour
 
             float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
 
-            Debug.Log("scaleOfCube:" + scaleOfCube);
-            Debug.Log("initialDistance:" + initialDistance);
+            //Debug.Log("scaleOfCube:" + scaleOfCube);
+            //Debug.Log("initialDistance:" + initialDistance);
 
 
             interactionCube.transform.localScale = initialScaleInteractionCube * scaleOfCube;

@@ -2890,6 +2890,7 @@ GameObject:
   - component: {fileID: 1009559862}
   - component: {fileID: 1009559861}
   - component: {fileID: 1009559860}
+  - component: {fileID: 1009559863}
   m_Layer: 5
   m_Name: Play/Pause
   m_TagString: Untagged
@@ -2946,10 +2947,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: c63f8faa9ade7cf4c81b4f484aef7634,
+    m_HighlightedSprite: {fileID: 21300000, guid: 8c4c00a2b9a299c43836e307e6cd2455,
       type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 1b9765818777fba4f92ff6ff619d64c3, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 39623ce6892d40c4d89e8ca5c9600de7, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: c715392547222414ea02fab9b0bb2b94, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 8c4c00a2b9a299c43836e307e6cd2455, type: 3}
     m_DisabledSprite: {fileID: 21300000, guid: 47abaa5f2753af242a4e2acbb8432e8b, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -2961,7 +2962,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1009559861}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1009559863}
+        m_TargetAssemblyTypeName: PlayPause, Assembly-CSharp
+        m_MethodName: changeStartStop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1009559861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2982,7 +2995,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 48e2a7ea7e75cd04bbe9e87f7969ae8a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 394757a48ac54684b99e57ad43332068, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3000,6 +3013,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1009559858}
   m_CullTransparentMesh: 1
+--- !u!114 &1009559863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009559858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3108fc8e20e6fe748a2ecf643b3b715f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playDefault: {fileID: 21300000, guid: 394757a48ac54684b99e57ad43332068, type: 3}
+  playHighlight: {fileID: 21300000, guid: 8c4c00a2b9a299c43836e307e6cd2455, type: 3}
+  playPressed: {fileID: 21300000, guid: c715392547222414ea02fab9b0bb2b94, type: 3}
+  pauseDefault: {fileID: 21300000, guid: fb6b19e4b1c3e01429f273a8e3729eeb, type: 3}
+  pauseHighlight: {fileID: 21300000, guid: 4084780f8d5fca2448077548838db86f, type: 3}
+  pausePressed: {fileID: 21300000, guid: f56766047053b3f4ca1a8957d18b12d8, type: 3}
+  playing: 0
+  button: {fileID: 1009559860}
 --- !u!1 &1045153672
 GameObject:
   m_ObjectHideFlags: 0
