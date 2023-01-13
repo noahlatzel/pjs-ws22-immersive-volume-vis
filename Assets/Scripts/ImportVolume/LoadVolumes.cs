@@ -241,10 +241,10 @@ public class VolumeAttribute
         
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", newTexture);
-        
+
             // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
             // a separate thread
-            newTexture.Apply()
+            newTexture.Apply();
         }
     }
 
