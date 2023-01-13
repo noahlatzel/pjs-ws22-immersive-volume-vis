@@ -160,6 +160,7 @@ public class VolumeAttribute
     private Material material;
     private MeshRenderer meshRenderer;
     private readonly Queue<byte[]> bufferQueue;
+    private readonly LimitedStack<Texture3D> bufferStack;
     private readonly int count;
     private readonly String originalPath;
     private bool usingScaled = false;
@@ -174,6 +175,7 @@ public class VolumeAttribute
         count = filePaths.Length;
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
+        bufferStack = new LimitedStack<Texture3D>(10);
         
         // Load the DLL into the Assembly object
         dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
@@ -226,7 +228,10 @@ public class VolumeAttribute
             // Set the current texture to the next texture in the buffer depended on usingScaled
             Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
                 new Texture3D(300, 300, 300, texFormat, false);
-        
+
+            // Save current Texture3D to bufferStack (for PreviousFrame())
+            bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
+
             // Set pixel data from bufferQueue
             newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
         
@@ -235,9 +240,10 @@ public class VolumeAttribute
         
             // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
             // a separate thread
-            newTexture.Apply();
+            newTexture.Apply()
         }
     }
+
 
     public Texture3D GetNextTexture()
     {
