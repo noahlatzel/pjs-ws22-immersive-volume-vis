@@ -148,6 +148,10 @@ public class LimitedStack<T>
         top = (items.Length + top - 1) % items.Length;
         return items[top];
     }
+
+    public int Count() {
+        return items.Length;
+    }
 }
 
 
@@ -244,6 +248,15 @@ public class VolumeAttribute
         }
     }
 
+    public void PreviousFrame()
+    {
+        // Check if textures are buffered
+        if (bufferStack.Count() > 0)
+        {
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", bufferStack.Pop());
+        }
+    }
 
     public Texture3D GetNextTexture()
     {
