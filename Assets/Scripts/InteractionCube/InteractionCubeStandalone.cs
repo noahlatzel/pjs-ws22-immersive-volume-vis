@@ -93,7 +93,6 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (!scalingCubesCreated)
         {
-            Debug.Log("Scaling Cubes created");
             lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             lowerScaleCube.name = "lowerScaleCube";
             lowerScaleCube.transform.SetParent(transform);
@@ -129,6 +128,10 @@ public class InteractionCubeStandalone : MonoBehaviour
             initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
             scalingCubesCreated = true;
         }
+        
+        upperScaleCube.transform.rotation = Quaternion.RotateTowards(upperScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+        lowerScaleCube.transform.rotation = Quaternion.RotateTowards(lowerScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+
     }
 
     void DestroyScalingCubes()
