@@ -41,11 +41,13 @@ public class InteractionCubeStandalone : MonoBehaviour
 
     void RotateCube()
     {
-        Debug.Log("Stopped Rotating Cube!");
         if (!IsHandNearCube())
         {   
-            Debug.Log("Rotating Cube!");
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 1.5f);
+        }
+        else
+        {
+            transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
         }
     }
 
