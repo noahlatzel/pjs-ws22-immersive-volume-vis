@@ -41,8 +41,10 @@ public class InteractionCubeStandalone : MonoBehaviour
 
     void RotateCube()
     {
+        Debug.Log("Stopped Rotating Cube!");
         if (!IsHandNearCube())
-        {
+        {   
+            Debug.Log("Rotating Cube!");
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 1.5f);
         }
     }
@@ -85,6 +87,7 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (AreHandsNearCube())
         {
+            Debug.Log("Both hands near cube!");
             CreateScalingCubes();
             ScaleInteractionCube();
         }
@@ -149,7 +152,7 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
         transform.localScale = initialScaleInteractionCube * scaleOfCube;
-
+        
         volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
     }
 }
