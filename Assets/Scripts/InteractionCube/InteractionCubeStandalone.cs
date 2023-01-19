@@ -138,6 +138,10 @@ public class InteractionCubeStandalone : MonoBehaviour
 
             scalingCubesCreated = true;
         }
+        
+        upperScaleCube.transform.rotation = Quaternion.RotateTowards(upperScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+        lowerScaleCube.transform.rotation = Quaternion.RotateTowards(lowerScaleCube.transform.rotation, Quaternion.identity, 2.5f);
+
     }
 
     void DestroyScalingCubes()
