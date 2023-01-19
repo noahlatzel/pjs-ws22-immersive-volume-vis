@@ -89,7 +89,6 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (AreHandsNearCube())
         {
-            Debug.Log("Both hands near cube!");
             CreateScalingCubes();
             ScaleInteractionCube();
         }
@@ -103,7 +102,6 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (!scalingCubesCreated)
         {
-            Debug.Log("Scaling Cubes created");
             lowerScaleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             lowerScaleCube.name = "lowerScaleCube";
             lowerScaleCube.transform.SetParent(transform);
