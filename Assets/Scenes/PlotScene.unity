@@ -2771,7 +2771,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &960917540
 Transform:
   m_ObjectHideFlags: 0
@@ -4230,7 +4230,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1165726501}
   - component: {fileID: 1165726502}
-  - component: {fileID: 1165726503}
   m_Layer: 0
   m_Name: PlotObject
   m_TagString: Untagged
@@ -4262,19 +4261,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165726500}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 488523fa553be3d47a678ebe206bf0f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1165726503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165726500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 535ef5d89403424c924ad9592bbb1a58, type: 3}
+  m_Script: {fileID: 11500000, guid: 80b2a5f63f3784ce7b85acc66c3a9e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1279102694
