@@ -18,6 +18,7 @@ public class InteractionCubeStandalone : MonoBehaviour
     private float initialDistance;
     private Vector3 initialScaleInteractionCube;
     private GameObject volumeRenderer;
+    private bool first = true;
     
     // Start is called before the first frame update
     void Start()
@@ -125,13 +126,17 @@ public class InteractionCubeStandalone : MonoBehaviour
             upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
             upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
 
-            initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
+            if (first)
+            {
+                initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
+                first = false;
+            }
+
             scalingCubesCreated = true;
         }
         
         upperScaleCube.transform.rotation = Quaternion.RotateTowards(upperScaleCube.transform.rotation, Quaternion.identity, 2.5f);
         lowerScaleCube.transform.rotation = Quaternion.RotateTowards(lowerScaleCube.transform.rotation, Quaternion.identity, 2.5f);
-
     }
 
     void DestroyScalingCubes()
