@@ -27,7 +27,6 @@ public class InteractionCubeStandalone : MonoBehaviour
         leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
         rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
         
-        initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
         initialScaleInteractionCube = transform.localScale;
         volumeRenderer = GameObject.Find("RenderedVolume");
     }
@@ -42,12 +41,12 @@ public class InteractionCubeStandalone : MonoBehaviour
     void RotateCube()
     {
         if (!IsHandNearCube())
-        {   
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 1.5f);
+        {
+            transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
         }
         else
         {
-            transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 1.5f);
         }
     }
 
@@ -57,15 +56,11 @@ public class InteractionCubeStandalone : MonoBehaviour
         Vector3 leftHandPos = leftHand.transform.position;
         Vector3 rightHandPos = rightHand.transform.position;
         float distance = 0.5f;
-        
-        bool leftHandInArea =
-            Mathf.Abs(leftHandPos.x - curPos.x) < distance &&
-            Mathf.Abs(leftHandPos.z - curPos.z) < distance && leftHandPos.y - curPos.y > distance;
-        bool rightHandInArea =
-            Mathf.Abs(rightHandPos.x - curPos.x) < distance &&
-            Mathf.Abs(rightHandPos.z - curPos.z) < distance && rightHandPos.y - curPos.y > distance;
-        
-        return leftHandInArea || rightHandInArea;
+
+        float rightHandDistance = Vector3.Distance(curPos, leftHandPos);
+        float leftHandDistance = Vector3.Distance(curPos, rightHandPos);
+
+        return rightHandDistance < distance || leftHandDistance < distance;
     }
     
     bool AreHandsNearCube()
@@ -74,22 +69,17 @@ public class InteractionCubeStandalone : MonoBehaviour
         Vector3 leftHandPos = leftHand.transform.position;
         Vector3 rightHandPos = rightHand.transform.position;
         float distance = 0.5f;
-        
-        bool leftHandInArea =
-            Mathf.Abs(leftHandPos.x - curPos.x) < distance &&
-            Mathf.Abs(leftHandPos.z - curPos.z) < distance && leftHandPos.y - curPos.y > distance;
-        bool rightHandInArea =
-            Mathf.Abs(rightHandPos.x - curPos.x) < distance &&
-            Mathf.Abs(rightHandPos.z - curPos.z) < distance && rightHandPos.y - curPos.y > distance;
-        
-        return leftHandInArea && rightHandInArea;
+
+        float rightHandDistance = Vector3.Distance(curPos, leftHandPos);
+        float leftHandDistance = Vector3.Distance(curPos, rightHandPos);
+
+        return rightHandDistance < distance && leftHandDistance < distance;
     }
 
     void ManageScalingCubes()
     {
         if (AreHandsNearCube())
         {
-            Debug.Log("Both hands near cube!");
             CreateScalingCubes();
             ScaleInteractionCube();
         }
@@ -136,6 +126,7 @@ public class InteractionCubeStandalone : MonoBehaviour
             upperScaleCube.GetComponent<XRGrabInteractable>().throwOnDetach = false;
             upperScaleCube.GetComponent<Rigidbody>().useGravity = false;
 
+            initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
             scalingCubesCreated = true;
         }
     }
@@ -155,7 +146,8 @@ public class InteractionCubeStandalone : MonoBehaviour
     void ScaleInteractionCube()
     {
         float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
-        transform.localScale = initialScaleInteractionCube * scaleOfCube;
+
+        transform.localScale = new Vector3(0.15f, 0.15f, 0.15f) * scaleOfCube;
         
         volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
     }
