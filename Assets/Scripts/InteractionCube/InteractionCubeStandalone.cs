@@ -41,7 +41,7 @@ public class InteractionCubeStandalone : MonoBehaviour
 
     void RotateCube()
     {
-        if (!IsHandNearCube())
+        if (!IsHandNearCube() && !IsGrabbingScalingCubes())
         {
             transform.Rotate(new Vector3(0.2f, 0, 0.2f), Space.World);
         }
@@ -64,7 +64,7 @@ public class InteractionCubeStandalone : MonoBehaviour
         return rightHandDistance < distance || leftHandDistance < distance;
     }
     
-    bool AreHandsNearCube()
+    public bool AreHandsNearCube()
     {
         Vector3 curPos = transform.position;
         Vector3 leftHandPos = leftHand.transform.position;
@@ -73,7 +73,6 @@ public class InteractionCubeStandalone : MonoBehaviour
 
         float rightHandDistance = Vector3.Distance(curPos, leftHandPos);
         float leftHandDistance = Vector3.Distance(curPos, rightHandPos);
-
         return rightHandDistance < distance && leftHandDistance < distance;
     }
 
@@ -82,11 +81,13 @@ public class InteractionCubeStandalone : MonoBehaviour
         if (AreHandsNearCube())
         {
             CreateScalingCubes();
-            ScaleInteractionCube();
         }
         else
         {
             DestroyScalingCubes();
+        }
+        if (scalingCubesCreated) {
+            ScaleInteractionCube();
         }
     }
 
@@ -128,7 +129,7 @@ public class InteractionCubeStandalone : MonoBehaviour
 
             if (first)
             {
-                initialDistance = Vector3.Distance(lowerScaleCube.transform.position, upperScaleCube.transform.position);
+                initialDistance = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position);
                 first = false;
             }
 
@@ -141,9 +142,8 @@ public class InteractionCubeStandalone : MonoBehaviour
 
     void DestroyScalingCubes()
     {
-        if (scalingCubesCreated)
+        if (scalingCubesCreated && !IsGrabbingScalingCubes())
         {
-            Debug.Log("Scaling Cubes Destroyed!");
             Destroy(upperScaleCube);
             Destroy(lowerScaleCube);
 
@@ -153,10 +153,17 @@ public class InteractionCubeStandalone : MonoBehaviour
 
     void ScaleInteractionCube()
     {
-        float scaleOfCube = Vector3.Distance(upperScaleCube.transform.localPosition, lowerScaleCube.transform.localPosition) / initialDistance;
+        if (IsGrabbingScalingCubes())
+        {
+            float scaleOfCube = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position) / initialDistance;
+            transform.localScale = initialScaleInteractionCube * scaleOfCube;
 
-        transform.localScale = new Vector3(0.15f, 0.15f, 0.15f) * scaleOfCube;
-        
-        volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
+            volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
+        }
+    }
+
+    bool IsGrabbingScalingCubes()
+    {
+        return scalingCubesCreated ? upperScaleCube.GetComponent<XRGrabInteractable>().isSelected && lowerScaleCube.GetComponent<XRGrabInteractable>().isSelected : false;
     }
 }
