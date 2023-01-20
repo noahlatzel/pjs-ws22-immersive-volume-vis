@@ -157,7 +157,6 @@ public class InteractionCubeStandalone : MonoBehaviour
         {
             float scaleOfCube = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position) / initialDistance;
             transform.localScale = initialScaleInteractionCube * scaleOfCube;
-
             volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
         }
     }
