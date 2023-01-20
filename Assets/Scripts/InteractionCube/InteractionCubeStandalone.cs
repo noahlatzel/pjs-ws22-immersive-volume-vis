@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
@@ -8,25 +6,24 @@ public class InteractionCubeStandalone : MonoBehaviour
 {
     private GameObject leftHand;
     private GameObject rightHand;
-    private XRDirectInteractor leftHandComponent;
-    private XRDirectInteractor rightHandComponent;
     
     private GameObject lowerScaleCube;
     private GameObject upperScaleCube;
-    private Vector3 scalingCubesSize = new Vector3(0.3f, 0.3f, 0.3f);
+    private readonly Vector3 scalingCubesSize = new Vector3(0.3f, 0.3f, 0.3f);
     private bool scalingCubesCreated = false;
     private float initialDistance;
     private Vector3 initialScaleInteractionCube;
     private GameObject volumeRenderer;
     private bool first = true;
+    private bool isReleased = false;
+    private float permScale = 1f;
+    private float scaleOfCube = 1f;
     
     // Start is called before the first frame update
     void Start()
     {
         leftHand = GameObject.Find("LeftHand");
         rightHand = GameObject.Find("RightHand");
-        leftHandComponent = leftHand.GetComponent<XRDirectInteractor>();
-        rightHandComponent = rightHand.GetComponent<XRDirectInteractor>();
         
         initialScaleInteractionCube = transform.localScale;
         volumeRenderer = GameObject.Find("RenderedVolume");
@@ -144,6 +141,19 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (scalingCubesCreated && !IsGrabbingScalingCubes())
         {
+            if (isReleased)
+            {
+                // Save previous scale
+                permScale += scaleOfCube - 1;
+                
+                // Reset scale and positions of scale cubes
+                transform.localScale = initialScaleInteractionCube;
+            
+                // Remove flag
+                isReleased = false;
+            }
+            
+            // Destroy scale cubes
             Destroy(upperScaleCube);
             Destroy(lowerScaleCube);
 
@@ -155,14 +165,31 @@ public class InteractionCubeStandalone : MonoBehaviour
     {
         if (IsGrabbingScalingCubes())
         {
-            float scaleOfCube = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position) / initialDistance;
+            scaleOfCube = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position) / initialDistance;
             transform.localScale = initialScaleInteractionCube * scaleOfCube;
-            volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * scaleOfCube;
+            volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * (permScale + scaleOfCube - 1);
+            isReleased = true;
+        }
+        else
+        {
+            if (isReleased)
+            {
+                // Save previous scale
+                permScale += scaleOfCube - 1;
+                
+                // Reset scale and positions of scale cubes
+                transform.localScale = initialScaleInteractionCube;
+                lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
+                upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
+                
+                // Remove flag
+                isReleased = false;
+            }
         }
     }
 
     bool IsGrabbingScalingCubes()
     {
-        return scalingCubesCreated ? upperScaleCube.GetComponent<XRGrabInteractable>().isSelected && lowerScaleCube.GetComponent<XRGrabInteractable>().isSelected : false;
+        return scalingCubesCreated && (upperScaleCube.GetComponent<XRGrabInteractable>().isSelected && lowerScaleCube.GetComponent<XRGrabInteractable>().isSelected);
     }
 }
