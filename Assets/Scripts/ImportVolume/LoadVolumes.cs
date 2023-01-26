@@ -45,10 +45,6 @@ public class LoadVolumes : MonoBehaviour
 
     // Manager class
     private VolumeManager volumeManager;
-    
-    // command buffer
-    private CommandBuffer commandBuffer;
-    private bool isPaused;
 
     // Load the first volume per attribute with the importer; guarantees
     // correct configuration of Material properties etc.
@@ -60,43 +56,6 @@ public class LoadVolumes : MonoBehaviour
         
         // Render volumes on start 
         RenderOnStart(volumeManager);
-
-        commandBuffer = new CommandBuffer();
-        commandBuffer.name = "Load Texture3D";
-        
-        // execute command buffer
-        //Camera.main.AddCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
-        
-        // Invoke ChangeTexture() method repeatedly every second
-        //InvokeRepeating("ChangeTexture", 1, 1);
-    }
-
-    public void Pause()
-    {
-        isPaused = true;
-        CancelInvoke();
-    }
-
-    public void Resume()
-    {
-        isPaused = false;
-        InvokeRepeating("ChangeTexture", 1, 1);
-    }
-
-    private void ChangeTexture()
-    {
-        if (!isPaused)
-        {
-            Texture3D nextTexture = volumeManager.GetVolumeAttributes()[0].GetNextTexture();
-            // update command buffer with new texture
-            commandBuffer.SetGlobalTexture("_DataTex", nextTexture);
-            volumeManager.GetVolumeAttributes()[0].GetMaterialReference().SetTexture("_DataTex", nextTexture);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        Camera.main.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, commandBuffer);
     }
 
     // Update is called once per frame
@@ -189,6 +148,10 @@ public class LimitedStack<T>
         top = (items.Length + top - 1) % items.Length;
         return items[top];
     }
+
+    public int Count() {
+        return items.Length;
+    }
 }
 
 
@@ -201,6 +164,7 @@ public class VolumeAttribute
     private Material material;
     private MeshRenderer meshRenderer;
     private readonly Queue<byte[]> bufferQueue;
+    private readonly LimitedStack<Texture3D> bufferStack;
     private readonly int count;
     private readonly String originalPath;
     private bool usingScaled = false;
@@ -215,6 +179,7 @@ public class VolumeAttribute
         count = filePaths.Length;
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
+        bufferStack = new LimitedStack<Texture3D>(10);
         
         // Load the DLL into the Assembly object
         dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
@@ -267,16 +232,29 @@ public class VolumeAttribute
             // Set the current texture to the next texture in the buffer depended on usingScaled
             Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
                 new Texture3D(300, 300, 300, texFormat, false);
-        
+
+            // Save current Texture3D to bufferStack (for PreviousFrame())
+            bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
+
             // Set pixel data from bufferQueue
             newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
         
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", newTexture);
-        
+
             // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
             // a separate thread
             newTexture.Apply();
+        }
+    }
+
+    public void PreviousFrame()
+    {
+        // Check if textures are buffered
+        if (bufferStack.Count() > 0)
+        {
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", bufferStack.Pop());
         }
     }
 
