@@ -115,6 +115,7 @@ public class LoadVolumes : MonoBehaviour
             // Transform object and set hierarchy
             obj.transform.SetParent(transform);
             obj.transform.rotation = Quaternion.identity;
+            obj.transform.localPosition = Vector3.zero;
             obj.name = volumeAttribute.GetName();
                 
             // Disable MeshRenderer

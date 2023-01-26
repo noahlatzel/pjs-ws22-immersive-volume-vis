@@ -14,7 +14,7 @@ public class TrackpadRotation : MonoBehaviour
     void Update()
     {
         float trackpadX = Input.GetAxis("Trackpad X");
-        Debug.Log(trackpadX);
-        transform.Rotate(trackpadX * speed * Time.deltaTime, 0, 0, Space.Self);
+
+        transform.Rotate(0, trackpadX * speed * Time.deltaTime, 0, Space.Self);
     }
 }
