@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace JsonReader
@@ -20,6 +21,19 @@ namespace JsonReader
     {
         public int key { get; set; }
         public List<List<double>> value { get; set; }
+
+        public List<Vector2> convDoubleToVec()
+        {
+            List<Vector2> vectorList = new List<Vector2>();
+
+            foreach (List<double> innerList in value)
+            {
+                vectorList.Add(new Vector2((float) innerList[0], (float)innerList[1]));
+            }
+            
+            
+            return vectorList;
+        }
     }
 
     public class Root : MonoBehaviour
@@ -27,6 +41,5 @@ namespace JsonReader
         public string hash { get; set; }
         public List<Embedding> embeddings { get; set; }
     }
-
-
+    
 }
