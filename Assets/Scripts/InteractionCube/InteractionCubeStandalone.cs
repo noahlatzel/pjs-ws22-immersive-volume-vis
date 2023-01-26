@@ -181,7 +181,7 @@ public class InteractionCubeStandalone : MonoBehaviour
                 transform.localScale = initialScaleInteractionCube;
                 lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
                 upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
-                
+                DestroyScalingCubes();
                 // Remove flag
                 isReleased = false;
             }
