@@ -1655,6 +1655,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftTeleportation: {fileID: 1575477347}
   rightTeleportation: {fileID: 1279102694}
+  rightGrab: {fileID: 1736027990}
+  leftGrab: {fileID: 1092416084}
   leftActivate:
     m_UseReference: 1
     m_Action:
