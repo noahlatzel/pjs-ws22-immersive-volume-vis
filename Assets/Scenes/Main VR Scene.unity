@@ -2810,7 +2810,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960917538}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b338ff00064469d4fba825d22ba7afe4, type: 3}
   m_Name: 
@@ -4252,6 +4252,7 @@ GameObject:
   - component: {fileID: 1206224749}
   - component: {fileID: 1206224748}
   - component: {fileID: 1206224755}
+  - component: {fileID: 1206224756}
   m_Layer: 0
   m_Name: InteractionCubeStandalone
   m_TagString: Untagged
@@ -4502,6 +4503,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c63ec42196ae9e40a8b589142b9e64a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1206224756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206224747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1231e24d0be2340ad2e7bd8012fd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
 --- !u!1 &1279102694
 GameObject:
   m_ObjectHideFlags: 0
