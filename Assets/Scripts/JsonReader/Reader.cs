@@ -16,7 +16,7 @@ namespace JsonReader
     {
 
         public List<Embedding> embeddings;
-        public List<List<Vector2>> allVecList = new List<List<Vector2>>();
+        public static List<List<Vector2>> allVecList = new List<List<Vector2>>();
         void Start()
         {
             string filePath = @"./Assets/Scripts/JsonReader/plot1.json";

@@ -2,34 +2,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-namespace JsonReader
-{
-
 public class CreatePlot : MonoBehaviour
 {
     //List of lists to store multiple sets of points, each representing a separate graph
     public List<List<Vector2>> pointsList;
-    //Array of LineRenderers to display each graph on the plot
-    public LineRenderer[] lineRenderers;
+
     //Variable to keep track of the selected graph
     public int selectedGraphIndex = -1;
 
     private Vector3 playerPosition;
-    //public Reader reader = GetG;
 
     void Start()
     {
-        
-        //Iterate through each list of points
+        pointsList = JsonReader.Reader.allVecList;
+        // Make sure that the pointsList is not empty
+        if (pointsList == null || pointsList.Count == 0)
+        {
+            Debug.LogError("pointsList is empty");
+            return;
+        }
+
+        // Iterate through each list of points
         for (int j = 0; j < pointsList.Count; j++)
         {
-            //Set the LineRenderer's position count
-            lineRenderers[j].positionCount = pointsList[j].Count;
+            // Create a new LineRenderer component
+            LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
+            // Set the LineRenderer's position count
+            lineRenderer.positionCount = pointsList[j].Count;
             //Iterate through each point in the list
             for (int i = 0; i < pointsList[j].Count; i++)
             {
-                //Set the position of each point on the LineRenderer to match the corresponding point in the list
-                lineRenderers[j].SetPosition(i, pointsList[j][i]);
+            //Set the position of each point on the LineRenderer to match the corresponding point in the list
+                lineRenderer.SetPosition(i, pointsList[j][i]);
             }
         }
     }
@@ -64,6 +68,4 @@ public class CreatePlot : MonoBehaviour
         //Return the corresponding point
         return pointsList[selectedGraphIndex][closestPointIndex];
     }
-}
-    
 }
