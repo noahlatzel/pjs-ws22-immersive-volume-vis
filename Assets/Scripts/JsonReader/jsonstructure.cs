@@ -22,13 +22,14 @@ namespace JsonReader
         public int key { get; set; }
         public List<List<double>> value { get; set; }
 
-        public List<Vector2> convDoubleToVec()
+        public List<Vector3> convDoubleToVec()
         {
-            List<Vector2> vectorList = new List<Vector2>();
+            List<Vector3> vectorList = new List<Vector3>();
 
             foreach (List<double> innerList in value)
             {
-                vectorList.Add(new Vector2((float) innerList[0], (float)innerList[1]));
+                // vectorList.Add(new Vector3((float) innerList[0], (float)innerList[1], (float)innerList[2]));
+                vectorList.Add(new Vector3((float) innerList[0], (float)innerList[1], 0f));
             }
             
             
