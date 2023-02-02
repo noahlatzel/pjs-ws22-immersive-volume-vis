@@ -1,48 +1,51 @@
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using JsonReader;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CreatePlot : MonoBehaviour
 {
-    //List of lists to store multiple sets of points, each representing a separate graph
-    public List<List<Vector3>> pointsList;
-
     //Variable to keep track of the selected graph
     public int selectedGraphIndex = -1;
 
     private Vector3 playerPosition;
 
-    void Start()
+    //List of lists to store multiple sets of points, each representing a separate graph
+    public List<List<Vector3>> pointsList;
+
+    private void Start()
     {
-        pointsList = JsonReader.Reader.giveVals();
+        pointsList = Reader.GiveDataList()[0];
         // Make sure that the pointsList is not empty
         if (pointsList == null || pointsList.Count == 0)
         {
             Debug.LogError("pointsList is empty");
             return;
         }
-        
-        Debug.Log("CreatePlot:"+pointsList[0][6]);
+
+        Debug.Log("CreatePlot:" + pointsList[0][6]);
 
         // Iterate through each list of points
-        for (int j = 0; j < pointsList.Count; j++)
+        for (var j = 0; j < pointsList.Count; j++)
         {
-            GameObject newObj = new GameObject();
+            var newObj = new GameObject();
             newObj.transform.SetParent(gameObject.transform);
             // Create a new LineRenderer component
-            LineRenderer lineRenderer = newObj.AddComponent<LineRenderer>();
-            lineRenderer.widthMultiplier = 0.01f;
+            var lineRenderer = newObj.AddComponent<LineRenderer>();
+            lineRenderer.widthMultiplier = 0.005f;
             lineRenderer.useWorldSpace = false;
-            
-                // Set the LineRenderer's position count
-                lineRenderer.positionCount = pointsList[j].Count;
-                //Iterate through each point in the list
-                lineRenderer.SetPositions(pointsList[j].ToArray());
-                // for (int i = 0; i < pointsList[j].Count; i++)
-                // {
-                // //Set the position of each point on the LineRenderer to match the corresponding point in the list
-                //     lineRenderer.SetPosition(i, pointsList[j][i]);
-                // }
+            lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
+
+            // Set the LineRenderer's position count
+            lineRenderer.positionCount = pointsList[j].Count;
+            //Iterate through each point in the list
+            lineRenderer.SetPositions(pointsList[j].ToArray());
+            // for (int i = 0; i < pointsList[j].Count; i++)
+            // {
+            // //Set the position of each point on the LineRenderer to match the corresponding point in the list
+            //     lineRenderer.SetPosition(i, pointsList[j][i]);
+            // }
         }
     }
 
