@@ -6376,11 +6376,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b2a5f63f3784ce7b85acc66c3a9e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pressure: 0
-  temperature: 0
-  water: 0
-  meteorite: 0
+  pressure: 1
+  temperature: 1
+  water: 1
+  meteorite: 1
   dimensions: 0
+  simRun0Vis: 1
+  simRun1Vis: 1
+  simRun2Vis: 1
+  simRun3Vis: 1
+  simRun4Vis: 1
+  simRun5Vis: 1
+  simRun6Vis: 1
   selectedGraphIndex: -1
   layers:
   - Pressure

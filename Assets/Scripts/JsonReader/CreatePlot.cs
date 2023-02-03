@@ -17,6 +17,20 @@ namespace JsonReader
         
         [Tooltip("Choose 1D, 2D or 3D plot.")] public int dimensions;
 
+        [Tooltip("Show/Hide simulation run 0 plot.")] public bool simRun0Vis;
+        
+        [Tooltip("Show/Hide simulation run 1 plot.")] public bool simRun1Vis;
+        
+        [Tooltip("Show/Hide simulation run 2 plot.")] public bool simRun2Vis;
+        
+        [Tooltip("Show/Hide simulation run 3 plot.")] public bool simRun3Vis;
+        
+        [Tooltip("Show/Hide simulation run 4 plot.")] public bool simRun4Vis;
+        
+        [Tooltip("Show/Hide simulation run 5 plot.")] public bool simRun5Vis;
+        
+        [Tooltip("Show/Hide simulation run 6 plot.")] public bool simRun6Vis;
+
         //Variable to keep track of the selected graph
         public int selectedGraphIndex = -1;
 
@@ -30,6 +44,11 @@ namespace JsonReader
         private void Start()
         {
             dimensions = 3;
+
+            bool[] layerVisibilities = new[] {pressure, temperature, water, meteorite };
+
+            bool[] simRunVisibilities = new[]
+                { simRun0Vis, simRun1Vis, simRun2Vis, simRun3Vis, simRun4Vis, simRun5Vis, simRun6Vis };
             
             //Access first layer of plotData
             pointsList = Reader.GiveDataList();
@@ -43,6 +62,8 @@ namespace JsonReader
 
             for (int i = 0; i < pointsList.Count; i++)
             {
+                var layerObj = gameObject.transform.Find(layers[i]);
+                
                 // Iterate through each list of points
                 for (var j = 0; j < pointsList[i].Count; j++)
                 {
@@ -57,8 +78,6 @@ namespace JsonReader
                     //
                     // // Create a new LineRenderer component
                     // var lineRenderer = newObj.AddComponent<LineRenderer>();
-
-                    var layerObj = gameObject.transform.Find(layers[i]);
 
                     var contObj = layerObj.transform.Find("SimRun_" + i + "_" + j);
 
@@ -78,13 +97,32 @@ namespace JsonReader
                     lineRenderer.SetPositions(pointsList[i][j].ToArray());
                 }
             }
-
+            SetVisibilities(layerVisibilities, simRunVisibilities);
         }
 
-        // public void SetLineRendererVisibilities(bool[] visibilities)
-        // {
-        //     
-        // }
+        public void SetVisibilities(bool[] layerVisibilities, bool[] simRunVisibilities)
+        {
+            if ((layerVisibilities.Length != 4) || (simRunVisibilities.Length != 7))
+            {
+                Debug.LogError("CreatePlot.SetVisibilities: Incorrect length at parameter arrays");
+                return;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                var layerObj = gameObject.transform.Find(layers[i]).gameObject;
+                
+                for (int j = 0; j < 7; j++)
+                {
+                    var simRunObj = layerObj.transform.Find("SimRun_" + i + "_" + j).gameObject;
+                    
+                    simRunObj.SetActive(simRunVisibilities[j]);
+                }
+                
+                layerObj.SetActive(layerVisibilities[i]);
+            }
+        }
+        
         // public List<Vector3> SetPlotData(int dimension)
         // {
         //     
