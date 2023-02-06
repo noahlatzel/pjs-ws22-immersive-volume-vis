@@ -19,11 +19,8 @@ public class SimRunVisToggles : MonoBehaviour
         createPlot = plotGameObject.GetComponent<CreatePlot>();
         thisToggle = gameObject.GetComponent<Toggle>();
 
-        simRunVisArr = new[]
-        {
-            createPlot.simRun0Vis, createPlot.simRun1Vis, createPlot.simRun2Vis, createPlot.simRun3Vis,
-            createPlot.simRun4Vis, createPlot.simRun5Vis, createPlot.simRun6Vis
-        };
+
+        simRunVisArr = createPlot.simRunVisibilities;
 
         thisToggle.isOn = simRunVisArr[assignedRun];
 
@@ -34,6 +31,7 @@ public class SimRunVisToggles : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        simRunVisArr = createPlot.simRunVisibilities;
         if (thisToggle.isOn != simRunVisArr[assignedRun]) thisToggle.isOn = simRunVisArr[assignedRun];
     }
 

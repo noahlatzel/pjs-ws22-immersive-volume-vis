@@ -7,14 +7,13 @@ namespace JsonReader
 {
     public class CreatePlot : MonoBehaviour
     {
-        [Tooltip("Show/Hide pressure plot.")] public bool pressure;
+        [Tooltip("Show/Hide pressure plot.")] private bool pressure;
 
-        [Tooltip("Show/Hide temperature plot.")]
-        public bool temperature;
+        [Tooltip("Show/Hide temperature plot.")] private bool temperature;
 
-        [Tooltip("Show/Hide water plot.")] public bool water;
+        [Tooltip("Show/Hide water plot.")] private bool water;
 
-        [Tooltip("Show/Hide meteorite plot.")] public bool meteorite;
+        [Tooltip("Show/Hide meteorite plot.")] private bool meteorite;
 
         [Tooltip("Choose 1D, 2D or 3D plot.")] public int dimensions;
 
@@ -46,23 +45,20 @@ namespace JsonReader
 
         public string[] layers = { "Pressure", "Temperature", "Water", "Meteorite" };
 
-        private bool[] layerVisibilities = { true, true, true, true };
+        public bool[] layerVisibilities = { true, true, true, true };
 
         private Vector3 playerPosition;
 
 
         //List of lists to store multiple sets of points, each representing a separate graph
         public List<List<List<Vector3>>> pointsList;
-        private bool[] simRunVisibilities = { true, true, true, true, true, true, true };
+        public bool[] simRunVisibilities = { true, true, true, true, true, true, true };
 
         private void Start()
         {
             dimensions = 3;
 
-            layerVisibilities = new[] { pressure, temperature, water, meteorite };
-
-            simRunVisibilities = new[]
-                { simRun0Vis, simRun1Vis, simRun2Vis, simRun3Vis, simRun4Vis, simRun5Vis, simRun6Vis };
+            MakeVisArr();
 
             //Access first layer of plotData
             pointsList = Reader.GiveDataList();
@@ -137,11 +133,51 @@ namespace JsonReader
                 layerObj.SetActive(layerVisibilitiesArr[i]);
             }
         }
+        
+        public void SetVisibilities()
+        {
+            MakeVisArr();
+            
+            for (var i = 0; i < 4; i++)
+            {
+                var layerObj = gameObject.transform.Find(layers[i]).gameObject;
+
+                for (var j = 0; j < 7; j++)
+                {
+                    var simRunObj = layerObj.transform.Find("SimRun_" + i + "_" + j).gameObject;
+
+                    simRunObj.SetActive(simRunVisibilities[j]);
+                }
+
+                layerObj.SetActive(layerVisibilities[i]);
+            }
+        }
 
         public void SetVisibilityOfSingleRun(int runNum, bool val)
         {
             simRunVisibilities[runNum] = val;
             SetVisibilities(layerVisibilities, simRunVisibilities);
+        }
+        
+        public void MakeVisArr()
+        {
+            layerVisibilities = new[] { pressure, temperature, water, meteorite };
+            
+            simRunVisibilities = new[]
+                { simRun0Vis, simRun1Vis, simRun2Vis, simRun3Vis, simRun4Vis, simRun5Vis, simRun6Vis };
+        }
+
+        public void MakeVisArr(bool[] layerVisibilitiesArr, bool[] simRunVisibilitiesArr)
+        {
+            if (layerVisibilitiesArr.Length != 4 || simRunVisibilitiesArr.Length != 7)
+            {
+                Debug.LogError("CreatePlot.MakeVisArr: Incorrect length at parameter arrays");
+                return;
+            }
+
+            layerVisibilities = layerVisibilitiesArr;
+
+            simRunVisibilities = simRunVisibilitiesArr;
         }
 
         // public List<Vector3> SetPlotData(int dimension)
@@ -166,6 +202,7 @@ namespace JsonReader
         {
             Debug.Log(test);
         }
+        
 
 
         // //Method that takes the player's position as a parameter and returns the closest point on the selected graph to the player
