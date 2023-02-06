@@ -2910,9 +2910,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plotGameObject: {fileID: 1165726500}
   assignedRun: 0
-  createPlot: {fileID: 0}
-  thisToggle: {fileID: 0}
-  simRunVisArr: []
 --- !u!1 &578275426
 GameObject:
   m_ObjectHideFlags: 0
