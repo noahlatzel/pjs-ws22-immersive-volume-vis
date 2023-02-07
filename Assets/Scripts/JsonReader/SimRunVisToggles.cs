@@ -23,9 +23,6 @@ public class SimRunVisToggles : MonoBehaviour
         simRunVisArr = createPlot.simRunVisibilities;
 
         thisToggle.isOn = simRunVisArr[assignedRun];
-
-        Debug.Log(thisToggle.name);
-        Debug.Log(createPlot.name);
     }
 
     // Update is called once per frame
@@ -37,8 +34,6 @@ public class SimRunVisToggles : MonoBehaviour
 
     public void ToggleAction()
     {
-        Debug.Log("Current state:" + thisToggle.isOn);
-
         simRunVisArr[assignedRun] = thisToggle.isOn;
 
         createPlot.SetVisibilityOfSingleRun(assignedRun, simRunVisArr[assignedRun]);

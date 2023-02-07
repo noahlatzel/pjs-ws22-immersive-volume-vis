@@ -41,19 +41,17 @@ namespace JsonReader
         //Variable to keep track of the selected graph
         public int selectedGraphIndex = -1;
 
-        public UnityEvent testEvent;
-
-        public string[] layers = { "Pressure", "Temperature", "Water", "Meteorite" };
-
-        public bool[] layerVisibilities = { true, true, true, true };
+        //Names of all the layers as array
+        private string[] layers = { "Pressure", "Temperature", "Water", "Meteorite" };
 
         private Vector3 playerPosition;
 
-
         //List of lists to store multiple sets of points, each representing a separate graph
         public List<List<List<Vector3>>> pointsList;
+        
         public bool[] simRunVisibilities = { true, true, true, true, true, true, true };
-
+        public bool[] layerVisibilities = { true, false, false, false };
+        
         private void Start()
         {
             dimensions = 3;
@@ -108,7 +106,7 @@ namespace JsonReader
                 }
             }
 
-            SetVisibilities(layerVisibilities, simRunVisibilities);
+            SetVisibilities();
         }
 
         public void SetVisibilities(bool[] layerVisibilitiesArr, bool[] simRunVisibilitiesArr)
@@ -136,8 +134,6 @@ namespace JsonReader
         
         public void SetVisibilities()
         {
-            MakeVisArr();
-            
             for (var i = 0; i < 4; i++)
             {
                 var layerObj = gameObject.transform.Find(layers[i]).gameObject;
@@ -156,7 +152,9 @@ namespace JsonReader
         public void SetVisibilityOfSingleRun(int runNum, bool val)
         {
             simRunVisibilities[runNum] = val;
-            SetVisibilities(layerVisibilities, simRunVisibilities);
+            
+            SetVisibilities();
+            //SetVisibilities(layerVisibilities, simRunVisibilities);
         }
         
         public void MakeVisArr()
