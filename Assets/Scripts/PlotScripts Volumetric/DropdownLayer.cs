@@ -8,7 +8,7 @@ namespace PlotScripts_Volumetric
         [Tooltip("Assign plotObject.")] public GameObject plotGameObject;
 
         private CreatePlot createPlot;
-        private bool[] layerVisibilities;
+        private int visibleLayer;
 
         private TMP_Dropdown thisDropdown;
 
@@ -17,11 +17,11 @@ namespace PlotScripts_Volumetric
         {
             createPlot = plotGameObject.GetComponent<CreatePlot>();
 
-            layerVisibilities = createPlot.layerVisibilities;
+            visibleLayer = createPlot.visibleLayer;
 
             thisDropdown = gameObject.GetComponent<TMP_Dropdown>();
 
-            thisDropdown.value = 0;
+            thisDropdown.value = 0; //Pressure is visible on program start
 
             SetLayerVisible();
         }
@@ -29,15 +29,14 @@ namespace PlotScripts_Volumetric
         // Update is called once per frame
         private void Update()
         {
-            layerVisibilities = createPlot.layerVisibilities;
+            visibleLayer = createPlot.visibleLayer;
         }
 
         public void SetLayerVisible()
         {
-            layerVisibilities = new[] { false, false, false, false };
-            layerVisibilities[thisDropdown.value] = true;
+            visibleLayer = thisDropdown.value;
 
-            createPlot.layerVisibilities = layerVisibilities;
+            createPlot.visibleLayer = visibleLayer;
 
             createPlot.SetVisibilities();
         }
