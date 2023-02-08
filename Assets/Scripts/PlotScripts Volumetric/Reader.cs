@@ -71,7 +71,7 @@ namespace PlotScripts_Volumetric
                 {
                     case 1:
                         // Debug.Log("Case 1");
-                        outList.Add(new Vector3(valList[i].x, 0, 0));
+                        outList.Add(new Vector3(valList[i].x, i/100f, 0));
                         break;
                     case 2:
                         // Debug.Log("Case 2");

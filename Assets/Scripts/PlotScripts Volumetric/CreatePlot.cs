@@ -6,7 +6,7 @@ namespace PlotScripts_Volumetric
 {
     public class CreatePlot : MonoBehaviour
     {
-        [Tooltip("Choose 1D, 2D or 3D plot.")] public int dimensions;
+        public int dimensions = 2;
 
         // //Variable to keep track of the selected graph
         // public int selectedGraphIndex = -1;
@@ -24,7 +24,7 @@ namespace PlotScripts_Volumetric
 
         private void Start()
         {
-            dimensions = 2;
+            dimensions = 3;
 
             // MakeVisArr();
 
@@ -63,6 +63,7 @@ namespace PlotScripts_Volumetric
 
                     // Adjust styling of the LineRenderer
                     lineRenderer.LineWidth = 0.005f;
+                    lineRenderer.LightSaberFactor = 1.0f;
 
                     //Set vertices of the LineRenderer according to plotData for current layer and simulation run
                     lineRenderer.UpdateLineVertices(pointsList[i][j].ToArray());
