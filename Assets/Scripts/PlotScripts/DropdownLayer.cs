@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace JsonReader
@@ -9,24 +10,24 @@ namespace JsonReader
         private CreatePlot createPlot;
         private bool[] layerVisibilities;
 
-        private TMPro.TMP_Dropdown thisDropdown;
+        private TMP_Dropdown thisDropdown;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             createPlot = plotGameObject.GetComponent<CreatePlot>();
 
             layerVisibilities = createPlot.layerVisibilities;
 
-            thisDropdown = gameObject.GetComponent<TMPro.TMP_Dropdown>();
+            thisDropdown = gameObject.GetComponent<TMP_Dropdown>();
 
             thisDropdown.value = 0;
-            
+
             SetLayerVisible();
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             layerVisibilities = createPlot.layerVisibilities;
         }
