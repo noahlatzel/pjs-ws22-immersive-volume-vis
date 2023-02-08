@@ -8050,7 +8050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b2a5f63f3784ce7b85acc66c3a9e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dimensions: 0
+  dimensions: 2
   simRunVisibilities: 01010101010101
   layerVisibilities: 01000000
 --- !u!1 &1175780353

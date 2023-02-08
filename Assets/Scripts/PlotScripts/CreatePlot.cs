@@ -24,12 +24,12 @@ namespace JsonReader
 
         private void Start()
         {
-            dimensions = 3;
+            dimensions = 2;
 
             // MakeVisArr();
 
             //Access first layer of plotData
-            pointsList = Reader.GiveDataList();
+            pointsList = GivePlotData(dimensions);
 
             // Make sure that the pointsList is not empty
             if (pointsList == null || pointsList.Count == 0)
@@ -139,10 +139,12 @@ namespace JsonReader
             simRunVisibilities = simRunVisibilitiesArr;
         }
 
-        // public List<Vector3> SetPlotData(int dimension)
-        // {
-        //     
-        // }
+        public List<List<List<Vector3>>> GivePlotData(int dimension)
+        {
+            List<List<List<Vector3>>> plotData = Reader.GiveDataList(dimension);
+
+            return plotData;
+        }
 
 
         // //Method to get a specific point value from the graph
