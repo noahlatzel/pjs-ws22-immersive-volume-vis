@@ -6,7 +6,7 @@ namespace PlotScripts_Volumetric
 {
     public class CreatePlot : MonoBehaviour
     {
-        public int dimensions = 2;
+        public int dimension;
 
         // //Variable to keep track of the selected graph
         // public int selectedGraphIndex = -1;
@@ -24,12 +24,17 @@ namespace PlotScripts_Volumetric
 
         private void Start()
         {
-            dimensions = 3;
-
             // MakeVisArr();
 
-            //Access first layer of plotData
-            pointsList = GivePlotData(dimensions);
+            SetPlotData(dimension);
+
+            SetVisibilities();
+        }
+
+        public void SetPlotData(int dimension_internal)
+        {
+            //Load plot data
+            pointsList = GivePlotData(dimension_internal);
 
             // Make sure that the pointsList is not empty
             if (pointsList == null || pointsList.Count == 0)
@@ -69,10 +74,15 @@ namespace PlotScripts_Volumetric
                     lineRenderer.UpdateLineVertices(pointsList[i][j].ToArray());
                 }
             }
-
-            SetVisibilities();
         }
+        
+        public List<List<List<Vector3>>> GivePlotData(int dimension_internal)
+        {
+            List<List<List<Vector3>>> plotData = Reader.GiveDataList(dimension_internal);
 
+            return plotData;
+        }
+        
         public void SetVisibilities(bool[] layerVisibilitiesArr, bool[] simRunVisibilitiesArr)
         {
             if (layerVisibilitiesArr.Length != 4 || simRunVisibilitiesArr.Length != 7)
@@ -131,13 +141,6 @@ namespace PlotScripts_Volumetric
             layerVisibilities = layerVisibilitiesArr;
 
             simRunVisibilities = simRunVisibilitiesArr;
-        }
-
-        public List<List<List<Vector3>>> GivePlotData(int dimension)
-        {
-            List<List<List<Vector3>>> plotData = Reader.GiveDataList(dimension);
-
-            return plotData;
         }
 
 

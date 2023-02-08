@@ -37,7 +37,7 @@ namespace PlotScripts_Volumetric
                 {
                     var currVecList = PreprocessList(nVectors.value, dimension);
                     
-                    Debug.Log(currVecList[0].x + ", " + currVecList[0].y + ", " + currVecList[0].z);
+                    // Debug.Log(currVecList[0].x + ", " + currVecList[0].y + ", " + currVecList[0].z);
 
                     vecList.Add(currVecList);
                 }
