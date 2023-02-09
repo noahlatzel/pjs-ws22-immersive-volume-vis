@@ -33,7 +33,7 @@ namespace PlotScripts_Volumetric
         public void pressButton()
         {
             Vector3 closestPoint =
-                createPlot.GetClosestPointOnSelectedGraph(cameraPos.transform.position, 4);
+                createPlot.GetClosestPointOnSelectedGraph(cameraPos.transform.position, createPlot.selectedRun);
             
             demoSphere.transform.position = closestPoint;
             

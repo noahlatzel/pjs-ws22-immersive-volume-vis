@@ -8,6 +8,8 @@ namespace PlotScripts_Volumetric
     {
         public int dimension;
 
+        public int selectedRun;
+
         public bool[] simRunVisibilities = { true, true, true, true, true, true, true };
         public int visibleLayer;
 
