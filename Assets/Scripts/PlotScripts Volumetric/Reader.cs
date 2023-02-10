@@ -24,7 +24,7 @@ namespace PlotScripts_Volumetric
          * Returns list of layers (prs, tmp, v01, v02) with every layer containing list of all 7 simulation runs,
          * with each simulation run containing list of timesteps, with each timestep containing a Vector3 (the relevant data)
          */
-        public static List<List<List<Vector3>>> GiveDataList(int dimension)
+        public static List<List<List<Vector3>>> GiveDataList(int dimension, float scale)
         {
             var embeddings = ReadData();
 
@@ -35,7 +35,7 @@ namespace PlotScripts_Volumetric
                 var vecList = new List<List<Vector3>>();
                 foreach (var nVectors in t.nVectors)
                 {
-                    var currVecList = PreprocessList(nVectors.value, dimension);
+                    var currVecList = PreprocessList(nVectors.value, dimension, scale);
                     
                     // Debug.Log(currVecList[0].x + ", " + currVecList[0].y + ", " + currVecList[0].z);
 
@@ -61,7 +61,7 @@ namespace PlotScripts_Volumetric
             return vectorList;
         }
 
-        public static List<Vector3> ChangeDimension(List<Vector3> valList, int dimension)
+        public static List<Vector3> ChangeDimension(List<Vector3> valList, int dimension, float scale)
         {
             var outList = new List<Vector3>();
             
@@ -69,13 +69,17 @@ namespace PlotScripts_Volumetric
             {
                 switch (dimension)
                 {
+                    case 0:
+                        // Debug.Log("Case 0");
+                        outList.Add(new Vector3(i/100f * scale, valList[i].x, 0));
+                        break;
                     case 1:
                         // Debug.Log("Case 1");
-                        outList.Add(new Vector3(valList[i].x, i/100f, 0));
-                        break;
+                        outList.Add(new Vector3(valList[i].x, i/100f * scale, 0));
+                        break;                    
                     case 2:
                         // Debug.Log("Case 2");
-                        outList.Add(new Vector3(valList[i].x, valList[i].y, 0));
+                        outList.Add(new Vector3(valList[i].x * scale, valList[i].y * scale, 0));
                         break;
                     case 3:
                         // Debug.Log("Case 3");
@@ -90,10 +94,10 @@ namespace PlotScripts_Volumetric
             return outList;
         }
 
-        public static List<Vector3> PreprocessList(List<List<double>> value, int dimension)
+        public static List<Vector3> PreprocessList(List<List<double>> value, int dimension, float scale)
         {
             var vectorList = ConvDoubleToVec(value);
-            vectorList = ChangeDimension(vectorList, dimension);
+            vectorList = ChangeDimension(vectorList, dimension, scale);
 
             return vectorList;
         }

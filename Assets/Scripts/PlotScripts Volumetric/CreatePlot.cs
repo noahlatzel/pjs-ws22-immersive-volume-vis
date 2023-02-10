@@ -21,15 +21,15 @@ namespace PlotScripts_Volumetric
 
         private void Start()
         {
-            SetPlotData(dimension);
+            SetPlotData(dimension, 1);
 
             SetVisibilities();
         }
 
-        public void SetPlotData(int dimensionInternal)
+        public void SetPlotData(int dimensionInternal, float scale)
         {
             //Load plot data
-            pointsList = GivePlotData(dimensionInternal);
+            pointsList = GivePlotData(dimensionInternal, scale);
 
             // Make sure that the pointsList is not empty
             if (pointsList == null || pointsList.Count == 0)
@@ -57,11 +57,39 @@ namespace PlotScripts_Volumetric
                     lineRenderer.UpdateLineVertices(pointsList[i][j].ToArray());
                 }
             }
+
+            Vector3 newAngles;
+            
+            switch (dimensionInternal)
+            {
+                case 0:
+                    // Debug.Log("Case 0");
+                    newAngles = new Vector3(90, 0, 0);
+                    break;
+                case 1:
+                    // Debug.Log("Case 1");
+                    newAngles = new Vector3(90, 90, 0);
+                    break;                    
+                case 2:
+                    // Debug.Log("Case 2");
+                    newAngles = new Vector3(90, 0, 0);
+                    break;
+                case 3:
+                    // Debug.Log("Case 3");
+                    newAngles = new Vector3(0, 0, 0);
+                    break;
+                default:
+                    newAngles = new Vector3(0, 0, 0);
+                    Debug.LogError("CreatePlot.SetPlotData: Invalid dimension");
+                    break;
+            }
+
+            gameObject.transform.eulerAngles = newAngles;
         }
 
-        public List<List<List<Vector3>>> GivePlotData(int dimensionInternal)
+        public List<List<List<Vector3>>> GivePlotData(int dimensionInternal, float scale)
         {
-            var plotData = Reader.GiveDataList(dimensionInternal);
+            var plotData = Reader.GiveDataList(dimensionInternal, scale);
 
             return plotData;
         }
@@ -122,7 +150,7 @@ namespace PlotScripts_Volumetric
 
             for (var i = 0; i < pointsList[visibleLayer][selectedRunIndex].Count; i++)
             {
-                var currDist = Vector3.Distance(pointsList[visibleLayer][selectedRunIndex][i], playerPosition);
+                var currDist = Vector3.Distance( gameObject.transform.TransformPoint(pointsList[visibleLayer][selectedRunIndex][i]), playerPosition);
 
                 if (currDist < minDist)
                 {
@@ -133,7 +161,7 @@ namespace PlotScripts_Volumetric
 
 
             //Return the corresponding point
-            return pointsList[visibleLayer][selectedRunIndex][smallestDistindex];
+            return gameObject.transform.TransformPoint(pointsList[visibleLayer][selectedRunIndex][smallestDistindex]);
         }
     }
 }

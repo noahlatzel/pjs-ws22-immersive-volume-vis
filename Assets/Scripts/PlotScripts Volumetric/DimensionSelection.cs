@@ -23,8 +23,8 @@ namespace PlotScripts_Volumetric
 
         public void SetDimension()
         {
-            createPlot.SetPlotData(thisDropdown.value + 1);
-            createPlot.dimension = thisDropdown.value + 1;
+            createPlot.SetPlotData(thisDropdown.value, 1);
+            createPlot.dimension = thisDropdown.value;
         }
     }
 }
