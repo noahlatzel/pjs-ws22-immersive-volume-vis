@@ -311,7 +311,7 @@ public class VolumeManager
 {
     private readonly String dataSetPath;
     private VolumeAttribute[] volumeAttributes;
-    private int currentTimeStep;
+    public int currentTimeStep;
     private bool isReadingBinary;
     private bool usingScaled = false;
 
@@ -375,6 +375,24 @@ public class VolumeManager
                             
         // Clear the flag to indicate that the reading operation has completed
         isReadingBinary = false;
+    }
+    
+    public void SetFrame(int frameNum)
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.NextFrame();
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep = frameNum;
+        }
     }
 
     public bool IsReadingBinary()
