@@ -5,6 +5,9 @@ namespace PlotScripts_Volumetric
 {
     public class DropdownLayer : MonoBehaviour
     {
+        public GameObject uiVolumeToggle;
+        private EnableVols uiVolumeToggleComp;
+        
         [Tooltip("Assign plotObject.")] public GameObject plotGameObject;
 
         private CreatePlot createPlot;
@@ -15,6 +18,8 @@ namespace PlotScripts_Volumetric
         // Start is called before the first frame update
         private void Start()
         {
+            uiVolumeToggleComp = uiVolumeToggle.GetComponent<EnableVols>();
+
             createPlot = plotGameObject.GetComponent<CreatePlot>();
 
             visibleLayer = createPlot.visibleLayer;
@@ -39,6 +44,8 @@ namespace PlotScripts_Volumetric
             createPlot.visibleLayer = visibleLayer;
 
             createPlot.SetVisibilities();
+            
+            uiVolumeToggleComp.SetLayerVisibility();
         }
     }
 }
