@@ -132,8 +132,8 @@ namespace PlotScripts_Volumetric
         {
             if (firstVolume > -1 && secondVolume > -1)
             {
-                volumes[firstVolume].transform.localPosition = new Vector3(-0.5f, 0f, 0f);
-                volumes[secondVolume].transform.localPosition = new Vector3(0.5f, 0f, 0f);
+                volumes[firstVolume].transform.localPosition = new Vector3(-0.52f, 0f, 0f);
+                volumes[secondVolume].transform.localPosition = new Vector3(0.52f, 0f, 0f);
             }
             else if (firstVolume != secondVolume)
             {
