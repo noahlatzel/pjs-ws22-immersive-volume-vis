@@ -45,6 +45,9 @@ namespace PlotScripts_Volumetric
 
         public void activateVolumes()
         {
+            volumeTransformer.transform.position = new Vector3(0f, 6.5f, 20f);
+            volumeTransformer.transform.localScale = new Vector3(20f, 20f, 20f);
+            
             foreach (var volume in volumes)
             {
                 if (volume.activeInHierarchy)
