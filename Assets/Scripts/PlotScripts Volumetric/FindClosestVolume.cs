@@ -14,16 +14,23 @@ namespace PlotScripts_Volumetric
         private CreatePlot createPlot;
 
         private UnityEngine.UI.Button thisButton;
-        
-        public GameObject RenderedVolume;
-        private LoadVolumes loadVolumes;
+
+        public GameObject volumeTransformer;
+        private GameObject[] volumes;
         
         
         // Start is called before the first frame update
         void Start()
         {
             createPlot = plotGameObject.GetComponent<CreatePlot>();
-            loadVolumes = RenderedVolume.GetComponent<LoadVolumes>();
+            
+            volumes = new GameObject[volumeTransformer.transform.childCount];
+
+            for (int i = 0; i < volumes.Length; i++)
+            {
+                volumes[i] = volumeTransformer.transform.GetChild(i).gameObject;
+            }
+            
             thisButton = gameObject.GetComponent<Button>();
         }
 
@@ -33,7 +40,7 @@ namespace PlotScripts_Volumetric
         
         }
 
-        public void setClosestVolume()
+        public void SetClosestVolume()
         {
             var position = cameraPos.transform.position;
             Vector3 closestPoint =
@@ -44,7 +51,7 @@ namespace PlotScripts_Volumetric
                 
             demoSphere.transform.position = closestPoint;
             
-            loadVolumes.SetFrame(closestPointIndex);
+            volumes[createPlot.selectedRun].GetComponent<LoadVolumes>().SetFrame(closestPointIndex);
             
             Debug.Log("Position: "+ closestPoint + ", Timestep: " + closestPointIndex);
         }
