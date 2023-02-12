@@ -20,6 +20,7 @@ namespace PlotScripts_Volumetric
         private TMP_Dropdown layerSelectionDropdown;
         private TMP_Dropdown runSelectionDropdown;
 
+        public GameObject FindVolume;
         public GameObject VolumeTurn;
         public GameObject Volume1Desc;
         public GameObject Volume1Drop;
@@ -76,6 +77,7 @@ namespace PlotScripts_Volumetric
 
             if (thisToggle.isOn)
             {
+                FindVolume.SetActive(true);
                 VolumeTurn.SetActive(true);
                 Volume1Desc.SetActive(true);
                 Volume1Drop.SetActive(true);
@@ -84,6 +86,7 @@ namespace PlotScripts_Volumetric
             }
             else
             {
+                FindVolume.SetActive(false);
                 VolumeTurn.SetActive(false);
                 Volume1Desc.SetActive(false);
                 Volume1Drop.SetActive(false);

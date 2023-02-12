@@ -18,10 +18,14 @@ namespace PlotScripts_Volumetric
         public GameObject volumeTransformer;
         private GameObject[] volumes;
         
+        public GameObject uiVolumeToggle;
+        private EnableVols uiVolumeToggleComp;
         
         // Start is called before the first frame update
         void Start()
         {
+            uiVolumeToggleComp = uiVolumeToggle.GetComponent<EnableVols>();
+            
             createPlot = plotGameObject.GetComponent<CreatePlot>();
             
             volumes = new GameObject[volumeTransformer.transform.childCount];
@@ -51,7 +55,13 @@ namespace PlotScripts_Volumetric
                 
             demoSphere.transform.position = closestPoint;
             
-            volumes[createPlot.selectedRun].GetComponent<LoadVolumes>().SetFrame(closestPointIndex);
+            for (int i = 0; i < uiVolumeToggleComp.volumeVisibility.Length; i++)
+            {
+                if (uiVolumeToggleComp.volumeVisibility[i])
+                {
+                    volumes[i].GetComponent<LoadVolumes>().SetFrame(closestPointIndex);
+                }
+            }
             
             Debug.Log("Position: "+ closestPoint + ", Timestep: " + closestPointIndex);
         }
