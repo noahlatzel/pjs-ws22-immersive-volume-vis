@@ -163,5 +163,34 @@ namespace PlotScripts_Volumetric
             //Return the corresponding point
             return gameObject.transform.TransformPoint(pointsList[visibleLayer][selectedRunIndex][smallestDistindex]);
         }
+        
+        //Method that takes the player's position and a currently selected run as parameters and gives the timestep of the closest point on the selected run
+        public int GetIndexOfClosestPointOnSelectedGraph(Vector3 playerPosition, int selectedRunIndex)
+        {
+            //Check if a run has been selected
+            if (selectedRunIndex == -1)
+            {
+                Debug.LogError("No graph is selected.");
+                return -1;
+            }
+
+            var minDist = float.MaxValue;
+            var smallestDistindex = -1;
+
+            for (var i = 0; i < pointsList[visibleLayer][selectedRunIndex].Count; i++)
+            {
+                var currDist = Vector3.Distance( gameObject.transform.TransformPoint(pointsList[visibleLayer][selectedRunIndex][i]), playerPosition);
+
+                if (currDist < minDist)
+                {
+                    smallestDistindex = i;
+                    minDist = currDist;
+                }
+            }
+
+
+            //Return the corresponding point
+            return smallestDistindex;
+        }
     }
 }

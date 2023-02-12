@@ -44,7 +44,7 @@ public class LoadVolumes : MonoBehaviour
     public int bufferSpeed = 5;
 
     // Manager class
-    private VolumeManager volumeManager;
+    public VolumeManager volumeManager;
 
     // Load the first volume per attribute with the importer; guarantees
     // correct configuration of Material properties etc.
@@ -99,6 +99,11 @@ public class LoadVolumes : MonoBehaviour
 
         
 
+    }
+
+    public void SetFrame(int timeStep)
+    {
+        volumeManager.SetFrame(timeStep);
     }
 
     private void RenderOnStart(VolumeManager volumeManagerObject)
@@ -368,6 +373,19 @@ public class VolumeManager
         {
             volumeAttributes[i].SetVisibility(visibilities[i]);
         }
+    }
+
+    public void SetFrame(int timeStep)
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.SetFrame(timeStep);
+            }
+        }
+        
+        currentTimeStep = timeStep;
     }
 
     public void NextFrame()
