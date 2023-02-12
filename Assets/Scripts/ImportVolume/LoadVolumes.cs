@@ -11,7 +11,7 @@ using UnityVolumeRendering;
 public class LoadVolumes : MonoBehaviour
 {
     [Tooltip("Specify the name of the dataset you want to use. The dataset needs to be stored in Assets/Datasets/")]
-    public String datasetName = "Dataset1";
+    public String datasetName = "yB11";
 
     [Tooltip("Show/Hide pressure volume.")]
     public bool pressure;
@@ -53,9 +53,11 @@ public class LoadVolumes : MonoBehaviour
     {
         // Create manager class
         volumeManager = new VolumeManager(datasetName);
-        
+
         // Render volumes on start 
         RenderOnStart(volumeManager);
+
+        Debug.Log(volumeManager.IsReadingBinary());
     }
 
     // Update is called once per frame
@@ -248,6 +250,29 @@ public class VolumeAttribute
         }
     }
 
+    public void SetFrame(int timestep)
+    {
+        // Get correct texture format analogue to the Volume Importer
+        TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
+        // Set the current texture to the next texture in the buffer depended on usingScaled
+        Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+            new Texture3D(300, 300, 300, texFormat, false);
+
+        // Load pixelData from binary file at given position
+        int volumeToRender = (timestep) % count;
+
+        // Set pixel data from File
+        newTexture.SetPixelData(File.ReadAllBytes(GetVolumePath(volumeToRender)), 0);
+        
+        // Set _DataTex texture of material to newly loaded texture
+        material.SetTexture("_DataTex", newTexture);
+
+        // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+        // a separate thread
+        newTexture.Apply();
+    }
+
     public void PreviousFrame()
     {
         // Check if textures are buffered
@@ -311,7 +336,7 @@ public class VolumeManager
 {
     private readonly String dataSetPath;
     private VolumeAttribute[] volumeAttributes;
-    public int currentTimeStep;
+    private int currentTimeStep;
     private bool isReadingBinary;
     private bool usingScaled = false;
 
@@ -376,24 +401,7 @@ public class VolumeManager
         // Clear the flag to indicate that the reading operation has completed
         isReadingBinary = false;
     }
-    
-    public void SetFrame(int frameNum)
-    {
-        bool active = false;
-        foreach (var volumeAttribute in volumeAttributes)
-        {
-            if (volumeAttribute.IsVisible())
-            {
-                volumeAttribute.NextFrame();
-                active = true;
-            }
-        }
 
-        if (active)
-        {
-            currentTimeStep = frameNum;
-        }
-    }
 
     public bool IsReadingBinary()
     {
