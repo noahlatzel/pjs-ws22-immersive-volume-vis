@@ -82,6 +82,7 @@ public class StoreBinaries : MonoBehaviour
                     
                         // Destroy created object 
                         Destroy(obj);
+                        Destroy(GameObject.Find("VolumeRenderedObject_test"));
                     }
                 }
                 stopWatch.Stop();

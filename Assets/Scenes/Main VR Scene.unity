@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.043578748, g: 0.044726565, b: 0.059461884, a: 1}
+  m_IndirectSpecularColor: {r: 0.04365709, g: 0.044818856, b: 0.05955075, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1004,7 +1004,7 @@ RectTransform:
   m_GameObject: {fileID: 146960418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1290221655}
@@ -1013,7 +1013,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -200}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &146960420
 MonoBehaviour:
@@ -3483,7 +3483,7 @@ RectTransform:
   m_GameObject: {fileID: 881671694}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1290221655}
@@ -3492,7 +3492,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 150}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1000, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &881671696
 MonoBehaviour:
@@ -5378,7 +5378,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Option A
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6558,6 +6558,7 @@ GameObject:
   - component: {fileID: 1290221655}
   - component: {fileID: 1290221657}
   - component: {fileID: 1290221656}
+  - component: {fileID: 1290221658}
   m_Layer: 5
   m_Name: TransferFunctionPanel
   m_TagString: Untagged
@@ -6573,7 +6574,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1290221654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4748}
+  m_LocalPosition: {x: 0, y: 0, z: -1159}
   m_LocalScale: {x: 1.3875, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6589,7 +6590,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2130, y: 1554}
+  m_AnchoredPosition: {x: 890, y: -443}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1290221656
@@ -6630,6 +6631,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1290221654}
   m_CullTransparentMesh: 1
+--- !u!114 &1290221658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290221654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f94b6f84dd4e24478e708b66be1d364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alphaControlPointPrefab: {fileID: 161605435572883332, guid: c086f37c7d840a74b950574e898c7075,
+    type: 3}
+  colourControlPointPrefab: {fileID: 161605435572883332, guid: d69b9fc94822b8640815c2f71560494d,
+    type: 3}
 --- !u!1 &1316155189
 GameObject:
   m_ObjectHideFlags: 0
@@ -7351,7 +7368,7 @@ GameObject:
   - component: {fileID: 1525198617}
   - component: {fileID: 1525198616}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: DropdownAttributeSelector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7429,13 +7446,7 @@ MonoBehaviour:
   m_ItemImage: {fileID: 0}
   m_Value: 0
   m_Options:
-    m_Options:
-    - m_Text: Option A
-      m_Image: {fileID: 0}
-    - m_Text: Option B
-      m_Image: {fileID: 0}
-    - m_Text: Option C
-      m_Image: {fileID: 0}
+    m_Options: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
