@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using Unity.XR.CoreUtils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityVolumeRendering;
@@ -15,7 +16,13 @@ public class TransferFunctionPanel : MonoBehaviour
     private GameObject alphaView;
     public GameObject alphaControlPointPrefab;
     public GameObject colourControlPointPrefab;
+    private int activeAttribute;
     
+    // Color picker
+    public RectTransform texture;
+    public Texture2D refSprite;
+    public int selectedColourControlPointIndex = -1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,8 +40,11 @@ public class TransferFunctionPanel : MonoBehaviour
         
         dropdownMenu.GetComponent<TMP_Dropdown>().onValueChanged.AddListener(delegate
         {
-            DropDownValueChanged(dropdownMenu.GetComponent<TMP_Dropdown>());
+            DropDownValueChanged(dropdownMenu.GetComponent<TMP_Dropdown>().value);
         });
+        
+        // Initialize transfer function window
+        DropDownValueChanged(0);
     }
 
     // Update is called once per frame
@@ -43,10 +53,11 @@ public class TransferFunctionPanel : MonoBehaviour
         
     }
 
-    void DropDownValueChanged(TMP_Dropdown change)
+    void DropDownValueChanged(int value)
     {
+        activeAttribute = value;
         TransferFunction transferFunction =
-            selectedVolume.transform.GetChild(change.value).GetComponent<VolumeRenderedObject>().transferFunction;
+            selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
         Texture2D transferFuncTex = transferFunction.GetTexture();
         colorView.GetComponent<RawImage>().texture = transferFuncTex;
         alphaView.GetComponent<RawImage>().texture = transferFuncTex;
@@ -66,17 +77,17 @@ public class TransferFunctionPanel : MonoBehaviour
         // Create new control points (alpha)
         for (int i = 0; i < transferFunction.alphaControlPoints.Count; i++)
         {
-            NewAlphaControlPointUI(transferFunction.alphaControlPoints[i], change.value);
+            NewAlphaControlPointUI(transferFunction.alphaControlPoints[i], value, i);
         }
-        Debug.Log(transferFunction.colourControlPoints.Count);
+        
         // Create new control points (colour)
         for (int i = 0; i < transferFunction.colourControlPoints.Count; i++)
         {
-            NewColourControlPointUI(transferFunction.colourControlPoints[i], change.value);
+            NewColourControlPointUI(transferFunction.colourControlPoints[i], value, i);
         }
     }
 
-    void NewAlphaControlPointUI(TFAlphaControlPoint controlPoint, int index)
+    void NewAlphaControlPointUI(TFAlphaControlPoint controlPoint, int index, int indexControlPoint)
     {
         // Instantiate new control point from Button prefab
         GameObject controlPointUI = Instantiate(alphaControlPointPrefab);
@@ -96,10 +107,10 @@ public class TransferFunctionPanel : MonoBehaviour
         controlPointUI.GetComponent<UIDraggableAlpha>().controlPoint = controlPoint;
         controlPointUI.GetComponent<UIDraggableAlpha>().transferFunction = 
             selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
-        controlPointUI.GetComponent<UIDraggableAlpha>().index = index;
+        controlPointUI.GetComponent<UIDraggableAlpha>().index = indexControlPoint; 
     }
     
-    void NewColourControlPointUI(TFColourControlPoint controlPoint, int index)
+    void NewColourControlPointUI(TFColourControlPoint controlPoint, int index, int indexControlPoint)
     {
         // Instantiate new control point from Button prefab
         GameObject controlPointUI = Instantiate(colourControlPointPrefab);
@@ -114,10 +125,52 @@ public class TransferFunctionPanel : MonoBehaviour
         transformControlPoint.transform.localScale = new Vector3(1, 1, 1);
         transformControlPoint.anchoredPosition =
             new Vector2(baseWidth * controlPoint.dataValue, 0);
-        Debug.Log(controlPoint.dataValue);
         controlPointUI.GetComponent<UIDraggableColor>().controlPoint = controlPoint;
         controlPointUI.GetComponent<UIDraggableColor>().transferFunction = 
             selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
-        controlPointUI.GetComponent<UIDraggableColor>().index = index;
+        controlPointUI.GetComponent<UIDraggableColor>().index = indexControlPoint;
+    }
+
+    public void AddColourControlPoint()
+    {
+        TransferFunction transferFunction =
+            selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+        TFColourControlPoint controlPoint = new TFColourControlPoint(0.5f, Color.white);
+        transferFunction.colourControlPoints.Add(controlPoint);
+        NewColourControlPointUI(controlPoint, activeAttribute, transferFunction.colourControlPoints.Count - 1);
+    }
+    
+    public void AddAlphaControlPoint()
+    {
+        TransferFunction transferFunction =
+            selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+        TFAlphaControlPoint controlPoint = new TFAlphaControlPoint(0.5f, 0.5f);
+        transferFunction.alphaControlPoints.Add(controlPoint);
+        NewAlphaControlPointUI(controlPoint, activeAttribute, transferFunction.alphaControlPoints.Count - 1);
+    }
+
+    private void SetColor()
+    {
+        Vector3 imagePos = texture.position;
+        float globalPosX = Input.mousePosition.x - imagePos.x;
+        float globalPosY = Input.mousePosition.y - imagePos.y;
+
+        int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width));
+        int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height));
+
+        Color c = refSprite.GetPixel(localPosX, localPosY);
+        
+        TransferFunction transferFunction =
+            selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+        TFColourControlPoint oldCP = transferFunction.colourControlPoints[selectedColourControlPointIndex];
+        transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCP.dataValue, c);
+    }
+
+    public void OnClickColorPicker()
+    {
+        if (selectedColourControlPointIndex > -1)
+        {
+            SetColor();
+        }
     }
 }

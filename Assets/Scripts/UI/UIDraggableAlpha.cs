@@ -32,15 +32,19 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler
 
         if (rectTransform.anchoredPosition.x < 0)
         {
-            rectTransform.anchoredPosition = new Vector2(0, 0);
+            rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
         }
-        if (rectTransform.anchoredPosition.y != 0)
+        if (rectTransform.anchoredPosition.y < 0)
         {
             rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 0);
         }
+        if (rectTransform.anchoredPosition.y > maxHeight - myMaxHeight)
+        {
+            rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, maxHeight - myMaxHeight);
+        }
         if (rectTransform.anchoredPosition.x > maxWidth - myMaxWidth)
         {
-            rectTransform.anchoredPosition = new Vector2(maxWidth - myMaxWidth, 0);
+            rectTransform.anchoredPosition = new Vector2(maxWidth - myMaxWidth, rectTransform.anchoredPosition.y);
         }
 
         controlPoint.alphaValue = rectTransform.anchoredPosition.y / (maxHeight - myMaxHeight);
