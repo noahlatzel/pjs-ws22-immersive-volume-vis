@@ -35,7 +35,29 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
 
         if (rectTransform.anchoredPosition.x < 0)
         {
-            rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
+            if (rectTransform.anchoredPosition.x > -50)
+            {
+                if (rectTransform.anchoredPosition.x < -20)
+                {
+                    transferFunction.colourControlPoints.RemoveAt(index);
+                    
+                    // Fix index of remaining control points
+                    for (int i = 0; i < colorView.transform.childCount; i++)
+                    {
+                        if (colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index > index)
+                        {
+                            colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index--;
+                        }
+                    }
+                    
+                    // Destroy gameObject
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);    
+            }
         }
         if (rectTransform.anchoredPosition.y != 0)
         {

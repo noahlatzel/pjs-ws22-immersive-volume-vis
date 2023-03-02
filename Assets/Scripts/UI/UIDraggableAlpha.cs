@@ -32,7 +32,30 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler
 
         if (rectTransform.anchoredPosition.x < 0)
         {
-            rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
+            
+            if (rectTransform.anchoredPosition.x > -50 && rectTransform.anchoredPosition.y < 50)
+            {
+                if (rectTransform.anchoredPosition.x < -20)
+                {
+                    transferFunction.alphaControlPoints.RemoveAt(index);
+                    
+                    // Fix index of remaining control points
+                    for (int i = 0; i < alphaView.transform.childCount; i++)
+                    {
+                        if (alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index > index)
+                        {
+                            alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index--;
+                        }
+                    }
+                    
+                    // Destroy gameObject
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
+            }
         }
         if (rectTransform.anchoredPosition.y < 0)
         {
@@ -50,6 +73,7 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler
         controlPoint.alphaValue = rectTransform.anchoredPosition.y / (maxHeight - myMaxHeight);
         controlPoint.dataValue = rectTransform.anchoredPosition.x / (maxWidth- myMaxWidth);
         transferFunction.alphaControlPoints[index] = controlPoint;
+
         transferFunction.GenerateTexture();
     }
 }

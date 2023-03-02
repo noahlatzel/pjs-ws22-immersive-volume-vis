@@ -1016,6 +1016,7 @@ GameObject:
   - component: {fileID: 146960419}
   - component: {fileID: 146960421}
   - component: {fileID: 146960420}
+  - component: {fileID: 146960422}
   m_Layer: 5
   m_Name: TransferFuncColor
   m_TagString: Untagged
@@ -1078,6 +1079,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 146960418}
   m_CullTransparentMesh: 1
+--- !u!114 &146960422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146960418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &170880364
 GameObject:
   m_ObjectHideFlags: 0
@@ -3385,6 +3404,7 @@ GameObject:
   - component: {fileID: 881671695}
   - component: {fileID: 881671697}
   - component: {fileID: 881671696}
+  - component: {fileID: 881671698}
   m_Layer: 5
   m_Name: TransferFuncAlpha
   m_TagString: Untagged
@@ -3447,6 +3467,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881671694}
   m_CullTransparentMesh: 1
+--- !u!114 &881671698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881671694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &898378025
 GameObject:
   m_ObjectHideFlags: 0
