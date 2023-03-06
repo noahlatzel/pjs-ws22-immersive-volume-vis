@@ -29,11 +29,11 @@ public class LoadVolumes : MonoBehaviour
     private float timePassedBuffer = 0;
     
     [Tooltip("Start/Stop the animation.")]
-    [SerializeField] private bool play;
+    [SerializeField] public bool play;
     
     [Tooltip("Specify the frames per second of the animation.")]
     [SerializeField]
-    private int timesPerSecond = 1;
+    public int timesPerSecond = 1;
     
     [Tooltip("Start/Stop the buffer.")]
     public bool isBuffering;
@@ -47,7 +47,7 @@ public class LoadVolumes : MonoBehaviour
     public int timestep = 0;
     
     // Manager class
-    private VolumeManager volumeManager;
+    public VolumeManager volumeManager;
 
     // Load the first volume per attribute with the importer; guarantees
     // correct configuration of Material properties etc.
