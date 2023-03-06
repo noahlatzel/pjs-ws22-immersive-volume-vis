@@ -165,6 +165,7 @@ public class TransferFunctionPanel : MonoBehaviour
             selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
         TFColourControlPoint oldCP = transferFunction.colourControlPoints[selectedColourControlPointIndex];
         transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCP.dataValue, c);
+        transferFunction.GenerateTexture();
     }
 
     public void OnClickColorPicker()

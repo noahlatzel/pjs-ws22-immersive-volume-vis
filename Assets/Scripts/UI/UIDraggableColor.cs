@@ -70,6 +70,7 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
         
         controlPoint.dataValue = rectTransform.anchoredPosition.x / (maxWidth- myMaxWidth);
         controlPoint.dataValue = rectTransform.anchoredPosition.x / (maxWidth- myMaxWidth);
+        controlPoint.colourValue = transferFunction.colourControlPoints[index].colourValue;
         
         transferFunction.colourControlPoints[index] = controlPoint;
         
