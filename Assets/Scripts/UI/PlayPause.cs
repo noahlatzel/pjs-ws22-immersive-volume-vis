@@ -1,62 +1,49 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Sprites;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
-public class PlayPause : MonoBehaviour
+public class PlayPauseScript : MonoBehaviour
 {
     public Sprite playDefault;
-    public Sprite playHighlight;
-    public Sprite playPressed;
     public Sprite pauseDefault;
-    public Sprite pauseHighlight;
-    public Sprite pausePressed;
 
     public bool playing;
 
+    public GameObject volume;
+
     public Button button;
 
-    //public GameObject VolumeScriptStarter;
 
     // Start is called before the first frame update
     void Start()
     {
         playing = false;
-        //VolumeScriptStarter = GameObject.Find("VolumeScriptStarter");
-        //Debug.Log(VolumeScriptStarter.name);
-
+        volume = GameObject.Find("RenderedVolume");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    public void changeStartStop()
+    public void changeStartStop(InputAction.CallbackContext context)
     {
-        playing = !playing;
-        SpriteState buttonSS = button.spriteState;
-        
-        if (!playing)
+     
+        if (context.performed && !playing)
         {
-            Debug.Log("Play Case");
             button.image.sprite = playDefault;
-            buttonSS.highlightedSprite = playHighlight;
-            buttonSS.pressedSprite = playPressed;
-            buttonSS.selectedSprite = playHighlight;
-            buttonSS.disabledSprite = playPressed;
+            playing = true;
+            volume.GetComponent<LoadVolumes>().play = true;
         }
-        else
+        else if (context.performed && playing)
         {
-            Debug.Log("Pause Case");
             button.image.sprite = pauseDefault;
-            buttonSS.highlightedSprite = pauseHighlight;
-            buttonSS.pressedSprite = pausePressed;
-            buttonSS.selectedSprite = pauseHighlight;
-            buttonSS.disabledSprite = pausePressed;
+            playing = false;
+            volume.GetComponent<LoadVolumes>().play = false;
+
         }
-        Debug.Log(buttonSS.selectedSprite.name);
+
     }
 }
+
