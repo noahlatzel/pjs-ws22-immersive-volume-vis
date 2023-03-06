@@ -171,6 +171,7 @@ public class VolumeAttribute
     private bool usingScaled = false;
     private readonly Assembly dll;
 
+
     public VolumeAttribute(String path)
     {
         name = new DirectoryInfo(path).Name;
@@ -181,7 +182,7 @@ public class VolumeAttribute
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
         bufferStack = new LimitedStack<Texture3D>(10);
-        
+
         // Load the DLL into the Assembly object
         dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
     }
@@ -239,7 +240,37 @@ public class VolumeAttribute
 
             // Set pixel data from bufferQueue
             newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
-        
+            
+            // WIP
+            /*var allBytes = newTexture.GetPixelData<Color32>(0);
+            int surroundWidth = 0;
+            int textureSplits = 10;
+            //int chunkSize = allBytes.Length / textureSplits;
+            //var result = allBytes
+            //    .Select((x, i) => new { Index = i, Value = x })
+            //    .GroupBy(x => x.Index / chunkSize)
+            //    .Select(x => x.Select(v => v.Value).ToArray())
+            //    .ToArray();
+            //for (int i = 0; i < result.Length; i++) {
+            //    Texture3D splitTexture = new Texture3D(newTexture.width, newTexture.height, newTexture.depth / textureSplits, texFormat, false);
+            //    splitTexture.SetPixelData(result[i], 0);
+            //    material.SetTexture("_DataTex" + i, splitTexture);
+            //    splitTexture.Apply();
+            //}
+            
+            // Shader: dataTexPos.z = 1/12 + 10 * dataTexPos.z / 12;
+            for (int i = 0; i < textureSplits; i++)
+            {
+                int surroundWidthFactor = i == 0 || i == 9 ? 1 : 2;
+                Texture3D splitTexture = new Texture3D(newTexture.width, newTexture.height, newTexture.depth / textureSplits + surroundWidthFactor * surroundWidth, texFormat, false);
+                int preOffset = i == 0 ? 0 : newTexture.height * newTexture.width * surroundWidth;
+                int pastOffset = i == 9 ? 0 : newTexture.height * newTexture.width * surroundWidth;
+                Color32[] pixelData = allBytes.Skip(allBytes.Length / textureSplits * i - preOffset).Take(allBytes.Length / textureSplits + pastOffset + preOffset).ToArray();
+                splitTexture.SetPixelData(pixelData, 0);
+                material.SetTexture("_DataTex" + i, splitTexture);
+                splitTexture.Apply();
+            }*/
+            
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", newTexture);
 
