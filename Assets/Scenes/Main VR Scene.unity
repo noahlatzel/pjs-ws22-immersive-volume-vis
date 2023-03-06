@@ -3583,15 +3583,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   datasetName: Dataset1
-  pressure: 0
-  temperature: 0
-  water: 0
-  meteorite: 0
+  pressure: 1
+  temperature: 1
+  water: 1
+  meteorite: 1
   play: 0
   timesPerSecond: 1
-  isBuffering: 0
+  isBuffering: 1
   useScaledVersion: 0
   bufferSpeed: 5
+  forward: 1
+  timestep: 0
 --- !u!114 &960917543
 MonoBehaviour:
   m_ObjectHideFlags: 0

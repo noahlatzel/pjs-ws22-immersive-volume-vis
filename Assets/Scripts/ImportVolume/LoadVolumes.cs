@@ -44,6 +44,7 @@ public class LoadVolumes : MonoBehaviour
     public int bufferSpeed = 5;
 
     public bool forward = true;
+    public int timestep = 0;
     
     // Manager class
     private VolumeManager volumeManager;
@@ -76,14 +77,17 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
+                volumeManager.SetForward(forward);
                 if (forward)
                 {
                     // Render the next frame through Volume Manager
                     volumeManager.NextFrame();
+                    timestep = (timestep + 1) % 10;
                 }
                 else
                 {
                     volumeManager.PreviousFrame();
+                    timestep = (timestep - 1) % 10;
                 }
             }
         }
@@ -198,6 +202,11 @@ public class VolumeAttribute
 
     private String GetVolumePath(int number)
     {
+        if (number < 0)
+        {
+            number = count + number;
+        }
+
         return usingScaled ? filePathsScaled[number] : filePaths[number];
     }
 
@@ -292,11 +301,21 @@ public class VolumeAttribute
     public void PreviousFrame()
     {
         // Check if textures are buffered
-        if (bufferStack.Count() > 0)
+        /*if (bufferStack.Count() > 0)
         {
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", bufferStack.Pop());
         }
+        else
+        {
+            NextFrame();
+        }*/
+        NextFrame();
+    }
+
+    public void ClearBufferQueue()
+    {
+        bufferQueue.Clear();
     }
 
     public Texture3D GetNextTexture()
@@ -336,6 +355,22 @@ public class VolumeAttribute
         }
     }
     
+    // Loads the binary from the specified path and stores the loaded byte array in a queue.
+    // Loading the binary has to be separated from the main function because Unity functions classes
+    // may not be called in other threads than the main thread but we want to load our data in a separate 
+    // thread to reduce lag.
+    public void BufferNextFrameReverse(int currentTimeStep)
+    {
+        // Restrict buffer size
+        if (bufferQueue.Count <= 10)
+        {
+            // Load pixelData from binary file at next position
+            int nextVolumeToBuffer = (currentTimeStep - 1 - bufferQueue.Count) % count;
+            dll.GetType("ThreadedBinaryReader.FileReader").GetMethod("ReadFileInThread")
+                .Invoke(null, new object[] { GetVolumePath(nextVolumeToBuffer), bufferQueue });
+        }
+    }
+    
     public void SetUsingScale(bool usage)
     {
         // Check if scale was changed during runtime
@@ -343,6 +378,12 @@ public class VolumeAttribute
         {
             // Clear bufferQueue during runtime
             bufferQueue.Clear();
+            
+            // Clear bufferStack during runtime
+            while (bufferStack.Count() > 0)
+            {
+                bufferStack.Pop();
+            }
         }
         usingScaled = usage;
     }
@@ -355,11 +396,25 @@ public class VolumeManager
     private int currentTimeStep;
     private bool isReadingBinary;
     private bool usingScaled = false;
+    private bool forward = true;
 
     public VolumeManager(String dataSetName)
     {
         dataSetPath = $"Assets/Datasets/{dataSetName}";
         AddVolumeAttributes();
+    }
+
+    public void SetForward(bool direction)
+    {
+        if (forward != direction)
+        {
+            foreach (var volumeAttribute in volumeAttributes)
+            {
+                volumeAttribute.ClearBufferQueue();
+            }
+        }
+
+        forward = direction;
     }
 
     private void AddVolumeAttributes()
@@ -429,7 +484,14 @@ public class VolumeManager
         
         foreach (var volumeAttribute in volumeAttributes)
         {
-            volumeAttribute.BufferNextFrame(currentTimeStep);
+            if (forward)
+            {
+                volumeAttribute.BufferNextFrame(currentTimeStep);
+            }
+            else
+            {
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+            }
         }
                             
         // Clear the flag to indicate that the reading operation has completed
