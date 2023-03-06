@@ -43,6 +43,8 @@ public class LoadVolumes : MonoBehaviour
     [Tooltip("Adjust the buffer speed (buffer per second)")]
     public int bufferSpeed = 5;
 
+    public bool forward = true;
+    
     // Manager class
     private VolumeManager volumeManager;
 
@@ -74,8 +76,15 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
-                // Render the next frame through Volume Manager
-                volumeManager.NextFrame();
+                if (forward)
+                {
+                    // Render the next frame through Volume Manager
+                    volumeManager.NextFrame();
+                }
+                else
+                {
+                    volumeManager.PreviousFrame();
+                }
             }
         }
         
@@ -392,6 +401,24 @@ public class VolumeManager
         if (active)
         {
             currentTimeStep++;
+        }
+    }
+
+    public void PreviousFrame()
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.PreviousFrame();
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep--;
         }
     }
 
