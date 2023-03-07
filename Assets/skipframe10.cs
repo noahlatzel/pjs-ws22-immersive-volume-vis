@@ -21,11 +21,11 @@ public class skipframe10 : MonoBehaviour
     {
         if (playing)
         {
-            volume.GetComponent<LoadVolumes>().timesPerSecond++;
+            volume.GetComponent<LoadVolumes>().timesPerSecond = volume.GetComponent<LoadVolumes>().timesPerSecond+10 ;
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().volumeManager.NextFrame();
+            volume.GetComponent<LoadVolumes>().volumeManager.NextFrame(10);
         }
     }
 }

@@ -21,11 +21,11 @@ public class frameback10 : MonoBehaviour
     {
         if (playing)
         {
-            volume.GetComponent<LoadVolumes>().timesPerSecond--;
+            volume.GetComponent<LoadVolumes>().timesPerSecond = volume.GetComponent<LoadVolumes>().timesPerSecond - 10; ;
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().volumeManager.PreviousFrame();
+            volume.GetComponent<LoadVolumes>().volumeManager.PreviousFrame(10);
         }
     }
 }
