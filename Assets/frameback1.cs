@@ -17,7 +17,15 @@ public class frameback1 : MonoBehaviour
         playing = volume.GetComponent<LoadVolumes>().play;
     }
 
-    public void SkipFrame(InputAction.CallbackContext context)
+    public void Update()
+    {
+        if (Input.GetButtonDown("-1 Frame"))
+        {
+            SkipFrame();
+        }
+    }
+
+    public void SkipFrame()
     {
         if (playing)
         {

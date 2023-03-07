@@ -17,7 +17,15 @@ public class skipframe10 : MonoBehaviour
         playing = volume.GetComponent<LoadVolumes>().play;
     }
 
-    public void SkipFrame(InputAction.CallbackContext context)
+    public void Update()
+    {
+        if(Input.GetButtonDown("+10 Frame"))
+        {
+            SkipFrame();
+        }
+    }
+
+    public void SkipFrame()
     {
         if (playing)
         {
