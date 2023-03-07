@@ -509,6 +509,24 @@ public class VolumeManager
             currentTimeStep++;
         }
     }
+    
+    public void NextFrame(int framesToSkip)
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.NextFrame(framesToSkip);
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep++;
+        }
+    }
 
     public void PreviousFrame()
     {
@@ -518,6 +536,24 @@ public class VolumeManager
             if (volumeAttribute.IsVisible())
             {
                 volumeAttribute.PreviousFrame();
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep--;
+        }
+    }
+    
+    public void PreviousFrame(int framesToSkip)
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.PreviousFrame(framesToSkip);
                 active = true;
             }
         }
