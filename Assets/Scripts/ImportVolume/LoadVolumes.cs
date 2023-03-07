@@ -298,6 +298,42 @@ public class VolumeAttribute
         }
     }
 
+    public void NextFrame(int numberOfFramesToSkip)
+    {
+        // Check if textures are buffered
+        if (bufferQueue.Count > 0)
+        {
+            // Get correct texture format analogue to the Volume Importer
+            TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
+        
+            // Set the current texture to the next texture in the buffer depended on usingScaled
+            Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+                new Texture3D(300, 300, 300, texFormat, false);
+
+            // Save current Texture3D to bufferStack (for PreviousFrame())
+            bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
+
+            for (int j = 1; j < numberOfFramesToSkip; j++)
+            {
+                if (bufferQueue.Count > 2)
+                {
+                    bufferQueue.Dequeue();
+                }
+            }
+
+            // Set pixel data from bufferQueue
+            newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+            
+            
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", newTexture);
+
+            // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+            // a separate thread
+            newTexture.Apply();
+        }
+    }
+
     public void PreviousFrame()
     {
         // Check if textures are buffered
@@ -311,6 +347,21 @@ public class VolumeAttribute
             NextFrame();
         }*/
         NextFrame();
+    }
+    
+    public void PreviousFrame(int numberOfFramesToSkip)
+    {
+        // Check if textures are buffered
+        /*if (bufferStack.Count() > 0)
+        {
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", bufferStack.Pop());
+        }
+        else
+        {
+            NextFrame();
+        }*/
+        NextFrame(numberOfFramesToSkip);
     }
 
     public void ClearBufferQueue()
