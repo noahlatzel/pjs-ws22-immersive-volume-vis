@@ -1547,6 +1547,7 @@ GameObject:
   m_Component:
   - component: {fileID: 134202743}
   - component: {fileID: 134202744}
+  - component: {fileID: 134202745}
   m_Layer: 5
   m_Name: Water1
   m_TagString: Untagged
@@ -1624,6 +1625,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &134202745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134202742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c97bda6f0350424a988dc647d5eb906, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &140877964
 GameObject:
   m_ObjectHideFlags: 0
@@ -3998,6 +4011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 483365895}
   - component: {fileID: 483365896}
+  - component: {fileID: 483365897}
   m_Layer: 5
   m_Name: Meteorit1
   m_TagString: Untagged
@@ -4075,6 +4089,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &483365897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483365894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821aec34dcd2a934591ad5ced7f6613e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &535615337
 GameObject:
   m_ObjectHideFlags: 0
@@ -4168,6 +4196,7 @@ GameObject:
   m_Component:
   - component: {fileID: 555756600}
   - component: {fileID: 555756601}
+  - component: {fileID: 555756602}
   m_Layer: 5
   m_Name: Water2
   m_TagString: Untagged
@@ -4245,6 +4274,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &555756602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 555756599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9151893e17862f4098f60a8b8ed8407, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &565538414
 GameObject:
   m_ObjectHideFlags: 0
@@ -4255,6 +4298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 565538415}
   - component: {fileID: 565538416}
+  - component: {fileID: 565538417}
   m_Layer: 5
   m_Name: Temperature1
   m_TagString: Untagged
@@ -4332,6 +4376,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &565538417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565538414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e0646c2114c4ce4db39a8c7275e7450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &590128405
 GameObject:
   m_ObjectHideFlags: 0
@@ -5042,6 +5100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 715009386}
   - component: {fileID: 715009387}
+  - component: {fileID: 715009388}
   m_Layer: 5
   m_Name: Meteorit2
   m_TagString: Untagged
@@ -5119,6 +5178,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &715009388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715009385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41cc1bef1dc8ee84c9051151ae1fedf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &727154000
 GameObject:
   m_ObjectHideFlags: 0
@@ -5131,6 +5204,7 @@ GameObject:
   - component: {fileID: 727154004}
   - component: {fileID: 727154003}
   - component: {fileID: 727154002}
+  - component: {fileID: 727154005}
   m_Layer: 5
   m_Name: Volume1
   m_TagString: Untagged
@@ -5267,6 +5341,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 727154000}
   m_CullTransparentMesh: 1
+--- !u!114 &727154005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727154000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0638aa043625d747a2d3ad8722382fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &755148967
 GameObject:
   m_ObjectHideFlags: 0
@@ -8363,6 +8449,7 @@ GameObject:
   - component: {fileID: 1123540881}
   - component: {fileID: 1123540880}
   - component: {fileID: 1123540879}
+  - component: {fileID: 1123540882}
   m_Layer: 5
   m_Name: Volume2
   m_TagString: Untagged
@@ -8499,6 +8586,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1123540877}
   m_CullTransparentMesh: 1
+--- !u!114 &1123540882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123540877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5fdadd89a7024440b7d70956910cce8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1125277063
 GameObject:
   m_ObjectHideFlags: 0
@@ -11034,6 +11133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1357077277}
   - component: {fileID: 1357077278}
+  - component: {fileID: 1357077279}
   m_Layer: 5
   m_Name: Pressure1
   m_TagString: Untagged
@@ -11111,6 +11211,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &1357077279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357077276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec50f00b39977ed4096e78b13420a36c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &1373480478
 GameObject:
   m_ObjectHideFlags: 0
@@ -11458,6 +11572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1400404686}
   - component: {fileID: 1400404687}
+  - component: {fileID: 1400404688}
   m_Layer: 5
   m_Name: Temperature2
   m_TagString: Untagged
@@ -11535,6 +11650,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &1400404688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400404685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0233903667864a54d9d14e1e7bd659f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &1411626250
 GameObject:
   m_ObjectHideFlags: 0
@@ -14679,6 +14808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1857709287}
   - component: {fileID: 1857709288}
+  - component: {fileID: 1857709289}
   m_Layer: 5
   m_Name: Pressure2
   m_TagString: Untagged
@@ -14756,6 +14886,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &1857709289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857709286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e35f0acc9f3e5840b5107383d5b33c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  checkbox: {fileID: 0}
 --- !u!1 &1888605925
 GameObject:
   m_ObjectHideFlags: 0
