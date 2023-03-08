@@ -17,11 +17,11 @@ public class temperature2 : MonoBehaviour
     {
         if (checkbox.GetComponent<Toggle>().isOn)
         {
-            volume.GetComponent<LoadVolumes>().temperature = true;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetTemperature(true);
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().temperature = false;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetTemperature(false); 
         }
     }
 }

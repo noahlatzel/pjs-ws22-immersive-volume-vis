@@ -17,11 +17,11 @@ public class meteorit1 : MonoBehaviour
     {
         if (checkbox.GetComponent<Toggle>().isOn)
         {
-            volume.GetComponent<LoadVolumes>().meteorite = true;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetMeteorite(true);
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().meteorite = false;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetMeteorite(false);
         }
     }
 }

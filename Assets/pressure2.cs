@@ -17,11 +17,11 @@ public class pressure2 : MonoBehaviour
     {
         if (checkbox.GetComponent<Toggle>().isOn)
         {
-            volume.GetComponent<LoadVolumes>().pressure = true;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetPressure(true);
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().pressure = false;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetPressure(false);
         }
     }
 }

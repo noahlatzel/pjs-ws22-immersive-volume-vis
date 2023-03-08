@@ -17,11 +17,11 @@ public class water1 : MonoBehaviour
     {
         if (checkbox.GetComponent<Toggle>().isOn)
         {
-            volume.GetComponent<LoadVolumes>().water = true;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetWater(true);
         }
         else
         {
-            volume.GetComponent<LoadVolumes>().water = false;
+            volume.GetComponent<LoadVolumes>().volumeManager.SetWater(false);
         }
     }
 }
