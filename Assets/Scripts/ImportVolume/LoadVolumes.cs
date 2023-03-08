@@ -442,7 +442,7 @@ public class VolumeAttribute
 
 public class VolumeManager
 {
-    private readonly String dataSetPath;
+    private String dataSetPath;
     private VolumeAttribute[] volumeAttributes;
     private int currentTimeStep;
     private bool isReadingBinary;
@@ -596,6 +596,114 @@ public class VolumeManager
         foreach (var volumeAttribute in volumeAttributes)
         {
             volumeAttribute.SetUsingScale(usingScaled);
+        }
+        RefreshCurrentState();
+    }
+
+    public void SetDataset(String newDatasetName)
+    {
+        if (dataSetPath != $"Assets/Datasets/{newDatasetName}")
+        {
+            dataSetPath = $"Assets/Datasets/{newDatasetName}";
+            currentTimeStep = 0;
+            RefreshCurrentState();
+        }
+    }
+
+    public void RefreshCurrentState()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            volumeAttribute.ClearBufferQueue();
+            if (forward)
+            {
+                volumeAttribute.BufferNextFrame(currentTimeStep);
+            }
+            else
+            {
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+            }
+            NextFrame();
+        }
+    }
+
+    public void SetPressure()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs")
+            {
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetTemperature()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev")
+            {
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetWater()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02")
+            {
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetMeteorite()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03")
+            {
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
         }
     }
 }
