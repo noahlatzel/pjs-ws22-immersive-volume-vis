@@ -8,7 +8,7 @@ public class meteorit2 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        volume = GameObject.Find("RenderedVolume");
+        volume = GameObject.Find("RenderedVolume2");
         checkbox = GameObject.Find("Meteorit2");
     }
 

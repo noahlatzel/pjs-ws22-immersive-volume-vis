@@ -1,11 +1,6 @@
-
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Sprites;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
 public class PlayPAuse : MonoBehaviour
 {
@@ -15,6 +10,8 @@ public class PlayPAuse : MonoBehaviour
     public bool playing;
 
     public GameObject volume;
+    public GameObject volume2;
+    public GameObject dropdown;
 
     public Button button;
 
@@ -24,6 +21,8 @@ public class PlayPAuse : MonoBehaviour
     {
         playing = false;
         volume = GameObject.Find("RenderedVolume");
+        volume2 = GameObject.Find("RenderedVolume2");
+        dropdown = GameObject.Find("Volume2");
     }
 
     public void Update()
@@ -41,13 +40,21 @@ public class PlayPAuse : MonoBehaviour
         {
             button.image.sprite = playDefault;
             playing = true;
-            volume.GetComponent<LoadVolumes>().play = true;
+            if (!(dropdown.GetComponentInChildren<TextMeshProUGUI>().text == "Default"))
+            {
+                volume2.GetComponent<LoadVolumes>().play = true;
+            }
+                volume.GetComponent<LoadVolumes>().play = true;
         }
         else 
         {
             button.image.sprite = pauseDefault;
             playing = false;
-            volume.GetComponent<LoadVolumes>().play = false;
+            if (!(dropdown.GetComponentInChildren<TextMeshProUGUI>().text == "Default"))
+            {
+                volume2.GetComponent<LoadVolumes>().play = false;
+            }
+                volume.GetComponent<LoadVolumes>().play = false;
 
         }
 

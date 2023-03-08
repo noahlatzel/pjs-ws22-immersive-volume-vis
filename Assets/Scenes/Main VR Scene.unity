@@ -3924,7 +3924,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: yA11
+  m_text: Default
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5917,6 +5917,8 @@ MonoBehaviour:
   pauseDefault: {fileID: 0}
   playing: 0
   volume: {fileID: 0}
+  volume2: {fileID: 0}
+  dropdown: {fileID: 0}
   button: {fileID: 0}
 --- !u!1 &836990447
 GameObject:
@@ -8532,6 +8534,8 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
+    - m_Text: Default
+      m_Image: {fileID: 0}
     - m_Text: yA11
       m_Image: {fileID: 0}
     - m_Text: yA31
@@ -8600,6 +8604,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5fdadd89a7024440b7d70956910cce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  dropdown: {fileID: 0}
 --- !u!1 &1125277063
 GameObject:
   m_ObjectHideFlags: 0
@@ -10706,6 +10712,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playing: 0
   volume: {fileID: 0}
+  volume2: {fileID: 0}
+  dropdown: {fileID: 0}
 --- !u!114 &1314347530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10720,6 +10728,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playing: 0
   volume: {fileID: 0}
+  volume2: {fileID: 0}
+  dropdown: {fileID: 0}
 --- !u!114 &1314347531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10734,6 +10744,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playing: 0
   volume: {fileID: 0}
+  volume2: {fileID: 0}
+  dropdown: {fileID: 0}
 --- !u!1 &1316155189
 GameObject:
   m_ObjectHideFlags: 0
