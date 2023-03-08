@@ -627,12 +627,13 @@ public class VolumeManager
         }
     }
 
-    public void SetPressure()
+    public void SetPressure(bool visibility)
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
             if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs")
             {
+                volumeAttribute.SetVisibility(visibility);
                 volumeAttribute.ClearBufferQueue();
                 if (forward)
                 {
@@ -647,12 +648,13 @@ public class VolumeManager
         }
     }
     
-    public void SetTemperature()
+    public void SetTemperature(bool visibility)
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
             if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev")
             {
+                volumeAttribute.SetVisibility(visibility);
                 volumeAttribute.ClearBufferQueue();
                 if (forward)
                 {
@@ -667,12 +669,13 @@ public class VolumeManager
         }
     }
     
-    public void SetWater()
+    public void SetWater(bool visibility)
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
             if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02")
             {
+                volumeAttribute.SetVisibility(visibility);
                 volumeAttribute.ClearBufferQueue();
                 if (forward)
                 {
@@ -687,12 +690,13 @@ public class VolumeManager
         }
     }
     
-    public void SetMeteorite()
+    public void SetMeteorite(bool visibility)
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
             if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03")
             {
+                volumeAttribute.SetVisibility(visibility);
                 volumeAttribute.ClearBufferQueue();
                 if (forward)
                 {
