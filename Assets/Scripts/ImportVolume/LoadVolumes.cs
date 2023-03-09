@@ -617,20 +617,16 @@ public class VolumeManager
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
-            if (visibility != volumeAttribute.IsVisible())
+            volumeAttribute.ClearBufferQueue();
+            if (forward)
             {
-                volumeAttribute.SetVisibility(visibility);
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
-                {
-                    volumeAttribute.BufferNextFrame(currentTimeStep - 1);
-                }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                }
-                NextFrame();
+                volumeAttribute.BufferNextFrame(currentTimeStep - 1);
             }
+            else
+            {
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+            }
+            NextFrame();
         }
     }
 
