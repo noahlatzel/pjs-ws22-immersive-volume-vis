@@ -153,12 +153,17 @@ public class TransferFunctionPanel : MonoBehaviour
     private void SetColor()
     {
         Vector3 imagePos = texture.position;
-        float globalPosX = Input.mousePosition.x - imagePos.x;
-        float globalPosY = Input.mousePosition.y - imagePos.y;
-
-        int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width));
-        int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height));
-
+        //Vector3 inputPos = Input.mousePosition; // Desktop use
+        Vector3 inputPos = GameObject.Find("Right Grab Ray").GetComponent<LineRenderer>().GetPosition(1); // For VR use only
+        float globalPosX = inputPos.x - imagePos.x;
+        float globalPosY = inputPos.y - imagePos.y;
+        Debug.Log($"texture: x:{imagePos.x} y:{imagePos.y}");
+        Debug.Log($"input: x:{inputPos.x} y:{inputPos.y}");
+        Debug.Log($"global: x:{globalPosX} y:{globalPosY}");
+        int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width) / 0.827);
+        int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height) / 0.38);
+        Debug.Log($"width factor: {refSprite.width / texture.sizeDelta.x}, height factor: {refSprite.height / texture.sizeDelta.y}");
+        Debug.Log($"local: x:{localPosX} y:{localPosY}");
         Color c = refSprite.GetPixel(localPosX, localPosY);
         
         TransferFunction transferFunction =
