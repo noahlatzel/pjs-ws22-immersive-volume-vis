@@ -592,12 +592,15 @@ public class VolumeManager
 
     public void SetUsingScale(bool usage)
     {
-        usingScaled = usage;
         foreach (var volumeAttribute in volumeAttributes)
         {
             volumeAttribute.SetUsingScale(usingScaled);
         }
-        RefreshCurrentState();
+        if (usingScaled != usage)
+        {
+            RefreshCurrentState();
+        }
+        usingScaled = usage;
     }
 
     public void SetDataset(String newDatasetName)
@@ -614,16 +617,20 @@ public class VolumeManager
     {
         foreach (var volumeAttribute in volumeAttributes)
         {
-            volumeAttribute.ClearBufferQueue();
-            if (forward)
+            if (visibility != volumeAttribute.IsVisible())
             {
-                volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                volumeAttribute.SetVisibility(visibility);
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                }
+                NextFrame();
             }
-            else
-            {
-                volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-            }
-            NextFrame();
         }
     }
 
@@ -633,17 +640,20 @@ public class VolumeManager
         {
             if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs")
             {
-                volumeAttribute.SetVisibility(visibility);
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
+                if (visibility != volumeAttribute.IsVisible())
                 {
-                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                    volumeAttribute.SetVisibility(visibility);
+                    volumeAttribute.ClearBufferQueue();
+                    if (forward)
+                    {
+                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                    }
+                    else
+                    {
+                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                    }
+                    NextFrame();
                 }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
-                }
-                NextFrame();
             }
         }
     }
@@ -654,17 +664,20 @@ public class VolumeManager
         {
             if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev")
             {
-                volumeAttribute.SetVisibility(visibility);
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
+                if (visibility != volumeAttribute.IsVisible())
                 {
-                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                    volumeAttribute.SetVisibility(visibility);
+                    volumeAttribute.ClearBufferQueue();
+                    if (forward)
+                    {
+                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                    }
+                    else
+                    {
+                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                    }
+                    NextFrame();
                 }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
-                }
-                NextFrame();
             }
         }
     }
@@ -675,17 +688,20 @@ public class VolumeManager
         {
             if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02")
             {
-                volumeAttribute.SetVisibility(visibility);
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
+                if (visibility != volumeAttribute.IsVisible())
                 {
-                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                    volumeAttribute.SetVisibility(visibility);
+                    volumeAttribute.ClearBufferQueue();
+                    if (forward)
+                    {
+                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                    }
+                    else
+                    {
+                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                    }
+                    NextFrame();
                 }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
-                }
-                NextFrame();
             }
         }
     }
@@ -696,17 +712,19 @@ public class VolumeManager
         {
             if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03")
             {
-                volumeAttribute.SetVisibility(visibility);
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
-                {
-                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                if (visibility != volumeAttribute.IsVisible()) {
+                    volumeAttribute.SetVisibility(visibility);
+                    volumeAttribute.ClearBufferQueue();
+                    if (forward)
+                    {
+                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                    }
+                    else
+                    {
+                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                    }
+                    NextFrame();
                 }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
-                }
-                NextFrame();
             }
         }
     }
