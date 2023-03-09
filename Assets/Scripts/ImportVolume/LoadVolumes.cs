@@ -617,11 +617,11 @@ public class VolumeManager
             volumeAttribute.ClearBufferQueue();
             if (forward)
             {
-                volumeAttribute.BufferNextFrame(currentTimeStep);
+                volumeAttribute.BufferNextFrame(currentTimeStep - 1);
             }
             else
             {
-                volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
             }
             NextFrame();
         }
