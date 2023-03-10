@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityVolumeRendering;
 
-public class UIDraggableAlpha : MonoBehaviour, IDragHandler
+public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
     private GameObject alphaView;
@@ -33,27 +33,11 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler
 
         if (rectTransform.anchoredPosition.x < 0)
         {
-            
-            if (rectTransform.anchoredPosition.x > -50 && rectTransform.anchoredPosition.y < 50)
+            if (rectTransform.anchoredPosition.x < -60 && rectTransform.anchoredPosition.y < 50)
             {
-                if (rectTransform.anchoredPosition.x < -20)
-                {
-                    transferFunction.alphaControlPoints.RemoveAt(index);
-                    
-                    // Fix index of remaining control points
-                    for (int i = 0; i < alphaView.transform.childCount; i++)
-                    {
-                        if (alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index > index)
-                        {
-                            alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index--;
-                        }
-                    }
-                    
-                    // Destroy gameObject
-                    Destroy(gameObject);
-                }
+                rectTransform.anchoredPosition = new Vector2(-60, rectTransform.anchoredPosition.y);
             }
-            else
+            else if (rectTransform.anchoredPosition.y >= 50)
             {
                 rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
             }
@@ -76,5 +60,29 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler
         transferFunction.alphaControlPoints[index] = controlPoint;
 
         transferFunction.GenerateTexture();
+    }
+
+    public void OnEndDrag(PointerEventData pointerEventData) {
+        if (rectTransform.anchoredPosition.x < -20)
+        {
+            transferFunction.alphaControlPoints.RemoveAt(index);
+
+            // Fix index of remaining control points
+            for (int i = 0; i < alphaView.transform.childCount; i++)
+            {
+                if (alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index > index)
+                {
+                    alphaView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index--;
+                }
+            }
+
+            // Destroy gameObject
+            Destroy(gameObject);
+        }
+        else {
+            if (rectTransform.anchoredPosition.x >= -20 && rectTransform.anchoredPosition.x < 0) {
+                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
+            }
+        }
     }
 }

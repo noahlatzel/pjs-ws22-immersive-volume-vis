@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityVolumeRendering;
 
-public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandler
+public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
     private GameObject colorView;
@@ -34,30 +34,11 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
         float myMaxWidth = GetComponent<RectTransform>().rect.width;
         float myMaxHeight = GetComponent<RectTransform>().rect.height;
 
-        if (rectTransform.anchoredPosition.x < 0)
+        if (rectTransform.anchoredPosition.x <= 0)
         {
-            if (rectTransform.anchoredPosition.x > -50)
+            if (rectTransform.anchoredPosition.x < -60)
             {
-                if (rectTransform.anchoredPosition.x < -20)
-                {
-                    transferFunction.colourControlPoints.RemoveAt(index);
-                    
-                    // Fix index of remaining control points
-                    for (int i = 0; i < colorView.transform.childCount; i++)
-                    {
-                        if (colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index > index)
-                        {
-                            colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index--;
-                        }
-                    }
-                    
-                    // Destroy gameObject
-                    Destroy(gameObject);
-                }
-            }
-            else
-            {
-                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);    
+                rectTransform.anchoredPosition = new Vector2(-60, rectTransform.anchoredPosition.y);
             }
         }
         if (rectTransform.anchoredPosition.y != 0)
@@ -81,5 +62,28 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         transferFuncManager.selectedColourControlPointIndex = index;
+    }
+
+    public void OnEndDrag(PointerEventData pointerEventData) {
+        if (rectTransform.anchoredPosition.x < -20)
+        {
+            transferFunction.alphaControlPoints.RemoveAt(index);
+
+            // Fix index of remaining control points
+            for (int i = 0; i < colorView.transform.childCount; i++)
+            {
+                if (colorView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index > index)
+                {
+                    colorView.transform.GetChild(i).GetComponent<UIDraggableAlpha>().index--;
+                }
+            }
+
+            // Destroy gameObject
+            Destroy(gameObject);
+        }
+        else if (rectTransform.anchoredPosition.x < 0)
+        {
+            rectTransform.anchoredPosition = new Vector2(0, 0);
+        }
     }
 }
