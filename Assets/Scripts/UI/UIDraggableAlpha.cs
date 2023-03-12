@@ -22,8 +22,8 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
     
     public void OnDrag(PointerEventData eventData)
     {
-        rectTransform.anchoredPosition += eventData.delta; // For mouse use only
-        //rectTransform.position = GameObject.Find("Right Grab Ray").GetComponent<LineRenderer>().GetPosition(1); // For VR use only
+        //rectTransform.anchoredPosition += eventData.delta; // For mouse use only
+        rectTransform.position = GameObject.Find("Right Grab Ray").GetComponent<LineRenderer>().GetPosition(1); // For VR use only
 
         float maxHeight = alphaView.GetComponent<RectTransform>().rect.height;
         float maxWidth = alphaView.GetComponent<RectTransform>().rect.width;
