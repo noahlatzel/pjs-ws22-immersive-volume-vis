@@ -73,7 +73,7 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
     }
 
     public void OnEndDrag(PointerEventData pointerEventData) {
-        if (rectTransform.anchoredPosition.x < -20)
+        if (rectTransform.anchoredPosition.x < -30)
         {
             transferFunction.colourControlPoints.RemoveAt(index);
 

@@ -63,7 +63,7 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
     }
 
     public void OnEndDrag(PointerEventData pointerEventData) {
-        if (rectTransform.anchoredPosition.x < -20)
+        if (rectTransform.anchoredPosition.x < -30)
         {
             transferFunction.alphaControlPoints.RemoveAt(index);
 
@@ -79,10 +79,8 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
             // Destroy gameObject
             Destroy(gameObject);
         }
-        else {
-            if (rectTransform.anchoredPosition.x >= -20 && rectTransform.anchoredPosition.x < 0) {
-                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
-            }
+        else if (rectTransform.anchoredPosition.x < 0) {
+            rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);
         }
     }
 }
