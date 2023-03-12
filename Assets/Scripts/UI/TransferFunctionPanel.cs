@@ -18,6 +18,7 @@ public class TransferFunctionPanel : MonoBehaviour
     public GameObject alphaControlPointPrefab;
     public GameObject colourControlPointPrefab;
     private int activeAttribute;
+    private TransferFunction secondaryTransferFunction;
     
     // Color picker
     public RectTransform texture;
@@ -60,8 +61,20 @@ public class TransferFunctionPanel : MonoBehaviour
         TransferFunction transferFunction =
             selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
         Texture2D transferFuncTex = transferFunction.GetTexture();
-        colorView.GetComponent<RawImage>().texture = transferFuncTex;
         alphaView.GetComponent<RawImage>().texture = transferFuncTex;
+        
+        // Create only color transfer function for color view
+        secondaryTransferFunction = ScriptableObject.CreateInstance<TransferFunction>();
+        
+        // Create full alpha control point
+        List<TFAlphaControlPoint> fullAlphaControlPointList = new List<TFAlphaControlPoint> { new TFAlphaControlPoint(0.0f, 1.0f),new TFAlphaControlPoint(0.5f, 1.0f) };
+        secondaryTransferFunction.alphaControlPoints = fullAlphaControlPointList;
+        
+        // Copy color control points from primary transfer function
+        secondaryTransferFunction.colourControlPoints =
+            new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+        
+        colorView.GetComponent<RawImage>().texture = secondaryTransferFunction.GetTexture();
         
         // Delete old control points (alpha)
         for (int i = 0; i < alphaView.transform.childCount; i++)
@@ -129,6 +142,7 @@ public class TransferFunctionPanel : MonoBehaviour
         controlPointUI.GetComponent<UIDraggableColor>().controlPoint = controlPoint;
         controlPointUI.GetComponent<UIDraggableColor>().transferFunction = 
             selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
+        controlPointUI.GetComponent<UIDraggableColor>().secondaryTransferFunction = secondaryTransferFunction;
         controlPointUI.GetComponent<UIDraggableColor>().index = indexControlPoint;
     }
 
@@ -138,6 +152,12 @@ public class TransferFunctionPanel : MonoBehaviour
             selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
         TFColourControlPoint controlPoint = new TFColourControlPoint(0.5f, Color.white);
         transferFunction.colourControlPoints.Add(controlPoint);
+        transferFunction.GenerateTexture();
+        
+        // Add to secondary transfer function
+        secondaryTransferFunction.colourControlPoints.Add(controlPoint);
+        secondaryTransferFunction.GenerateTexture();
+        
         NewColourControlPointUI(controlPoint, activeAttribute, transferFunction.colourControlPoints.Count - 1);
     }
     
@@ -147,6 +167,7 @@ public class TransferFunctionPanel : MonoBehaviour
             selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
         TFAlphaControlPoint controlPoint = new TFAlphaControlPoint(0.5f, 0.5f);
         transferFunction.alphaControlPoints.Add(controlPoint);
+        transferFunction.GenerateTexture();
         NewAlphaControlPointUI(controlPoint, activeAttribute, transferFunction.alphaControlPoints.Count - 1);
     }
 
@@ -165,6 +186,12 @@ public class TransferFunctionPanel : MonoBehaviour
             selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
         TFColourControlPoint oldCP = transferFunction.colourControlPoints[selectedColourControlPointIndex];
         transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCP.dataValue, c);
+        
+        // Apply changes to secondary transfer function
+        secondaryTransferFunction.colourControlPoints =
+            new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+        
+        secondaryTransferFunction.GenerateTexture();
         transferFunction.GenerateTexture();
     }
 
