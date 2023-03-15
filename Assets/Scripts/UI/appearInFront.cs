@@ -27,7 +27,7 @@ public class appearInFront : MonoBehaviour
         if (showMenu.action.WasPressedThisFrame())
         {
             Quaternion posRot = new Quaternion(gameObject.transform.rotation.x, mainCam.transform.rotation.y, gameObject.transform.rotation.z, mainCam.transform.rotation.w);
-            Vector3 newPos = ((posRot * Vector3.forward * 1) + mainCam.transform.position);
+            Vector3 newPos = ((posRot * Vector3.forward * 2) + mainCam.transform.position);
             newPos.y = mainCam.transform.position.y - 0.3f;
         
             //Debug.Log(" w:" + mainCam.transform.rotation.w + " x:" + mainCam.transform.rotation.x + " y:" + mainCam.transform.rotation.y + " z:" + mainCam.transform.rotation.z);
