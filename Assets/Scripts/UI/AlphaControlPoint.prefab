@@ -134,3 +134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f426581211c9fa46832a9e80a2a2daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlPoint:
+    dataValue: 0
+    alphaValue: 0
+  transferFunction: {fileID: 0}
+  index: 0
