@@ -29,11 +29,11 @@ public class LoadVolumes : MonoBehaviour
     private float timePassedBuffer = 0;
     
     [Tooltip("Start/Stop the animation.")]
-    [SerializeField] private bool play;
+    [SerializeField] public bool play;
     
     [Tooltip("Specify the frames per second of the animation.")]
     [SerializeField]
-    private int timesPerSecond = 1;
+    public int timesPerSecond = 1;
     
     [Tooltip("Start/Stop the buffer.")]
     public bool isBuffering;
@@ -43,6 +43,9 @@ public class LoadVolumes : MonoBehaviour
     [Tooltip("Adjust the buffer speed (buffer per second)")]
     public int bufferSpeed = 5;
 
+    public bool forward = true;
+    public int timestep = 0;
+    
     // Manager class
     public VolumeManager volumeManager;
 
@@ -76,8 +79,18 @@ public class LoadVolumes : MonoBehaviour
             timePassed -= dur;
             if (play)
             {
-                // Render the next frame through Volume Manager
-                volumeManager.NextFrame();
+                volumeManager.SetForward(forward);
+                if (forward)
+                {
+                    // Render the next frame through Volume Manager
+                    volumeManager.NextFrame();
+                    timestep = (timestep + 1) % 10;
+                }
+                else
+                {
+                    volumeManager.PreviousFrame();
+                    timestep = (timestep - 1) % 10;
+                }
             }
         }
         
@@ -122,6 +135,7 @@ public class LoadVolumes : MonoBehaviour
             // Transform object and set hierarchy
             obj.transform.SetParent(transform);
             obj.transform.rotation = Quaternion.identity;
+            obj.transform.localPosition = Vector3.zero;
             obj.name = volumeAttribute.GetName();
                 
             // Disable MeshRenderer
@@ -177,6 +191,7 @@ public class VolumeAttribute
     private bool usingScaled = false;
     private readonly Assembly dll;
 
+
     public VolumeAttribute(String path)
     {
         name = new DirectoryInfo(path).Name;
@@ -187,13 +202,18 @@ public class VolumeAttribute
         originalPath = path;
         bufferQueue = new Queue<byte[]>();
         bufferStack = new LimitedStack<Texture3D>(10);
-        
+
         // Load the DLL into the Assembly object
         dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
     }
 
     private String GetVolumePath(int number)
     {
+        if (number < 0)
+        {
+            number = count + number;
+        }
+
         return usingScaled ? filePathsScaled[number] : filePaths[number];
     }
 
@@ -245,7 +265,73 @@ public class VolumeAttribute
 
             // Set pixel data from bufferQueue
             newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+            
+            // WIP
+            /*var allBytes = newTexture.GetPixelData<Color32>(0);
+            int surroundWidth = 0;
+            int textureSplits = 10;
+            //int chunkSize = allBytes.Length / textureSplits;
+            //var result = allBytes
+            //    .Select((x, i) => new { Index = i, Value = x })
+            //    .GroupBy(x => x.Index / chunkSize)
+            //    .Select(x => x.Select(v => v.Value).ToArray())
+            //    .ToArray();
+            //for (int i = 0; i < result.Length; i++) {
+            //    Texture3D splitTexture = new Texture3D(newTexture.width, newTexture.height, newTexture.depth / textureSplits, texFormat, false);
+            //    splitTexture.SetPixelData(result[i], 0);
+            //    material.SetTexture("_DataTex" + i, splitTexture);
+            //    splitTexture.Apply();
+            //}
+            
+            // Shader: dataTexPos.z = 1/12 + 10 * dataTexPos.z / 12;
+            for (int i = 0; i < textureSplits; i++)
+            {
+                int surroundWidthFactor = i == 0 || i == 9 ? 1 : 2;
+                Texture3D splitTexture = new Texture3D(newTexture.width, newTexture.height, newTexture.depth / textureSplits + surroundWidthFactor * surroundWidth, texFormat, false);
+                int preOffset = i == 0 ? 0 : newTexture.height * newTexture.width * surroundWidth;
+                int pastOffset = i == 9 ? 0 : newTexture.height * newTexture.width * surroundWidth;
+                Color32[] pixelData = allBytes.Skip(allBytes.Length / textureSplits * i - preOffset).Take(allBytes.Length / textureSplits + pastOffset + preOffset).ToArray();
+                splitTexture.SetPixelData(pixelData, 0);
+                material.SetTexture("_DataTex" + i, splitTexture);
+                splitTexture.Apply();
+            }*/
+            
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", newTexture);
+
+            // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+            // a separate thread
+            newTexture.Apply();
+        }
+    }
+
+    public void NextFrame(int numberOfFramesToSkip)
+    {
+        // Check if textures are buffered
+        if (bufferQueue.Count > 0)
+        {
+            // Get correct texture format analogue to the Volume Importer
+            TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
         
+            // Set the current texture to the next texture in the buffer depended on usingScaled
+            Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+                new Texture3D(300, 300, 300, texFormat, false);
+
+            // Save current Texture3D to bufferStack (for PreviousFrame())
+            bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
+
+            for (int j = 1; j < numberOfFramesToSkip; j++)
+            {
+                if (bufferQueue.Count > 2)
+                {
+                    bufferQueue.Dequeue();
+                }
+            }
+
+            // Set pixel data from bufferQueue
+            newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+            
+            
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", newTexture);
 
@@ -281,11 +367,36 @@ public class VolumeAttribute
     public void PreviousFrame()
     {
         // Check if textures are buffered
-        if (bufferStack.Count() > 0)
+        /*if (bufferStack.Count() > 0)
         {
             // Set _DataTex texture of material to newly loaded texture
             material.SetTexture("_DataTex", bufferStack.Pop());
         }
+        else
+        {
+            NextFrame();
+        }*/
+        NextFrame();
+    }
+    
+    public void PreviousFrame(int numberOfFramesToSkip)
+    {
+        // Check if textures are buffered
+        /*if (bufferStack.Count() > 0)
+        {
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", bufferStack.Pop());
+        }
+        else
+        {
+            NextFrame();
+        }*/
+        NextFrame(numberOfFramesToSkip);
+    }
+
+    public void ClearBufferQueue()
+    {
+        bufferQueue.Clear();
     }
 
     public Texture3D GetNextTexture()
@@ -325,6 +436,22 @@ public class VolumeAttribute
         }
     }
     
+    // Loads the binary from the specified path and stores the loaded byte array in a queue.
+    // Loading the binary has to be separated from the main function because Unity functions classes
+    // may not be called in other threads than the main thread but we want to load our data in a separate 
+    // thread to reduce lag.
+    public void BufferNextFrameReverse(int currentTimeStep)
+    {
+        // Restrict buffer size
+        if (bufferQueue.Count <= 10)
+        {
+            // Load pixelData from binary file at next position
+            int nextVolumeToBuffer = (currentTimeStep - 1 - bufferQueue.Count) % count;
+            dll.GetType("ThreadedBinaryReader.FileReader").GetMethod("ReadFileInThread")
+                .Invoke(null, new object[] { GetVolumePath(nextVolumeToBuffer), bufferQueue });
+        }
+    }
+    
     public void SetUsingScale(bool usage)
     {
         // Check if scale was changed during runtime
@@ -332,6 +459,12 @@ public class VolumeAttribute
         {
             // Clear bufferQueue during runtime
             bufferQueue.Clear();
+            
+            // Clear bufferStack during runtime
+            while (bufferStack.Count() > 0)
+            {
+                bufferStack.Pop();
+            }
         }
         usingScaled = usage;
     }
@@ -339,16 +472,30 @@ public class VolumeAttribute
 
 public class VolumeManager
 {
-    private readonly String dataSetPath;
+    private String dataSetPath;
     private VolumeAttribute[] volumeAttributes;
     private int currentTimeStep;
     private bool isReadingBinary;
     private bool usingScaled = false;
+    private bool forward = true;
 
     public VolumeManager(String dataSetName)
     {
         dataSetPath = $"Assets/Datasets/{dataSetName}";
         AddVolumeAttributes();
+    }
+
+    public void SetForward(bool direction)
+    {
+        if (forward != direction)
+        {
+            foreach (var volumeAttribute in volumeAttributes)
+            {
+                volumeAttribute.ClearBufferQueue();
+            }
+        }
+
+        forward = direction;
     }
 
     private void AddVolumeAttributes()
@@ -405,6 +552,60 @@ public class VolumeManager
             currentTimeStep++;
         }
     }
+    
+    public void NextFrame(int framesToSkip)
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.NextFrame(framesToSkip);
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep++;
+        }
+    }
+
+    public void PreviousFrame()
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.PreviousFrame();
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep--;
+        }
+    }
+    
+    public void PreviousFrame(int framesToSkip)
+    {
+        bool active = false;
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.IsVisible())
+            {
+                volumeAttribute.PreviousFrame(framesToSkip);
+                active = true;
+            }
+        }
+
+        if (active)
+        {
+            currentTimeStep--;
+        }
+    }
 
     public void BufferNextFrame()
     {
@@ -413,7 +614,14 @@ public class VolumeManager
         
         foreach (var volumeAttribute in volumeAttributes)
         {
-            volumeAttribute.BufferNextFrame(currentTimeStep);
+            if (forward)
+            {
+                volumeAttribute.BufferNextFrame(currentTimeStep);
+            }
+            else
+            {
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+            }
         }
                             
         // Clear the flag to indicate that the reading operation has completed
@@ -432,6 +640,118 @@ public class VolumeManager
         foreach (var volumeAttribute in volumeAttributes)
         {
             volumeAttribute.SetUsingScale(usingScaled);
+        }
+        RefreshCurrentState();
+    }
+
+    public void SetDataset(String newDatasetName)
+    {
+        if (dataSetPath != $"Assets/Datasets/{newDatasetName}")
+        {
+            dataSetPath = $"Assets/Datasets/{newDatasetName}";
+            currentTimeStep = 0;
+            RefreshCurrentState();
+        }
+    }
+
+    public void RefreshCurrentState()
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            volumeAttribute.ClearBufferQueue();
+            if (forward)
+            {
+                volumeAttribute.BufferNextFrame(currentTimeStep);
+            }
+            else
+            {
+                volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+            }
+            NextFrame();
+        }
+    }
+
+    public void SetPressure(bool visibility)
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs")
+            {
+                volumeAttribute.SetVisibility(visibility);
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetTemperature(bool visibility)
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev")
+            {
+                volumeAttribute.SetVisibility(visibility);
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetWater(bool visibility)
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02")
+            {
+                volumeAttribute.SetVisibility(visibility);
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
+        }
+    }
+    
+    public void SetMeteorite(bool visibility)
+    {
+        foreach (var volumeAttribute in volumeAttributes)
+        {
+            if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03")
+            {
+                volumeAttribute.SetVisibility(visibility);
+                volumeAttribute.ClearBufferQueue();
+                if (forward)
+                {
+                    volumeAttribute.BufferNextFrame(currentTimeStep);
+                }
+                else
+                {
+                    volumeAttribute.BufferNextFrameReverse(currentTimeStep);
+                }
+                NextFrame();
+            }
         }
     }
 }
