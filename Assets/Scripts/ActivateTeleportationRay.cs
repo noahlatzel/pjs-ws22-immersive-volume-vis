@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +18,32 @@ public class ActivateTeleportationRay : MonoBehaviour
 	public InputActionProperty leftCancel;
 	public InputActionProperty rightCancel;
 
+	private InteractionCubeStandalone interactionCube;
+	private bool interactionCubeExists = false;
+	
+	void Start()
+	{
+		if (GameObject.Find("InteractionCubeStandalone") != null)
+		{
+			if (GameObject.Find("InteractionCubeStandalone").GetComponent<InteractionCubeStandalone>() != null)
+			{
+				interactionCube = GameObject.Find("InteractionCubeStandalone")
+					.GetComponent<InteractionCubeStandalone>();
+				interactionCubeExists = true;
+			}
+		}
+		
+		
+	}
+
 	void Update()
 	{
-		bool isInArea = GameObject.Find("InteractionCubeStandalone").GetComponent<InteractionCubeStandalone>().AreHandsNearCube();
+		bool isInArea = false;
+		
+		if (interactionCubeExists)
+		{
+			isInArea = interactionCube.AreHandsNearCube();
+		}
 		leftTeleportation.SetActive(!isInArea && /*leftActivate.action.ReadValue<float>() > 0.1f &&*/ leftCancel.action.ReadValue<float>() == 0);
 		rightTeleportation.SetActive(!isInArea && /*rightActivate.action.ReadValue<float>() > 0.1f &&*/ rightCancel.action.ReadValue<float>() == 0);
 		//leftGrab.SetActive(!isInArea);
