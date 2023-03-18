@@ -202,68 +202,68 @@
                 int slices = 10;
                 int dataTexIndex = (int)floor(pos.z * slices); // Select the appropriate _DataTex based on the z-coordinate
                 float3 dataTexPos = pos;
-                dataTexPos.z = dataTexPos.z % (1); // Adjust the position relative to the selected _DataTex 
+                dataTexPos.z = (dataTexPos.z % 0.1) * slices; // Adjust the position relative to the selected _DataTex; dataTexPos.z % (1 / slices)
                 switch (dataTexIndex)
                 {
                     case 1:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex1, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 2:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex2, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 3:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex3, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 4:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex4, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 5:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex5, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 6:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex6, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 7:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex7, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 8:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex8, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     case 9:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex9, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                     default:
                         #if CUBIC_INTERPOLATION_ON
                             return interpolateTricubicFast(_DataTex, float3(dataTexPos.x, dataTexPos.y, dataTexPos.z), _TextureSize);
                         #else
-                            return tex3Dlod(_DataTex, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f));
+                            return saturate(tex3Dlod(_DataTex0, float4(dataTexPos.x, dataTexPos.y, dataTexPos.z, 0.0f)));
                         #endif
                 }
             }

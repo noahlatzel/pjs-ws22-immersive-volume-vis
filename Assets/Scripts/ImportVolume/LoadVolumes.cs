@@ -48,7 +48,16 @@ public class LoadVolumes : MonoBehaviour
     
     // Manager class
     public VolumeManager volumeManager;
+    
+    public int targetFramerate = 90;
+    
+    void Awake()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = targetFramerate;
+    }
 
+    
     // Load the first volume per attribute with the importer; guarantees
     // correct configuration of Material properties etc.
     // Start is called before the first frame update
@@ -65,7 +74,7 @@ public class LoadVolumes : MonoBehaviour
     void Update()
     {
         // Update volume visibility according to public variables
-        volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
+        //volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
         volumeManager.SetUsingScale(useScaledVersion);
         
         // Only execute as often as specified in timesPerSecond
@@ -107,9 +116,9 @@ public class LoadVolumes : MonoBehaviour
                 t.Start();
             }
         }
-
         
-
+        if(Application.targetFrameRate != targetFramerate)
+            Application.targetFrameRate = targetFramerate;
     }
 
     private void RenderOnStart(VolumeManager volumeManagerObject)
@@ -232,8 +241,11 @@ public class VolumeAttribute
 
     public void SetVisibility(bool visibility)
     {
-        meshRenderer.enabled = visibility;
-        active = visibility;
+        if (meshRenderer.enabled != visibility)
+        {
+            meshRenderer.enabled = visibility;
+            active = visibility;
+        }
     }
 
     public bool IsVisible()
@@ -246,21 +258,21 @@ public class VolumeAttribute
         // Check if textures are buffered
         if (bufferQueue.Count > 0)
         {
-            // Get correct texture format analogue to the Volume Importer
-            TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
-        
             // Set the current texture to the next texture in the buffer depended on usingScaled
-            Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
-                new Texture3D(300, 300, 300, texFormat, false);
-
+            //Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
+            //    new Texture3D(300, 300, 300, texFormat, false);
+            
+            // Get the currently loaded texture
+            Texture3D currentTexture = (Texture3D) material.GetTexture("_DataTex");
+            
             // Save current Texture3D to bufferStack (for PreviousFrame())
-            bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
+            bufferStack.Push(currentTexture);
 
             // Set pixel data from bufferQueue
-            newTexture.SetPixelData(bufferQueue.Dequeue(), 0);
+            currentTexture.SetPixelData(bufferQueue.Dequeue(), 0);
             
             // WIP
-            /*var allBytes = newTexture.GetPixelData<Color32>(0);
+            var allBytes = currentTexture.GetPixelData<Color32>(0);
             int surroundWidth = 0;
             int textureSplits = 10;
             //int chunkSize = allBytes.Length / textureSplits;
@@ -277,7 +289,7 @@ public class VolumeAttribute
             //}
             
             // Shader: dataTexPos.z = 1/12 + 10 * dataTexPos.z / 12;
-            for (int i = 0; i < textureSplits; i++)
+            /*for (int i = 0; i < textureSplits; i++)
             {
                 int surroundWidthFactor = i == 0 || i == 9 ? 1 : 2;
                 Texture3D splitTexture = new Texture3D(newTexture.width, newTexture.height, newTexture.depth / textureSplits + surroundWidthFactor * surroundWidth, texFormat, false);
@@ -285,16 +297,17 @@ public class VolumeAttribute
                 int pastOffset = i == 9 ? 0 : newTexture.height * newTexture.width * surroundWidth;
                 Color32[] pixelData = allBytes.Skip(allBytes.Length / textureSplits * i - preOffset).Take(allBytes.Length / textureSplits + pastOffset + preOffset).ToArray();
                 splitTexture.SetPixelData(pixelData, 0);
+                splitTexture.wrapMode = TextureWrapMode.Clamp;
                 material.SetTexture("_DataTex" + i, splitTexture);
-                splitTexture.Apply();
+                //splitTexture.Apply();
             }*/
             
             // Set _DataTex texture of material to newly loaded texture
-            material.SetTexture("_DataTex", newTexture);
+            material.SetTexture("_DataTex", currentTexture);
 
             // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
             // a separate thread
-            newTexture.Apply();
+            currentTexture.Apply();
         }
     }
 
@@ -626,7 +639,7 @@ public class VolumeManager
             {
                 volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
             }
-            NextFrame();
+            volumeAttribute.NextFrame();
         }
     }
 
@@ -639,16 +652,19 @@ public class VolumeManager
                 if (visibility != volumeAttribute.IsVisible())
                 {
                     volumeAttribute.SetVisibility(visibility);
-                    volumeAttribute.ClearBufferQueue();
-                    if (forward)
+                    if (visibility)
                     {
-                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        volumeAttribute.ClearBufferQueue();
+                        if (forward)
+                        {
+                            volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        }
+                        else
+                        {
+                            volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                        }
+                        volumeAttribute.NextFrame();
                     }
-                    else
-                    {
-                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                    }
-                    NextFrame();
                 }
             }
         }
@@ -663,16 +679,19 @@ public class VolumeManager
                 if (visibility != volumeAttribute.IsVisible())
                 {
                     volumeAttribute.SetVisibility(visibility);
-                    volumeAttribute.ClearBufferQueue();
-                    if (forward)
+                    if (visibility)
                     {
-                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        volumeAttribute.ClearBufferQueue();
+                        if (forward)
+                        {
+                            volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        }
+                        else
+                        {
+                            volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                        }
+                        volumeAttribute.NextFrame();
                     }
-                    else
-                    {
-                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                    }
-                    NextFrame();
                 }
             }
         }
@@ -687,16 +706,19 @@ public class VolumeManager
                 if (visibility != volumeAttribute.IsVisible())
                 {
                     volumeAttribute.SetVisibility(visibility);
-                    volumeAttribute.ClearBufferQueue();
-                    if (forward)
+                    if (visibility)
                     {
-                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        volumeAttribute.ClearBufferQueue();
+                        if (forward)
+                        {
+                            volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        }
+                        else
+                        {
+                            volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                        }
+                        volumeAttribute.NextFrame();
                     }
-                    else
-                    {
-                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                    }
-                    NextFrame();
                 }
             }
         }
@@ -710,16 +732,19 @@ public class VolumeManager
             {
                 if (visibility != volumeAttribute.IsVisible()) {
                     volumeAttribute.SetVisibility(visibility);
-                    volumeAttribute.ClearBufferQueue();
-                    if (forward)
+                    if (visibility)
                     {
-                        volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        volumeAttribute.ClearBufferQueue();
+                        if (forward)
+                        {
+                            volumeAttribute.BufferNextFrame(currentTimeStep - 1);
+                        }
+                        else
+                        {
+                            volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
+                        }
+                        volumeAttribute.NextFrame();
                     }
-                    else
-                    {
-                        volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                    }
-                    NextFrame();
                 }
             }
         }

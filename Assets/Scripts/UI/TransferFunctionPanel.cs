@@ -60,6 +60,11 @@ public class TransferFunctionPanel : MonoBehaviour
         activeAttribute = value;
         TransferFunction transferFunction =
             selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
+        
+        // Set transfer function for other volume
+        GameObject.Find("RenderedVolume2").transform.GetChild(value).GetComponent<VolumeRenderedObject>()
+            .transferFunction = transferFunction;
+        
         Texture2D transferFuncTex = transferFunction.GetTexture();
         alphaView.GetComponent<RawImage>().texture = transferFuncTex;
         

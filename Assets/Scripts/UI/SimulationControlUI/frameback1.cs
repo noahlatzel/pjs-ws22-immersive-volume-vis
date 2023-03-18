@@ -1,7 +1,11 @@
-using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using TMPro;
 
-public class skipframe10 : MonoBehaviour
+public class frameback1 : MonoBehaviour
 {
     public bool playing;
 
@@ -18,13 +22,13 @@ public class skipframe10 : MonoBehaviour
         playing = volume.GetComponent<LoadVolumes>().play;
     }
 
-    public void Update()
+    /*public void Update()
     {
-        if(Input.GetButtonDown("+10 Frame"))
+        if (Input.GetButtonDown("-1 Frame"))
         {
             SkipFrame();
         }
-    }
+    }*/
 
     public void SkipFrame()
     {
@@ -32,19 +36,17 @@ public class skipframe10 : MonoBehaviour
         {
             if (!(dropdown.GetComponentInChildren<TextMeshProUGUI>().text == "Default"))
             {
-                volume2.GetComponent<LoadVolumes>().timesPerSecond = volume2.GetComponent<LoadVolumes>().timesPerSecond + 10;
+                volume2.GetComponent<LoadVolumes>().timesPerSecond--;
             }
-            volume.GetComponent<LoadVolumes>().timesPerSecond = volume.GetComponent<LoadVolumes>().timesPerSecond+10 ;
+                volume.GetComponent<LoadVolumes>().timesPerSecond--;
         }
         else
         {
-
             if (!(dropdown.GetComponentInChildren<TextMeshProUGUI>().text == "Default"))
             {
-                volume2.GetComponent<LoadVolumes>().volumeManager.NextFrame(10);
+                volume2.GetComponent<LoadVolumes>().volumeManager.PreviousFrame();
             }
-
-                volume.GetComponent<LoadVolumes>().volumeManager.NextFrame(10);
+                volume.GetComponent<LoadVolumes>().volumeManager.PreviousFrame();
         }
     }
 }
