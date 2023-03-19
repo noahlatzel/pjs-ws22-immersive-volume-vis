@@ -181,6 +181,44 @@ namespace ImportVolume
                 Destroy(GameObject.Find("VolumeRenderedObject_test"));
             }
         }
+        
+        void PreprocessVolumePartialTextures(ProcessElementStruct processElementStruct, int textureSplits)
+        {
+            String file = processElementStruct.fileEntry;
+            String binaryPath = processElementStruct.binaryPath;
+            
+            // Extract fileName from path
+            String fileName = Path.GetFileNameWithoutExtension(file) + ".bin";
+            
+            // Only convert to binary if it has not been converted already
+            if (!File.Exists(binaryPath + fileName))
+            {
+                // Convert .nii to dataset and create object from it
+                VolumeDataset dataset = importer.Import(file);
+                VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+        
+                // Get Texture3D of rendered volume
+                // The volumeData is stored in the first Texture3D "_DataTex"
+                Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
+
+                // Split textures
+                // Extract pixel data from texture to save it 
+                // mipLevel 0 according to implementation in IImageFileImporter.Import
+                byte[][] byteArrays = SplitByteArray(texture.GetPixelData<byte>(0).ToArray(), textureSplits);
+                for (int i = 0; i < byteArrays.Length; i++)
+                {
+                    // Extract fileName from path
+                    String splitFileName = Path.GetFileNameWithoutExtension(file) + $"_{i}" + ".bin";
+                    
+                    // Save pixel data to binary file
+                    File.WriteAllBytes(binaryPath + splitFileName, byteArrays[i]);
+                }
+
+                // Destroy created object 
+                Destroy(obj);
+                Destroy(GameObject.Find("VolumeRenderedObject_test"));
+            }
+        }
 
         // Scales the given 3D texture down and returns a new 3D texture.
         Texture3D DownScaleTexture3D(Texture3D texture, int newWidth, int newHeight, int newDepth)
@@ -292,11 +330,23 @@ namespace ImportVolume
             return result;
         }
 
+        byte[][] SplitByteArray(byte[] byteArray, int textureSplits)
+        {
+            int chunkSize = byteArray.Length / textureSplits;
+            var result = byteArray
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / chunkSize)
+                .Select(x => x.Select(v => v.Value).ToArray())
+                .ToArray();
+            return result;
+        }
     }
 
+    
     struct ProcessElementStruct
     {
         public String binaryPath;
         public String fileEntry;
     }
+
 }
