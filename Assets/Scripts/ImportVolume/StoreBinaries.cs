@@ -139,7 +139,7 @@ namespace ImportVolume
                 TimeSpan timePerVolume = stopwatch.Elapsed / ++counter;
                 TimeSpan remainingTime = timePerVolume * processingQueue.Count;
                 DateTime finishedUntil = DateTime.Now.Add(remainingTime);
-                Debug.Log($"Processed {counter}/{initialCount} volumes in {stopwatch.Elapsed:hh\\:mm\\:ss} | time per volume {timePerVolume:mm\\:ss.fff} | approx. remaining time: {remainingTime:hh\\:mm\\:ss} | finished until {finishedUntil:HH:mm:ss}");
+                Debug.Log($"Processed {counter}/{initialCount} volumes in {stopwatch.Elapsed:hh\\:mm\\:ss} | time per volume {timePerVolume:mm\\:ss\\.fff} | approx. remaining time: {remainingTime:hh\\:mm\\:ss} | finished until {finishedUntil:HH:mm:ss}");
             }
         }
 
