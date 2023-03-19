@@ -51,7 +51,7 @@ namespace ImportVolume
         public VolumeManager volumeManager;
     
         public int targetFramerate = 90;
-    
+        
         void Awake()
         {
             QualitySettings.vSyncCount = 0;
@@ -92,13 +92,38 @@ namespace ImportVolume
                     {
                         // Render the next frame through Volume Manager
                         volumeManager.NextFrame();
-                        timestep = (timestep + 1) % 10;
+                        timestep = (timestep + 1) % volumeManager.GetCount();
                     }
                     else
                     {
                         volumeManager.PreviousFrame();
-                        timestep = (timestep - 1) % 10;
+                        timestep = (timestep - 1) % volumeManager.GetCount();
                     }
+                } else if (volumeManager.fireOnce)
+                {
+                    volumeManager.SetForward(forward);
+                    if (forward)
+                    {
+                        // Render the next frame through Volume Manager
+                        foreach (var volumeAttribute in volumeManager.GetVolumeAttributes())
+                        {
+                            if (volumeAttribute.IsVisible())
+                            {
+                                volumeAttribute.NextFrame();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var volumeAttribute in volumeManager.GetVolumeAttributes())
+                        {
+                            if (volumeAttribute.IsVisible())
+                            {
+                                volumeAttribute.PreviousFrame();
+                            }
+                        }
+                    }
+                    volumeManager.fireOnce = false;
                 }
             }
         
@@ -454,16 +479,22 @@ namespace ImportVolume
             }
             usingScaled = usage;
         }
+
+        public int GetCount()
+        {
+            return count;
+        }
     }
 
     public class VolumeManager
     {
         private String dataSetPath;
         private VolumeAttribute[] volumeAttributes;
-        private int currentTimeStep;
+        public int currentTimeStep;
         private bool isReadingBinary;
         private bool usingScaled = false;
         private bool forward = true;
+        public bool fireOnce = false;
 
         public VolumeManager(String dataSetName)
         {
@@ -646,6 +677,27 @@ namespace ImportVolume
             }
         }
 
+        public void SkipFrame(int frames)
+        {
+            foreach (var volumeAttribute in volumeAttributes)
+            {
+                if (volumeAttribute.IsVisible())
+                {
+                    volumeAttribute.ClearBufferQueue();
+                    volumeAttribute.BufferNextFrame(currentTimeStep - 1 + frames);
+                }
+            }
+            currentTimeStep = (currentTimeStep + frames) % GetCount();
+            if (currentTimeStep < 0)
+            {
+                currentTimeStep += GetCount();
+            }
+            Debug.Log(currentTimeStep);
+            
+            // Render next frame once
+            fireOnce = true;
+        }
+
         public void SetPressure(bool visibility)
         {
             foreach (var volumeAttribute in volumeAttributes)
@@ -751,6 +803,19 @@ namespace ImportVolume
                     }
                 }
             }
+        }
+            
+        public int GetCount()
+        {
+            int minCount = -1;
+            foreach (var volumeAttribute in volumeAttributes)
+            {
+                if (minCount == -1 || minCount > volumeAttribute.GetCount())
+                {
+                    minCount = volumeAttribute.GetCount();
+                }
+            }
+            return minCount;
         }
     }
 }

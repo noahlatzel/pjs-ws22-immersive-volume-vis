@@ -27,6 +27,8 @@ namespace UI.SimulationControlUI
             {
                 DropDownValueChanged(GetComponent<TMP_Dropdown>().value);
             });
+
+            
         }
 
         void DropDownValueChanged(int value)
