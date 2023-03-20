@@ -59,7 +59,7 @@ namespace PlotScripts_Volumetric
             {
                 if (uiVolumeToggleComp.volumeVisibility[i])
                 {
-                    volumes[i].GetComponent<LoadVolumes>().SetFrame(closestPointIndex);
+                    volumes[i].GetComponent<ImportVolume.LoadVolumes>().SetFrame(closestPointIndex);
                 }
             }
             

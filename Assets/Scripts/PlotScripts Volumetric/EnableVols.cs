@@ -66,7 +66,7 @@ namespace PlotScripts_Volumetric
             foreach (var volume in volumes)
                 if (volume.activeInHierarchy)
                 {
-                    var thisLV = volume.GetComponent<LoadVolumes>();
+                    var thisLV = volume.GetComponent<ImportVolume.LoadVolumes>();
                     thisLV.meteorite = false;
                     thisLV.pressure = false;
                     thisLV.temperature = false;
@@ -99,7 +99,7 @@ namespace PlotScripts_Volumetric
         {
             for (int i = 0; i < volumeVisibility.Length; i++)
             {
-                var thisLV = volumes[i].GetComponent<LoadVolumes>();
+                var thisLV = volumes[i].GetComponent<ImportVolume.LoadVolumes>();
 
                 thisLV.meteorite = false;
                 thisLV.pressure = false;

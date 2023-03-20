@@ -7,14 +7,14 @@ public class TimestepSetter : MonoBehaviour
 {
 
     public GameObject RenderedVolume;
-    private LoadVolumes loadVolumes;
+    private ImportVolume.LoadVolumes loadVolumes;
     
     private UnityEngine.UI.Button thisButton;
     
     // Start is called before the first frame update
     void Start()
     {
-        loadVolumes = RenderedVolume.GetComponent<LoadVolumes>();
+        loadVolumes = RenderedVolume.GetComponent<ImportVolume.LoadVolumes>();
         thisButton = gameObject.GetComponent<Button>();
     }
 
