@@ -5,13 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityVolumeRendering;
 
-public class LoadVolumes : MonoBehaviour
+namespace ImportVolume
 {
-    [Tooltip("Specify the name of the dataset you want to use. The dataset needs to be stored in Assets/Datasets/")]
-    public String datasetName = "yB11";
+    public class LoadVolumes : MonoBehaviour
+    {
+        [Tooltip("Specify the name of the dataset you want to use. The dataset needs to be stored in Assets/Datasets/")]
+        public String datasetName = "Dataset1";
 
     [Tooltip("Show/Hide pressure volume.")]
     public bool pressure;
@@ -49,19 +50,18 @@ public class LoadVolumes : MonoBehaviour
     // Manager class
     public VolumeManager volumeManager;
 
-    // Load the first volume per attribute with the importer; guarantees
-    // correct configuration of Material properties etc.
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Create manager class
-        volumeManager = new VolumeManager(datasetName);
-
-        // Render volumes on start 
-        RenderOnStart(volumeManager);
-
-        Debug.Log(volumeManager.IsReadingBinary());
-    }
+    
+        // Load the first volume per attribute with the importer; guarantees
+        // correct configuration of Material properties etc.
+        // Start is called before the first frame update
+        void Start()
+        {
+            // Create manager class
+            volumeManager = new VolumeManager(datasetName);
+        
+            // Render volumes on start 
+            RenderOnStart(volumeManager);
+        }
 
     // Update is called once per frame
     void Update()
@@ -627,7 +627,6 @@ public class VolumeManager
         // Clear the flag to indicate that the reading operation has completed
         isReadingBinary = false;
     }
-
 
     public bool IsReadingBinary()
     {
