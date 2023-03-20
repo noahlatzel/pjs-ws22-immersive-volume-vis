@@ -135,6 +135,7 @@ namespace ImportVolume
         {
             if (processingQueue.Count > 0)
             {
+                //PreprocessVolumePartialTextures(processingQueue.Dequeue(), 10);
                 PreprocessVolume(processingQueue.Dequeue());
                 TimeSpan timePerVolume = stopwatch.Elapsed / ++counter;
                 TimeSpan remainingTime = timePerVolume * processingQueue.Count;
