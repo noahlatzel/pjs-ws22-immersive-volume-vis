@@ -26,7 +26,8 @@ namespace PlotScripts_Volumetric
         public GameObject Volume1Drop;
         public GameObject Volume2Desc;
         public GameObject Volume2Drop;
-
+        public GameObject TransferfunctionUI;
+        
         private Toggle thisToggle;
 
         private GameObject[] volumes;
@@ -51,6 +52,11 @@ namespace PlotScripts_Volumetric
             for (var i = 0; i < volumeVisibility.Length; i++) volumeVisibility[i] = false;
 
             thisToggle = gameObject.GetComponent<Toggle>();
+            
+            thisToggle.GetComponent<Toggle>().onValueChanged.AddListener(delegate
+            {
+                activateVolumes();
+            });
         }
 
         // Update is called once per frame
@@ -81,8 +87,11 @@ namespace PlotScripts_Volumetric
                 VolumeTurn.SetActive(true);
                 Volume1Desc.SetActive(true);
                 Volume1Drop.SetActive(true);
+                Volume1Drop.GetComponent<VolumeSelector>().SelectVolume();
                 Volume2Desc.SetActive(true);
                 Volume2Drop.SetActive(true);
+                Volume2Drop.GetComponent<VolumeSelector>().SelectVolume();
+                TransferfunctionUI.SetActive(true);
             }
             else
             {
@@ -92,6 +101,7 @@ namespace PlotScripts_Volumetric
                 Volume1Drop.SetActive(false);
                 Volume2Desc.SetActive(false);
                 Volume2Drop.SetActive(false);
+                TransferfunctionUI.SetActive(false);
             }
         }
 

@@ -6,20 +6,20 @@ using UnityEngine;
 public class VolumeSelector : MonoBehaviour
 {
     public GameObject volumeTransformer;
-    private GameObject[] volumes;
 
     public GameObject runSelection;
-    private TMP_Dropdown runSelectionDropdown;
 
     public GameObject layerSelection;
-    private TMP_Dropdown layerSelectionDropdown;
 
     public GameObject uiVolumeToggle;
-    private EnableVols uiVolumeToggleComp;
-
-    private TMP_Dropdown thisDropdown;
 
     public bool isThisFirstDropdown;
+    private TMP_Dropdown layerSelectionDropdown;
+    private TMP_Dropdown runSelectionDropdown;
+
+    private TMP_Dropdown thisDropdown;
+    private EnableVols uiVolumeToggleComp;
+    private GameObject[] volumes;
 
     // Start is called before the first frame update
     private void Start()
@@ -40,23 +40,16 @@ public class VolumeSelector : MonoBehaviour
 
         options.Add(new TMP_Dropdown.OptionData("--"));
 
-        foreach (var volume in volumes)
-        {
-            options.Add(new TMP_Dropdown.OptionData(volume.name));
-        }
+        foreach (var volume in volumes) options.Add(new TMP_Dropdown.OptionData(volume.name));
 
         thisDropdown.options = options;
 
         thisDropdown.value = 0;
 
         if (isThisFirstDropdown)
-        {
             uiVolumeToggleComp.firstVolume = -1;
-        }
         else
-        {
             uiVolumeToggleComp.secondVolume = -1;
-        }
     }
 
     // Update is called once per frame
@@ -71,20 +64,13 @@ public class VolumeSelector : MonoBehaviour
         var currSelectedLayer = layerSelectionDropdown.value;
 
         int lastVolume;
-        
+
         if (isThisFirstDropdown)
-        {
             lastVolume = uiVolumeToggleComp.firstVolume;
-        }
         else
-        {
             lastVolume = uiVolumeToggleComp.secondVolume;
-        }
-        
-        if (lastVolume >= 0)
-        {
-            uiVolumeToggleComp.volumeVisibility[lastVolume] = false;
-        }
+
+        if (lastVolume >= 0) uiVolumeToggleComp.volumeVisibility[lastVolume] = false;
 
         if (currSelectedVolume >= 0)
         {
@@ -99,15 +85,11 @@ public class VolumeSelector : MonoBehaviour
                 uiVolumeToggleComp.volumeVisibility[currSelectedVolume] = true;
 
                 if (isThisFirstDropdown)
-                {
                     uiVolumeToggleComp.firstVolume = currSelectedVolume;
-                }
                 else
-                {
                     uiVolumeToggleComp.secondVolume = currSelectedVolume;
-                }
             }
-            
+
             uiVolumeToggleComp.SetLayerVisibility();
         }
     }
