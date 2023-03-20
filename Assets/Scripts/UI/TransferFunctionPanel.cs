@@ -23,13 +23,16 @@ namespace UI
         public int selectedColourControlPointIndex = -1;
 
         // Start is called before the first frame update
-        void Start()
+        public void Start()
         {
             dropdownMenu = GameObject.Find("DropdownAttributeSelector");
             selectedVolume = GameObject.Find("RenderedVolume");
             colorView = GameObject.Find("TransferFuncColor");
             alphaView = GameObject.Find("TransferFuncAlpha");
-        
+
+            // Clear option list
+            dropdownMenu.GetComponent<TMP_Dropdown>().options = new List<TMP_Dropdown.OptionData>();
+            
             // Set dropdown options
             for (int i = 0; i < selectedVolume.transform.childCount; i++)
             {

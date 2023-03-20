@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using UI;
 using UnityEngine;
 using UnityVolumeRendering;
 
@@ -65,7 +66,7 @@ namespace ImportVolume
         void Start()
         {
             // Create manager class
-            volumeManager = new VolumeManager(datasetName);
+            volumeManager = new VolumeManager(datasetName, gameObject);
         
             // Render volumes on start 
             RenderOnStart(volumeManager);
@@ -147,11 +148,11 @@ namespace ImportVolume
                 Application.targetFrameRate = targetFramerate;
         }
 
-        private void RenderOnStart(VolumeManager volumeManagerObject)
+        void RenderOnStart(VolumeManager volumeManagerObject)
         {
             // Create importer
             IImageFileImporter importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-        
+
             foreach (VolumeAttribute volumeAttribute in volumeManagerObject.GetVolumeAttributes())
             {
                 // Import dataset
@@ -162,7 +163,7 @@ namespace ImportVolume
                 
                 // Transform object and set hierarchy
                 Transform transform1;
-                (transform1 = obj.transform).SetParent(transform);
+                (transform1 = obj.transform).SetParent(transform, false);
                 transform1.rotation = Quaternion.identity;
                 transform1.localPosition = Vector3.zero;
                 obj.name = volumeAttribute.GetName();
@@ -173,6 +174,17 @@ namespace ImportVolume
                 // Save each Material property and MeshRenderer for later use
                 volumeAttribute.SetMaterialReference(obj.GetComponentInChildren<MeshRenderer>().material);
                 volumeAttribute.SetMeshRendererReference(obj.GetComponentInChildren<MeshRenderer>());
+            }
+        }
+
+        public void ChangeAttributeNames(VolumeManager volumeManager)
+        {
+            // Set names
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).name = volumeManager.GetVolumeAttributes()[i].GetName();
+                volumeManager.GetVolumeAttributes()[i].SetMeshRendererReference(transform.GetChild(i).gameObject.GetComponentInChildren<MeshRenderer>());
+                volumeManager.GetVolumeAttributes()[i].SetMaterialReference(transform.GetChild(i).gameObject.GetComponentInChildren<MeshRenderer>().material);
             }
         }
     }
@@ -495,10 +507,18 @@ namespace ImportVolume
         private bool usingScaled = false;
         private bool forward = true;
         public bool fireOnce = false;
+        public GameObject referencedGameObject;
 
         public VolumeManager(String dataSetName)
         {
             dataSetPath = $"Assets/Datasets/{dataSetName}";
+            AddVolumeAttributes();
+        }
+        
+        public VolumeManager(String dataSetName, GameObject referencedGameObject)
+        {
+            dataSetPath = $"Assets/Datasets/{dataSetName}";
+            this.referencedGameObject = referencedGameObject;
             AddVolumeAttributes();
         }
 
@@ -656,7 +676,10 @@ namespace ImportVolume
             {
                 dataSetPath = $"Assets/Datasets/{newDatasetName}";
                 currentTimeStep = 0;
+                AddVolumeAttributes();
+                referencedGameObject.GetComponent<LoadVolumes>().ChangeAttributeNames(this);
                 RefreshCurrentState();
+                GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanel>().Start();
             }
         }
 
@@ -673,7 +696,8 @@ namespace ImportVolume
                 {
                     volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
                 }
-                volumeAttribute.NextFrame();
+
+                fireOnce = true;
             }
         }
 

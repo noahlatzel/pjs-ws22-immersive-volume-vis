@@ -33,7 +33,7 @@ namespace UI.SimulationControlUI
 
         void DropDownValueChanged(int value)
         {
-            volume.GetComponent<LoadVolumes>().volumeManager.SetDataset(dataSetPaths[value]);
+            volume.GetComponent<LoadVolumes>().volumeManager.SetDataset(Path.GetFileName(dataSetPaths[value]));
         }
     
     }
