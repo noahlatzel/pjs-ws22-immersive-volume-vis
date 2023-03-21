@@ -496,12 +496,21 @@ namespace ImportVolume
         private bool usingScaled = false;
         private bool forward = true;
         public bool fireOnce = false;
+        public GameObject referencedGameObject;
 
         public VolumeManager(String dataSetName)
         {
             dataSetPath = $"Assets/Datasets/{dataSetName}";
             AddVolumeAttributes();
         }
+        
+        public VolumeManager(String dataSetName, GameObject referencedGameObject)
+        {
+            dataSetPath = $"Assets/Datasets/{dataSetName}";
+            this.referencedGameObject = referencedGameObject;
+            AddVolumeAttributes();
+        }
+
 
         public void SetForward(bool direction)
         {
