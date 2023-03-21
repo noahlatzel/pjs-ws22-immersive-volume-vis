@@ -10,7 +10,7 @@ EditorBuildSettings:
     guid: e7da43da2c7ac734fa7c3c95b10021b2
   - enabled: 1
     path: Assets/Scenes/PlotScene.unity
-    guid: c495871607c6f4244bd050d504105611
+    guid: 1f75eb5671794e842999f532172bd8c9
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 7a3c949308515e94ea853c3c8b643b97,
       type: 2}
