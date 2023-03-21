@@ -8,8 +8,6 @@ using UnityEngine.XR.Interaction.Toolkit.Transformers;
 
 public class appearInFront : MonoBehaviour
 {
-    private GameObject uiCanvas;
-    
     private GameObject mainCam;
 
     public InputActionProperty showMenu;
@@ -18,8 +16,6 @@ public class appearInFront : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        uiCanvas = GameObject.Find("uiCanvas");
-     
         mainCam = GameObject.Find("Main Camera");
 
         newRot = mainCam.transform.rotation;
@@ -30,16 +26,16 @@ public class appearInFront : MonoBehaviour
     {       
         if (showMenu.action.WasPressedThisFrame())
         {
-            Quaternion posRot = new Quaternion(uiCanvas.transform.rotation.x, mainCam.transform.rotation.y, uiCanvas.transform.rotation.z, mainCam.transform.rotation.w);
-            Vector3 newPos = ((posRot * Vector3.forward * 1) + mainCam.transform.position);
+            Quaternion posRot = new Quaternion(gameObject.transform.rotation.x, mainCam.transform.rotation.y, gameObject.transform.rotation.z, mainCam.transform.rotation.w);
+            Vector3 newPos = ((posRot * Vector3.forward * 2) + mainCam.transform.position);
             newPos.y = mainCam.transform.position.y - 0.3f;
         
             //Debug.Log(" w:" + mainCam.transform.rotation.w + " x:" + mainCam.transform.rotation.x + " y:" + mainCam.transform.rotation.y + " z:" + mainCam.transform.rotation.z);
 
-            uiCanvas.transform.position = newPos;
-            newRot = new Quaternion(uiCanvas.transform.rotation.x, mainCam.transform.rotation.y, uiCanvas.transform.rotation.z, mainCam.transform.rotation.w);
+            gameObject.transform.position = newPos;
+            newRot = new Quaternion(gameObject.transform.rotation.x, mainCam.transform.rotation.y, gameObject.transform.rotation.z, mainCam.transform.rotation.w);
         }
         
-        uiCanvas.transform.rotation = Quaternion.RotateTowards(uiCanvas.transform.rotation, newRot, 5f);
+        gameObject.transform.rotation = Quaternion.RotateTowards(gameObject.transform.rotation, newRot, 5f);
     }
 }
