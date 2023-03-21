@@ -176,7 +176,7 @@ public class InteractionCubeStandalone : MonoBehaviour
             
             // Decrement alpha value
             Color currentColor = GetComponent<MeshRenderer>().materials[0].color;
-            currentColor.a = initialScaleInteractionCube.magnitude / scaleOfCube; // Maybe multiply by some factor
+            currentColor.a = 1 / scaleOfCube * 255; // Maybe multiply by some factor
             GetComponent<MeshRenderer>().materials[0].color = currentColor;
         }
         else
@@ -191,7 +191,7 @@ public class InteractionCubeStandalone : MonoBehaviour
                 
                 // Reset alpha value
                 Color currentColor = GetComponent<MeshRenderer>().materials[0].color;
-                currentColor.a = 1;
+                currentColor.a = 255;
                 GetComponent<MeshRenderer>().materials[0].color = currentColor;
                 
                 lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;

@@ -42,9 +42,6 @@ namespace ImportVolume
             
                 foreach (String volumeAttributePath in volumeAttributePaths)
                 {
-                    // Create stopwatch for performance measures
-                    Stopwatch stopWatch = Stopwatch.StartNew();
-                
                     // Set path to store the binary files in separate directory
                     // @ forces the String to be interpreted verbatim
                     String binaryPath = volumeAttributePath + @"_bin/";
@@ -59,10 +56,7 @@ namespace ImportVolume
                 
                     // Create importer to import all .nii files
                     importer = ImporterFactory.CreateImageFileImporter(ImageFileFormat.NIFTI);
-                
-                    // Counter to keep track of added files
-                    //int counter = 0;
-                
+
                     foreach (String file in fileEntries)
                     {
                         // Extract fileName from path
@@ -78,68 +72,31 @@ namespace ImportVolume
 
                             processingQueue.Enqueue(processElement); 
                         }
-                        /*
-                        // Extract fileName from path
-                        String fileName = Path.GetFileNameWithoutExtension(file) + ".bin";
-                        String subFilename = Path.GetFileNameWithoutExtension(file) + "_sub.bin";
-
-                        // Only convert to binary if it has not been converted already
-                        if (!File.Exists(binaryPath + fileName))
-                        {
-                            // Convert .nii to dataset and create object from it
-                            VolumeDataset dataset = importer.Import(file);
-                            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
-                    
-                            // Get Texture3D of rendered volume
-                            // The volumeData is stored in the first Texture3D "_DataTex"
-                            Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
-                        
-                            // Scale down the Texture3D of the rendered volume
-                            Texture3D subTexture = DownScaleTexture3D(texture, sideLength, 
-                                sideLength, sideLength);
-                        
-                            // Extract pixel data from texture to save it 
-                            // mipLevel 0 according to implementation in IImageFileImporter.Import
-                            byte[] pixelData = texture.GetPixelData<byte>(0).ToArray();
-                            byte[] subPixelData = subTexture.GetPixelData<byte>(0).ToArray();
-
-                            // Save pixel data to binary file
-                            File.WriteAllBytes(binaryPath + fileName, pixelData);
-                            File.WriteAllBytes(binaryPath + subFilename, subPixelData);
-                        
-                            // Increment counter to keep track of added files
-                            counter++;
-                    
-                            // Destroy created object 
-                            Destroy(obj);
-                            Destroy(GameObject.Find("VolumeRenderedObject_test"));
-                        }
-                        */
                     }
-                    stopWatch.Stop();
-                
-                    // Display success message when new files have been added and measure the time
-                    // Replace "\" with "/" for uniform look
-                    /*if (counter > 0)
-                    {
-                        Debug.Log($"Added {counter} binary {(counter == 1 ? "file" : "files")} from directory: {volumeAttributePath.Replace(@"\", "/")} " +
-                                  $"and scaled down each texture in {stopWatch.Elapsed:m\\:ss\\.fff}.");
-                    }*/
                 }
             }
             initialCount = processingQueue.Count;
-            stopwatch.Start();
         }
 
         private void Update()
         {
             if (processingQueue.Count > 0)
             {
+                if (!stopwatch.IsRunning)
+                {
+                    stopwatch.Start();
+                }
+
+                //PreprocessVolumePartialTextures(processingQueue.Dequeue(), 10);
                 PreprocessVolume(processingQueue.Dequeue());
                 TimeSpan timePerVolume = stopwatch.Elapsed / ++counter;
                 TimeSpan remainingTime = timePerVolume * processingQueue.Count;
                 DateTime finishedUntil = DateTime.Now.Add(remainingTime);
                 Debug.Log($"Processed {counter}/{initialCount} volumes in {stopwatch.Elapsed:hh\\:mm\\:ss} | time per volume {timePerVolume:mm\\:ss\\.fff} | approx. remaining time: {remainingTime:hh\\:mm\\:ss} | finished until {finishedUntil:HH:mm:ss}");
+            }
+            else
+            {
+                stopwatch.Stop();
             }
         }
 
@@ -175,6 +132,44 @@ namespace ImportVolume
                 // Save pixel data to binary file
                 File.WriteAllBytes(binaryPath + fileName, pixelData);
                 File.WriteAllBytes(binaryPath + subFilename, subPixelData);
+
+                // Destroy created object 
+                Destroy(obj);
+                Destroy(GameObject.Find("VolumeRenderedObject_test"));
+            }
+        }
+        
+        void PreprocessVolumePartialTextures(ProcessElementStruct processElementStruct, int textureSplits)
+        {
+            String file = processElementStruct.fileEntry;
+            String binaryPath = processElementStruct.binaryPath;
+            
+            // Extract fileName from path
+            String fileName = Path.GetFileNameWithoutExtension(file) + ".bin";
+            
+            // Only convert to binary if it has not been converted already
+            if (!File.Exists(binaryPath + fileName))
+            {
+                // Convert .nii to dataset and create object from it
+                VolumeDataset dataset = importer.Import(file);
+                VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+        
+                // Get Texture3D of rendered volume
+                // The volumeData is stored in the first Texture3D "_DataTex"
+                Texture3D texture = (Texture3D) obj.GetComponentInChildren<MeshRenderer>().material.GetTexture("_DataTex");
+
+                // Split textures
+                // Extract pixel data from texture to save it 
+                // mipLevel 0 according to implementation in IImageFileImporter.Import
+                byte[][] byteArrays = SplitByteArray(texture.GetPixelData<byte>(0).ToArray(), textureSplits);
+                for (int i = 0; i < byteArrays.Length; i++)
+                {
+                    // Extract fileName from path
+                    String splitFileName = Path.GetFileNameWithoutExtension(file) + $"_{i}" + ".bin";
+                    
+                    // Save pixel data to binary file
+                    File.WriteAllBytes(binaryPath + splitFileName, byteArrays[i]);
+                }
 
                 // Destroy created object 
                 Destroy(obj);
@@ -292,11 +287,23 @@ namespace ImportVolume
             return result;
         }
 
+        byte[][] SplitByteArray(byte[] byteArray, int textureSplits)
+        {
+            int chunkSize = byteArray.Length / textureSplits;
+            var result = byteArray
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / chunkSize)
+                .Select(x => x.Select(v => v.Value).ToArray())
+                .ToArray();
+            return result;
+        }
     }
 
+    
     struct ProcessElementStruct
     {
         public String binaryPath;
         public String fileEntry;
     }
+
 }
