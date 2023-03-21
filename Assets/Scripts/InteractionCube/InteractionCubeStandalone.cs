@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Transformers;
@@ -14,6 +15,7 @@ public class InteractionCubeStandalone : MonoBehaviour
     private float initialDistance;
     private Vector3 initialScaleInteractionCube;
     private GameObject volumeRenderer;
+    private GameObject secondVolume;
     private bool first = true;
     private bool isReleased = false;
     private float permScale = 1f;
@@ -27,6 +29,7 @@ public class InteractionCubeStandalone : MonoBehaviour
         
         initialScaleInteractionCube = transform.localScale;
         volumeRenderer = GameObject.Find("RenderedVolume");
+        secondVolume = GameObject.Find("RenderedVolume2");
     }
 
     // Update is called once per frame
@@ -168,7 +171,13 @@ public class InteractionCubeStandalone : MonoBehaviour
             scaleOfCube = Vector3.Distance(upperScaleCube.transform.position, lowerScaleCube.transform.position) / initialDistance;
             transform.localScale = initialScaleInteractionCube * scaleOfCube;
             volumeRenderer.transform.localScale = new Vector3(1, 1, 1) * (permScale + scaleOfCube - 1);
+            secondVolume.transform.localScale  = new Vector3(1, 1, 1) * (permScale + scaleOfCube - 1);
             isReleased = true;
+            
+            // Decrement alpha value
+            Color currentColor = GetComponent<MeshRenderer>().materials[0].color;
+            currentColor.a = 1 / scaleOfCube * 255; // Maybe multiply by some factor
+            GetComponent<MeshRenderer>().materials[0].color = currentColor;
         }
         else
         {
@@ -179,6 +188,12 @@ public class InteractionCubeStandalone : MonoBehaviour
                 
                 // Reset scale and positions of scale cubes
                 transform.localScale = initialScaleInteractionCube;
+                
+                // Reset alpha value
+                Color currentColor = GetComponent<MeshRenderer>().materials[0].color;
+                currentColor.a = 255;
+                GetComponent<MeshRenderer>().materials[0].color = currentColor;
+                
                 lowerScaleCube.transform.localPosition = new Vector3(-0.5f, -0.5f, 0.5f) * 2;
                 upperScaleCube.transform.localPosition = new Vector3(0.5f, 0.5f, -0.5f) * 2;
                 DestroyScalingCubes();

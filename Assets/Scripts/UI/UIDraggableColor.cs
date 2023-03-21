@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityVolumeRendering;
 
-public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandler
+public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
     private GameObject colorView;
@@ -13,6 +14,7 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
     // Set in TransferFunctionPanel.cs
     public TFColourControlPoint controlPoint;
     public TransferFunction transferFunction;
+    public TransferFunction secondaryTransferFunction;
     public int index;
 
 
@@ -25,38 +27,20 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
 
     public void OnDrag(PointerEventData eventData)
     {
-        rectTransform.anchoredPosition += eventData.delta;
-        
+        //rectTransform.anchoredPosition += eventData.delta; // For mouse use only
+        rectTransform.position = GameObject.Find("Right Grab Ray").GetComponent<LineRenderer>().GetPosition(1); // For VR use only
+
         float maxHeight = colorView.GetComponent<RectTransform>().rect.height;
         float maxWidth = colorView.GetComponent<RectTransform>().rect.width;
 
         float myMaxWidth = GetComponent<RectTransform>().rect.width;
         float myMaxHeight = GetComponent<RectTransform>().rect.height;
 
-        if (rectTransform.anchoredPosition.x < 0)
+        if (rectTransform.anchoredPosition.x <= 0)
         {
-            if (rectTransform.anchoredPosition.x > -50)
+            if (rectTransform.anchoredPosition.x < -60)
             {
-                if (rectTransform.anchoredPosition.x < -20)
-                {
-                    transferFunction.colourControlPoints.RemoveAt(index);
-                    
-                    // Fix index of remaining control points
-                    for (int i = 0; i < colorView.transform.childCount; i++)
-                    {
-                        if (colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index > index)
-                        {
-                            colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index--;
-                        }
-                    }
-                    
-                    // Destroy gameObject
-                    Destroy(gameObject);
-                }
-            }
-            else
-            {
-                rectTransform.anchoredPosition = new Vector2(0, rectTransform.anchoredPosition.y);    
+                rectTransform.anchoredPosition = new Vector2(-60, rectTransform.anchoredPosition.y);
             }
         }
         if (rectTransform.anchoredPosition.y != 0)
@@ -74,11 +58,45 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
         
         transferFunction.colourControlPoints[index] = controlPoint;
         
+        // Add changes to secondary transfer function
+        secondaryTransferFunction.colourControlPoints =
+            new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+        
+        secondaryTransferFunction.GenerateTexture();
         transferFunction.GenerateTexture();
+        
+        transferFuncManager.selectedColourControlPointIndex = index;
     }
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         transferFuncManager.selectedColourControlPointIndex = index;
+    }
+
+    public void OnEndDrag(PointerEventData pointerEventData) {
+        if (rectTransform.anchoredPosition.x < -30)
+        {
+            transferFunction.colourControlPoints.RemoveAt(index);
+
+            // Fix index of remaining control points
+            for (int i = 0; i < colorView.transform.childCount; i++)
+            {
+                if (colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index > index)
+                {
+                    colorView.transform.GetChild(i).GetComponent<UIDraggableColor>().index--;
+                }
+            }
+            
+            // Add changes to secondary transfer function
+            secondaryTransferFunction.colourControlPoints =
+                new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+
+            // Destroy gameObject
+            Destroy(gameObject);
+        }
+        else if (rectTransform.anchoredPosition.x < 0)
+        {
+            rectTransform.anchoredPosition = new Vector2(0, 0);
+        }
     }
 }
