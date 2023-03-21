@@ -148,6 +148,12 @@ namespace ImportVolume
                 Application.targetFrameRate = targetFramerate;
         }
 
+        public void SetFrame(int timeStep)
+        {
+            volumeManager.SetFrame(timeStep);
+        }
+
+        
         private void RenderOnStart(VolumeManager volumeManagerObject)
         {
             // Create importer
@@ -340,6 +346,33 @@ namespace ImportVolume
             }
         }
 
+        public void SetFrame(int timestep)
+        {
+            // Get correct texture format analogue to the Volume Importer
+            var texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf)
+                ? TextureFormat.RHalf
+                : TextureFormat.RFloat;
+
+            // Set the current texture to the next texture in the buffer depended on usingScaled
+            var newTexture = usingScaled
+                ? new Texture3D(100, 100, 100, texFormat, false)
+                : new Texture3D(300, 300, 300, texFormat, false);
+
+            // Load pixelData from binary file at given position
+            var volumeToRender = timestep % count;
+
+            // Set pixel data from File
+            newTexture.SetPixelData(File.ReadAllBytes(GetVolumePath(volumeToRender)), 0);
+
+            // Set _DataTex texture of material to newly loaded texture
+            material.SetTexture("_DataTex", newTexture);
+
+            // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
+            // a separate thread
+            newTexture.Apply();
+        }
+
+        
         public void NextFrame(int numberOfFramesToSkip)
         {
             // Check if textures are buffered
@@ -548,6 +581,16 @@ namespace ImportVolume
                 volumeAttributes[i].SetVisibility(visibilities[i]);
             }
         }
+        
+        public void SetFrame(int timeStep)
+        {
+            foreach (var volumeAttribute in volumeAttributes)
+                if (volumeAttribute.IsVisible())
+                    volumeAttribute.SetFrame(timeStep);
+
+            currentTimeStep = timeStep;
+        }
+
 
         public void NextFrame()
         {
