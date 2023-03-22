@@ -27,6 +27,11 @@ namespace PlotScripts_Volumetric
         public GameObject Volume2Desc;
         public GameObject Volume2Drop;
 
+        public GameObject plus10;
+        public GameObject minus10;
+        public GameObject plus1;
+        public GameObject minus1;
+
         private Toggle thisToggle;
 
         private GameObject[] volumes;
@@ -83,6 +88,10 @@ namespace PlotScripts_Volumetric
                 Volume1Drop.SetActive(true);
                 Volume2Desc.SetActive(true);
                 Volume2Drop.SetActive(true);
+                plus10.SetActive(true);
+                plus1.SetActive(true);
+                minus10.SetActive(true);
+                minus1.SetActive(true);
             }
             else
             {
@@ -92,6 +101,10 @@ namespace PlotScripts_Volumetric
                 Volume1Drop.SetActive(false);
                 Volume2Desc.SetActive(false);
                 Volume2Drop.SetActive(false);
+                plus10.SetActive(false);
+                plus1.SetActive(false);
+                minus10.SetActive(false);
+                minus1.SetActive(false);
             }
         }
 

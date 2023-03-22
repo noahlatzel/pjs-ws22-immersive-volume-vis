@@ -117,6 +117,27 @@ public class LoadVolumes : MonoBehaviour
     public void SetFrame(int timeStep)
     {
         volumeManager.SetFrame(timeStep);
+        timestep = timeStep;
+    }
+
+    public int getCount()
+    {
+        int count = 0;
+        if (volumeManager.GetVolumeAttributes().Length > 0)
+        {
+            count = volumeManager.GetVolumeAttributes()[0].GetCount();
+
+            foreach (var volAtt in volumeManager.GetVolumeAttributes())
+            {
+                int currCount = volAtt.GetCount();
+                if (currCount < count)
+                {
+                    count = currCount;
+                }
+            }
+        }
+
+        return count;
     }
 
     private void RenderOnStart(VolumeManager volumeManagerObject)
@@ -225,6 +246,11 @@ public class VolumeAttribute
     public String GetName()
     {
         return name;
+    }
+
+    public int GetCount()
+    {
+        return count;
     }
 
     public void SetMaterialReference(Material materialRef)
