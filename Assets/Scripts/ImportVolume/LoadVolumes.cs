@@ -377,8 +377,10 @@ public class VolumeAttribute
             new Texture3D(300, 300, 300, texFormat, false);
 
         // Load pixelData from binary file at given position
-        int volumeToRender = (timestep) % count;
+        int volumeToRender = Math.Max(0,Math.Min(timestep,count));
 
+        Debug.Log("SetFrame: Aktueller Timestep intern: " + volumeToRender);
+        
         // Set pixel data from File
         newTexture.SetPixelData(File.ReadAllBytes(GetVolumePath(volumeToRender)), 0);
         
