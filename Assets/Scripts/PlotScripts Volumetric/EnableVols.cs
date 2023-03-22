@@ -66,7 +66,7 @@ namespace PlotScripts_Volumetric
 
         public void activateVolumes()
         {
-            volumeTransformer.transform.position = new Vector3(0f, -10f, 20f);
+            volumeTransformer.transform.position = new Vector3(0f, -2f, 12f);
             volumeTransformer.transform.localScale = new Vector3(20f, 20f, 20f);
 
             foreach (var volume in volumes)
@@ -124,16 +124,16 @@ namespace PlotScripts_Volumetric
                     switch (layerSelectionDropdown.value)
                     {
                         case 0:
-                            thisLV.pressure = true;
+                            thisLV.meteorite = true;
                             break;
                         case 1:
-                            thisLV.temperature = true;
+                            thisLV.pressure = true;
                             break;
                         case 2:
-                            thisLV.water = true;
+                            thisLV.temperature = true;
                             break;
                         case 3:
-                            thisLV.meteorite = true;
+                            thisLV.water = true;
                             break;
                         default:
                             Debug.Log("EnableVols.SetLayerVisibility: Invalid Value");

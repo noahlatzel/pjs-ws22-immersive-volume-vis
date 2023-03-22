@@ -95,7 +95,7 @@ namespace UI
             });
         
             // Initialize transfer function window
-            DropDownValueChanged(0);
+            // DropDownValueChanged(3);
         }
 
         void volumeChanged()
@@ -118,6 +118,9 @@ namespace UI
         void DropDownValueChanged(int value)
         {
             activeAttribute = value;
+            
+            Debug.Log("DropDownValueChanged: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(value).name + " Aktuelles Volume: " + selectedVolume.name);
+            
             TransferFunction transferFunction =
                 selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
         
