@@ -51,7 +51,7 @@ namespace ImportVolume
         // Manager class
         public VolumeManager volumeManager;
         public int targetFramerate = 90;
-        
+        public bool mainScene;
         void Awake()
         {
             QualitySettings.vSyncCount = 0;
@@ -76,7 +76,10 @@ namespace ImportVolume
         void Update()
         {
             // Update volume visibility according to public variables
-            //volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
+            if (!mainScene)
+            {
+                volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
+            }
             volumeManager.SetUsingScale(useScaledVersion);
         
             // Only execute as often as specified in timesPerSecond
@@ -126,11 +129,12 @@ namespace ImportVolume
                     }
                     volumeManager.fireOnce = false;
                 }
-                
-                if(Application.targetFrameRate != targetFramerate)
-                    Application.targetFrameRate = targetFramerate;
+
             }
-        
+                        
+            if(Application.targetFrameRate != targetFramerate)
+                Application.targetFrameRate = targetFramerate;
+            
             // Limit speed of loading the buffer to reduce lag
             float durBuffer = 1f / bufferSpeed;
             timePassedBuffer += Time.deltaTime;
@@ -146,9 +150,6 @@ namespace ImportVolume
                     t.Start();
                 }
             }
-
-        
-
         }
 
         public void SetFrame(int timeStep)
@@ -263,6 +264,7 @@ namespace ImportVolume
         private bool usingScaled = false;
         private readonly Assembly dll;
         private static readonly int DataTex = Shader.PropertyToID("_DataTex");
+        private MaterialPropertyBlock materialPropertyBlock;
 
 
         public VolumeAttribute(String path)
@@ -275,7 +277,7 @@ namespace ImportVolume
             originalPath = path;
             bufferQueue = new Queue<byte[]>();
             bufferStack = new LimitedStack<Texture3D>(10);
-
+    
             // Load the DLL into the Assembly object
             dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
         }

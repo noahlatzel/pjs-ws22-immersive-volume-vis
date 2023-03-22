@@ -1,6 +1,7 @@
 using ImportVolume;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI.SimulationControlUI
 {
@@ -11,12 +12,11 @@ namespace UI.SimulationControlUI
         public GameObject volume;
         public GameObject volume2;
         public GameObject dropdown;
+        public GameObject synchron;
 
         // Start is called before the first frame update
         void Start()
         {
-            volume = GameObject.Find("RenderedVolume");
-            volume2 = GameObject.Find("RenderedVolume2");
             dropdown = GameObject.Find("Volume2");
             playing = volume.GetComponent<LoadVolumes>().play;
         }
@@ -26,16 +26,19 @@ namespace UI.SimulationControlUI
             if (playing)
             {
                 volume.GetComponent<LoadVolumes>().timesPerSecond = volume.GetComponent<LoadVolumes>().timesPerSecond - 10; 
-                volume2.GetComponent<LoadVolumes>().timesPerSecond = volume.GetComponent<LoadVolumes>().timesPerSecond - 10; 
             }
             else
             {
                 volume.GetComponent<LoadVolumes>().volumeManager.SkipFrame(-10);
-                volume2.GetComponent<LoadVolumes>().volumeManager.SkipFrame(-10);
                 
                 // Set timeStep in inspector
-                GameObject.Find("RenderedVolume").GetComponent<LoadVolumes>().timestep = volume.GetComponent<LoadVolumes>().volumeManager.currentTimeStep;
-                GameObject.Find("RenderedVolume2").GetComponent<LoadVolumes>().timestep = volume.GetComponent<LoadVolumes>().volumeManager.currentTimeStep;
+                volume.GetComponent<LoadVolumes>().timestep = volume.GetComponent<LoadVolumes>().volumeManager.currentTimeStep;
+                
+                if (synchron.GetComponent<Toggle>().isOn)
+                {
+                    volume2.GetComponent<LoadVolumes>().volumeManager.SkipFrame(-10);
+                    volume2.GetComponent<LoadVolumes>().timestep = volume.GetComponent<LoadVolumes>().volumeManager.currentTimeStep;
+                }
             }
         }
     }

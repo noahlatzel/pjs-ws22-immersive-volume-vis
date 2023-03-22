@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ImportVolume;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,8 +44,26 @@ namespace UI
 
             for (var i = 0; i < volumes.Length; i++) volumes[i] = volumeTransformer.transform.GetChild(i).gameObject;
 
-            selectedVolume = volumes[3];
-            selectedVolume2 = volumes[3];
+            bool first = true;
+            for (int i = 0; i < volumes.Length; i++)
+            {
+                if (volumes[i].transform.childCount > 0)
+                {
+                    if (first)
+                    {
+                        selectedVolume = volumes[i];
+                        first = false;
+                    }
+                    else
+                    {
+                        selectedVolume2 = volumes[i];
+                    }
+                    Debug.Log("HERE");
+                }
+            }
+
+            //selectedVolume = volumes[3];
+            //selectedVolume2 = volumes[3];
             
             dropdownMenu = GameObject.Find("DropdownAttributeSelector");
             colorView = GameObject.Find("TransferFuncColor");
@@ -185,11 +204,11 @@ namespace UI
             transformControlPoint.transform.localScale = new Vector3(1, 1, 1);
             transformControlPoint.anchoredPosition =
                 new Vector2(baseWidth * controlPoint.dataValue, 0);
-            controlPointUI.GetComponent<UIDraggableColor>().controlPoint = controlPoint;
-            controlPointUI.GetComponent<UIDraggableColor>().transferFunction = 
+            controlPointUI.GetComponent<UIDraggableColorPlot>().controlPoint = controlPoint;
+            controlPointUI.GetComponent<UIDraggableColorPlot>().transferFunction = 
                 selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
-            controlPointUI.GetComponent<UIDraggableColor>().secondaryTransferFunction = secondaryTransferFunction;
-            controlPointUI.GetComponent<UIDraggableColor>().index = indexControlPoint;
+            controlPointUI.GetComponent<UIDraggableColorPlot>().secondaryTransferFunction = secondaryTransferFunction;
+            controlPointUI.GetComponent<UIDraggableColorPlot>().index = indexControlPoint;
         }
 
         public void AddColourControlPoint()
