@@ -9,7 +9,7 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
 {
     private RectTransform rectTransform;
     private GameObject colorView;
-    private TransferFunctionPanel transferFuncManager;
+    private TransferFunctionPanelMainScene transferFuncManager;
     
     // Set in TransferFunctionPanel.cs
     public TFColourControlPoint controlPoint;
@@ -22,7 +22,7 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
     {
         rectTransform = GetComponent<RectTransform>();
         colorView = GameObject.Find("TransferFuncColor");
-        transferFuncManager = GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanel>();
+        transferFuncManager = GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanelMainScene>();
     }
 
     public void OnDrag(PointerEventData eventData)
