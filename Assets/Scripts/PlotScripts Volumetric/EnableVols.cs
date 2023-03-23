@@ -121,6 +121,7 @@ namespace PlotScripts_Volumetric
                 thisLV.water = false;
                 if (volumeVisibility[i])
                 {
+                    Debug.Log("EnbableVols.SetLayerVisibility: Dropdowntext: " + layerSelectionDropdown.captionText.text);
                     switch (layerSelectionDropdown.value)
                     {
                         case 0:
