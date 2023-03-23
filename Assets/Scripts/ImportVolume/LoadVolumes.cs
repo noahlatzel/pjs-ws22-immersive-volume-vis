@@ -615,6 +615,43 @@ namespace ImportVolume
             {
                 volumeAttributes[i].SetVisibility(visibilities[i]);
             }
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+           
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+            for (var i = 0; i < visibilities.Length; i++)
+            {
+                
+                for(int j = 0; j < names.Count; j++)
+                {
+                    if (names[j].Contains<String>(volumeAttributes[i].GetName()))
+                    {
+                        volumeAttributes[i].SetVisibility(visibilities[j]);
+
+                        found = true;
+                        //Debug.Log("LoadVolumes.SetVisibilities: VolumeAttribute " + volumeAttributes[i].getName() + " gefunden!");
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("LoadVolumes.SetVisibilities: Kein VolumeAttribute gefunden!");
+            }
         }
 
         public void SetFrame(int timeStep)

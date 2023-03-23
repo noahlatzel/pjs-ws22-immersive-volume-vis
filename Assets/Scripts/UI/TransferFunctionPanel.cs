@@ -162,7 +162,7 @@ namespace UI
             }
             else
             {
-                Debug.Log("TransferFunctionPanel.DropDownValueChanged: Child " + foundObject.name + " gefunden!");
+                Debug.Log("TransferFunctionPanel.DropDownValueChanged: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
                 TransferFunction transferFunction =
                     foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
 
@@ -231,8 +231,7 @@ namespace UI
                 }
                 else
                 {
-                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Volume 2 Child " + foundObject.name +
-                              " gefunden!");
+                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Child " + foundObject.name + " gesetzt! ActiveAttribute: " + activeAttributeName);
 
                     // Set transfer function for other volume
                     foundObject.GetComponent<VolumeRenderedObject>()
@@ -263,8 +262,7 @@ namespace UI
                 }
                 else
                 {
-                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Volume 2 Child " + foundObject.name +
-                              " gefunden!");
+                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Zweites Child " + foundObject.name + " gesetzt! ActiveAttribute: " + activeAttributeName);
 
                     // Set transfer function for other volume
                     foundObject.GetComponent<VolumeRenderedObject>()
@@ -291,9 +289,58 @@ namespace UI
                 new Vector2(baseWidth * controlPoint.dataValue, baseHeight * controlPoint.alphaValue);
 
             controlPointUI.GetComponent<UIDraggableAlpha>().controlPoint = controlPoint;
-            controlPointUI.GetComponent<UIDraggableAlpha>().transferFunction = 
-                selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
-            controlPointUI.GetComponent<UIDraggableAlpha>().index = indexControlPoint; 
+
+
+            
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+
+            Debug.Log("NewAlphaControlPointUI: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(index).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+
+            foreach (String[] currVolNames in names)
+            {
+                if (currVolNames.Contains<String>(activeAttributeName))
+                {
+                    foreach (var currName in currVolNames)
+                    {
+                        if (selectedVolume.transform.Find(currName))
+                        {
+                            foundObject = selectedVolume.transform.Find(currName).gameObject;
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("TransferFunctionPanel.NewAlphaControlPointUI: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+            }
+            else
+            {
+                Debug.Log("TransferFunctionPanel.NewAlphaControlPointUI: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
+
+                controlPointUI.GetComponent<UIDraggableAlpha>().transferFunction =
+                foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
+                controlPointUI.GetComponent<UIDraggableAlpha>().index = indexControlPoint;
+
+            }
         }
     
         void NewColourControlPointUI(TFColourControlPoint controlPoint, int index, int indexControlPoint)
@@ -312,35 +359,173 @@ namespace UI
             transformControlPoint.anchoredPosition =
                 new Vector2(baseWidth * controlPoint.dataValue, 0);
             controlPointUI.GetComponent<UIDraggableColorPlot>().controlPoint = controlPoint;
-            controlPointUI.GetComponent<UIDraggableColorPlot>().transferFunction = 
-                selectedVolume.transform.GetChild(index).GetComponent<VolumeRenderedObject>().transferFunction;
-            controlPointUI.GetComponent<UIDraggableColorPlot>().secondaryTransferFunction = secondaryTransferFunction;
-            controlPointUI.GetComponent<UIDraggableColorPlot>().index = indexControlPoint;
+
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+
+            Debug.Log("NewColourControlPointUI: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(index).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+
+            foreach (String[] currVolNames in names)
+            {
+                if (currVolNames.Contains<String>(activeAttributeName))
+                {
+                    foreach (var currName in currVolNames)
+                    {
+                        if (selectedVolume.transform.Find(currName))
+                        {
+                            foundObject = selectedVolume.transform.Find(currName).gameObject;
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("TransferFunctionPanel.NewColourControlPointUI: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+            }
+            else
+            {
+                Debug.Log("TransferFunctionPanel.NewColourControlPointUI: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
+
+
+                controlPointUI.GetComponent<UIDraggableColorPlot>().transferFunction =
+                foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
+                controlPointUI.GetComponent<UIDraggableColorPlot>().secondaryTransferFunction = secondaryTransferFunction;
+                controlPointUI.GetComponent<UIDraggableColorPlot>().index = indexControlPoint;
+            }
         }
 
         public void AddColourControlPoint()
         {
-            TransferFunction transferFunction =
-                selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
-            TFColourControlPoint controlPoint = new TFColourControlPoint(0.5f, Color.white);
-            transferFunction.colourControlPoints.Add(controlPoint);
-            transferFunction.GenerateTexture();
-        
-            // Add to secondary transfer function
-            secondaryTransferFunction.colourControlPoints.Add(controlPoint);
-            secondaryTransferFunction.GenerateTexture();
-        
-            NewColourControlPointUI(controlPoint, activeAttribute, transferFunction.colourControlPoints.Count - 1);
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+
+            Debug.Log("AddColourControlPoint: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(activeAttribute).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+
+            foreach (String[] currVolNames in names)
+            {
+                if (currVolNames.Contains<String>(activeAttributeName))
+                {
+                    foreach (var currName in currVolNames)
+                    {
+                        if (selectedVolume.transform.Find(currName))
+                        {
+                            foundObject = selectedVolume.transform.Find(currName).gameObject;
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("TransferFunctionPanel.AddColourControlPoint: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+            }
+            else
+            {
+                Debug.Log("TransferFunctionPanel.AddColourControlPoint: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
+
+
+                TransferFunction transferFunction =
+                foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
+                TFColourControlPoint controlPoint = new TFColourControlPoint(0.5f, Color.white);
+                transferFunction.colourControlPoints.Add(controlPoint);
+                transferFunction.GenerateTexture();
+
+                // Add to secondary transfer function
+                secondaryTransferFunction.colourControlPoints.Add(controlPoint);
+                secondaryTransferFunction.GenerateTexture();
+
+                NewColourControlPointUI(controlPoint, activeAttribute, transferFunction.colourControlPoints.Count - 1);
+            }
         }
     
         public void AddAlphaControlPoint()
         {
-            TransferFunction transferFunction =
-                selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
-            TFAlphaControlPoint controlPoint = new TFAlphaControlPoint(0.5f, 0.5f);
-            transferFunction.alphaControlPoints.Add(controlPoint);
-            transferFunction.GenerateTexture();
-            NewAlphaControlPointUI(controlPoint, activeAttribute, transferFunction.alphaControlPoints.Count - 1);
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+
+            Debug.Log("AddColourControlPoint: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(activeAttribute).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+
+            foreach (String[] currVolNames in names)
+            {
+                if (currVolNames.Contains<String>(activeAttributeName))
+                {
+                    foreach (var currName in currVolNames)
+                    {
+                        if (selectedVolume.transform.Find(currName))
+                        {
+                            foundObject = selectedVolume.transform.Find(currName).gameObject;
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("TransferFunctionPanel.AddColourControlPoint: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+            }
+            else
+            {
+                Debug.Log("TransferFunctionPanel.AddColourControlPoint: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
+
+                TransferFunction transferFunction =
+                foundObject.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+                TFAlphaControlPoint controlPoint = new TFAlphaControlPoint(0.5f, 0.5f);
+                transferFunction.alphaControlPoints.Add(controlPoint);
+                transferFunction.GenerateTexture();
+                NewAlphaControlPointUI(controlPoint, activeAttribute, transferFunction.alphaControlPoints.Count - 1);
+            }
         }
 
         private void SetColor()
@@ -353,18 +538,64 @@ namespace UI
             int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width) / 0.827); // factor considering stretch hard coded
             int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height) / 0.38);
             Color c = refSprite.GetPixel(localPosX, localPosY);
-        
-            TransferFunction transferFunction =
-                selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
-            TFColourControlPoint oldCp = transferFunction.colourControlPoints[selectedColourControlPointIndex];
-            transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCp.dataValue, c);
-        
-            // Apply changes to secondary transfer function
-            secondaryTransferFunction.colourControlPoints =
-                new List<TFColourControlPoint>(transferFunction.colourControlPoints);
-        
-            secondaryTransferFunction.GenerateTexture();
-            transferFunction.GenerateTexture();
+
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+
+            Debug.Log("SetColor: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(activeAttribute).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            GameObject foundObject = new GameObject();
+            bool found = false;
+            List<String[]> names = new List<String[]>();
+
+            String[] tev = new[] { "temperature", "tev", "Temperature" };
+            names.Add(tev);
+
+            String[] prs = new[] { "pressure", "prs", "Pressure" };
+            names.Add(prs);
+
+            String[] v02 = new[] { "water", "v02", "Water" };
+            names.Add(v02);
+
+            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+            names.Add(v03);
+
+
+            foreach (String[] currVolNames in names)
+            {
+                if (currVolNames.Contains<String>(activeAttributeName))
+                {
+                    foreach (var currName in currVolNames)
+                    {
+                        if (selectedVolume.transform.Find(currName))
+                        {
+                            foundObject = selectedVolume.transform.Find(currName).gameObject;
+                            found = true;
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Debug.Log("SetColor.AddColourControlPoint: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+            }
+            else
+            {
+                Debug.Log("SetColor.AddColourControlPoint: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
+
+
+                TransferFunction transferFunction =
+                foundObject.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+                TFColourControlPoint oldCp = transferFunction.colourControlPoints[selectedColourControlPointIndex];
+                transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCp.dataValue, c);
+
+                // Apply changes to secondary transfer function
+                secondaryTransferFunction.colourControlPoints =
+                    new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+
+                secondaryTransferFunction.GenerateTexture();
+                transferFunction.GenerateTexture();
+            }
         }
 
         public void OnClickColorPicker()
