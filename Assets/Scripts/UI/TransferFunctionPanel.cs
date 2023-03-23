@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ImportVolume;
 using TMPro;
@@ -117,17 +118,145 @@ namespace UI
 
         void DropDownValueChanged(int value)
         {
-            activeAttribute = value;
+            activeAttribute = value; 
+            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
             
             Debug.Log("DropDownValueChanged: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(value).name + " Aktuelles Volume: " + selectedVolume.name);
+
+            List<GameObject> foundObjects = new List<GameObject>();
+            GameObject foundObject = new GameObject();
+            switch (activeAttributeName)
+            {
+                case "temperature": case "tev": case "Temperature":
+                    foundObjects.Add(selectedVolume.transform.Find("temperature").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("tev").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Temperature").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "pressure": case "prs": case "Pressure":
+                    foundObjects.Add(selectedVolume.transform.Find("pressure").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("prs").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Pressure").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "water": case "v02": case "Water":
+                    foundObjects.Add(selectedVolume.transform.Find("water").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("v02").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Water").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "meteorite": case "v03": case "Meteorite":
+                    foundObjects.Add(selectedVolume.transform.Find("meteorite").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("v03").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Meteorite").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;       
+                default:
+                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Switchcase: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+                    break;
+            }
             
+            Debug.Log("TransferFunctionPanel.DropDownValueChanged: Child " + foundObject.name + " gefunden!");
             TransferFunction transferFunction =
-                selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
+               foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
         
+
+        
+            foundObjects = new List<GameObject>();
+            foundObject = new GameObject();
+            switch (activeAttributeName)
+            {
+                case "temperature": case "tev": case "Temperature":
+                    foundObjects.Add(selectedVolume.transform.Find("temperature").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("tev").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Temperature").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "pressure": case "prs": case "Pressure":
+                    foundObjects.Add(selectedVolume.transform.Find("pressure").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("prs").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Pressure").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "water": case "v02": case "Water":
+                    foundObjects.Add(selectedVolume.transform.Find("water").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("v02").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Water").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;
+                case "meteorite": case "v03": case "Meteorite":
+                    foundObjects.Add(selectedVolume.transform.Find("meteorite").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("v03").gameObject);
+                    foundObjects.Add(selectedVolume.transform.Find("Meteorite").gameObject);
+
+                    foreach (var obj in foundObjects)
+                    {
+                        if (obj != null)
+                        {
+                            foundObject = obj;
+                        }
+                    }
+                    break;       
+                default:
+                    Debug.Log("TransferFunctionPanel.DropDownValueChanged: Switchcase: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
+                    break;
+            }
+            
+            Debug.Log("TransferFunctionPanel.DropDownValueChanged: Volume 2 Child " + foundObject.name + " gefunden!");
+            
             // Set transfer function for other volume
-            selectedVolume2.transform.GetChild(value).GetComponent<VolumeRenderedObject>()
+            foundObject.GetComponent<VolumeRenderedObject>()
                 .transferFunction = transferFunction;
-        
+            
             Texture2D transferFuncTex = transferFunction.GetTexture();
             alphaView.GetComponent<RawImage>().texture = transferFuncTex;
         
