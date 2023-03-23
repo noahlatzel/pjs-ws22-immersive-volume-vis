@@ -30,7 +30,15 @@ namespace UI
         public GameObject colourControlPointPrefab;
         private int activeAttribute;
         private TransferFunction secondaryTransferFunction;
-    
+
+        List<String[]> names = new List<String[]>();
+
+        String[] tev = new[] { "temperature", "tev", "Temperature" };
+        String[] prs = new[] { "pressure", "prs", "Pressure" };
+        String[] v02 = new[] { "water", "v02", "Water" };
+        String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
+
+
         // Color picker
         public RectTransform texture;
         public Texture2D refSprite;
@@ -45,6 +53,11 @@ namespace UI
             volumes = new GameObject[volumeTransformer.transform.childCount];
 
             for (var i = 0; i < volumes.Length; i++) volumes[i] = volumeTransformer.transform.GetChild(i).gameObject;
+
+            names.Add(tev);
+            names.Add(prs);
+            names.Add(v02);
+            names.Add(v03);
 
             bool first = true;
             for (int i = 0; i < volumes.Length; i++)
@@ -126,21 +139,6 @@ namespace UI
             
             GameObject foundObject = new GameObject();
             bool found = false;
-            List<String[]> names = new List<String[]>();
-
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-            
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-            
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-            
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
-            
-
             foreach (String[] currVolNames in names)
             {
                 if (currVolNames.Contains<String>(activeAttributeName))
@@ -151,6 +149,14 @@ namespace UI
                         {
                             foundObject = selectedVolume.transform.Find(currName).gameObject;
                             found = true;
+
+                            for (int i = 0; i < selectedVolume.transform.childCount; i++)
+                            {
+                                if (selectedVolume.transform.GetChild(i).gameObject.name.Equals(currName))
+                                {
+                                    activeAttribute = i;
+                                }
+                }
                         }
                     }
                 }
@@ -162,6 +168,8 @@ namespace UI
             }
             else
             {
+
+
                 Debug.Log("TransferFunctionPanel.DropDownValueChanged: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
                 TransferFunction transferFunction =
                     foundObject.GetComponent<VolumeRenderedObject>().transferFunction;
@@ -298,21 +306,6 @@ namespace UI
 
             GameObject foundObject = new GameObject();
             bool found = false;
-            List<String[]> names = new List<String[]>();
-
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
-
-
             foreach (String[] currVolNames in names)
             {
                 if (currVolNames.Contains<String>(activeAttributeName))
@@ -366,19 +359,7 @@ namespace UI
 
             GameObject foundObject = new GameObject();
             bool found = false;
-            List<String[]> names = new List<String[]>();
 
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
 
 
             foreach (String[] currVolNames in names)
@@ -420,21 +401,6 @@ namespace UI
 
             GameObject foundObject = new GameObject();
             bool found = false;
-            List<String[]> names = new List<String[]>();
-
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
-
-
             foreach (String[] currVolNames in names)
             {
                 if (currVolNames.Contains<String>(activeAttributeName))
@@ -481,21 +447,6 @@ namespace UI
 
             GameObject foundObject = new GameObject();
             bool found = false;
-            List<String[]> names = new List<String[]>();
-
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
-
-
             foreach (String[] currVolNames in names)
             {
                 if (currVolNames.Contains<String>(activeAttributeName))
@@ -539,64 +490,19 @@ namespace UI
             int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height) / 0.38);
             Color c = refSprite.GetPixel(localPosX, localPosY);
 
-            String activeAttributeName = dropdownMenu.GetComponent<TMP_Dropdown>().captionText.text;
+            TransferFunction transferFunction =
+                selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
+            TFColourControlPoint oldCp = transferFunction.colourControlPoints[selectedColourControlPointIndex];
+            transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCp.dataValue, c);
 
-            Debug.Log("SetColor: Aktuelles Volumeattribute: " + selectedVolume.transform.GetChild(activeAttribute).name + " Aktuelles Volume: " + selectedVolume.name);
+            // Apply changes to secondary transfer function
+            secondaryTransferFunction.colourControlPoints =
+                new List<TFColourControlPoint>(transferFunction.colourControlPoints);
 
-            GameObject foundObject = new GameObject();
-            bool found = false;
-            List<String[]> names = new List<String[]>();
-
-            String[] tev = new[] { "temperature", "tev", "Temperature" };
-            names.Add(tev);
-
-            String[] prs = new[] { "pressure", "prs", "Pressure" };
-            names.Add(prs);
-
-            String[] v02 = new[] { "water", "v02", "Water" };
-            names.Add(v02);
-
-            String[] v03 = new[] { "meteorite", "v03", "Meteorite" };
-            names.Add(v03);
-
-
-            foreach (String[] currVolNames in names)
-            {
-                if (currVolNames.Contains<String>(activeAttributeName))
-                {
-                    foreach (var currName in currVolNames)
-                    {
-                        if (selectedVolume.transform.Find(currName))
-                        {
-                            foundObject = selectedVolume.transform.Find(currName).gameObject;
-                            found = true;
-                        }
-                    }
-                }
-            }
-
-            if (!found)
-            {
-                Debug.Log("SetColor.AddColourControlPoint: Kein Layer mit dem Namen " + activeAttributeName + " gefunden.");
-            }
-            else
-            {
-                Debug.Log("SetColor.AddColourControlPoint: Child " + foundObject.name + " gefunden! ActiveAttribute: " + activeAttributeName);
-
-
-                TransferFunction transferFunction =
-                foundObject.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
-                TFColourControlPoint oldCp = transferFunction.colourControlPoints[selectedColourControlPointIndex];
-                transferFunction.colourControlPoints[selectedColourControlPointIndex] = new TFColourControlPoint(oldCp.dataValue, c);
-
-                // Apply changes to secondary transfer function
-                secondaryTransferFunction.colourControlPoints =
-                    new List<TFColourControlPoint>(transferFunction.colourControlPoints);
-
-                secondaryTransferFunction.GenerateTexture();
-                transferFunction.GenerateTexture();
-            }
+            secondaryTransferFunction.GenerateTexture();
+            transferFunction.GenerateTexture();
         }
+
 
         public void OnClickColorPicker()
         {
