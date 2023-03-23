@@ -797,7 +797,7 @@ namespace ImportVolume
         {
             foreach (var volumeAttribute in volumeAttributes)
             {
-                if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs")
+                if (volumeAttribute.GetName() == "Pressure" || volumeAttribute.GetName() == "prs" || volumeAttribute.GetName() == "pressure")
                 {
                     if (visibility != volumeAttribute.IsVisible())
                     {
@@ -825,7 +825,7 @@ namespace ImportVolume
         {
             foreach (var volumeAttribute in volumeAttributes)
             {
-                if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev")
+                if (volumeAttribute.GetName() == "Temperature" || volumeAttribute.GetName() == "tev" || volumeAttribute.GetName() == "temperature")
                 {
                     if (visibility != volumeAttribute.IsVisible())
                     {
@@ -852,7 +852,7 @@ namespace ImportVolume
         {
             foreach (var volumeAttribute in volumeAttributes)
             {
-                if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02")
+                if (volumeAttribute.GetName() == "Water" || volumeAttribute.GetName() == "v02" || volumeAttribute.GetName() == "water")
                 {
                     if (visibility != volumeAttribute.IsVisible())
                     {
@@ -879,7 +879,7 @@ namespace ImportVolume
         {
             foreach (var volumeAttribute in volumeAttributes)
             {
-                if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03")
+                if (volumeAttribute.GetName() == "Meteorite" || volumeAttribute.GetName() == "v03" || volumeAttribute.GetName() == "meteorite")
                 {
                     if (visibility != volumeAttribute.IsVisible()) {
                         volumeAttribute.SetVisibility(visibility);
