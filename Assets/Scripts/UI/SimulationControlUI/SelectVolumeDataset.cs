@@ -27,14 +27,11 @@ namespace UI.SimulationControlUI
             {
                 DropDownValueChanged(GetComponent<TMP_Dropdown>().value);
             });
-
-            
         }
 
         void DropDownValueChanged(int value)
         {
-            volume.GetComponent<LoadVolumes>().volumeManager.SetDataset(Path.GetFileName(dataSetPaths[value]));
+            volume.GetComponent<LoadVolumes>().datasetName = Path.GetFileName(dataSetPaths[value]);
         }
-    
     }
 }

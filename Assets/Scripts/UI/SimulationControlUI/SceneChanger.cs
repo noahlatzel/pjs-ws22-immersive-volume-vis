@@ -1,19 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneChanger : MonoBehaviour
+namespace UI.SimulationControlUI
 {
-    /*public void Update()
+    public class SceneChanger : MonoBehaviour
     {
-        if (Input.GetButtonDown("SceneChange"))
+        public void ChangeScene(string sceneName)
         {
-            ChangeScene("PlotScene");
+            SceneManager.LoadScene(sceneName);
         }
-    }*/
-    
-    public void ChangeScene(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
     }
 }
 

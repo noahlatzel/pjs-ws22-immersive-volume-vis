@@ -1,6 +1,7 @@
+using System.Collections;
 using ImportVolume;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace UI.SimulationControlUI
 {
@@ -10,7 +11,6 @@ namespace UI.SimulationControlUI
 
         public GameObject volume;
         public GameObject volume2;
-        public GameObject dropdown;
         public GameObject referenceButton;
     
         // Start is called before the first frame update
@@ -18,7 +18,6 @@ namespace UI.SimulationControlUI
         {
             volume = GameObject.Find("RenderedVolume");
             volume2 = GameObject.Find("RenderedVolume2");
-            dropdown = GameObject.Find("Volume2");
         }
 
         public void ChangeStartStop()
@@ -27,24 +26,28 @@ namespace UI.SimulationControlUI
             {
                 playing = true;
                 referenceButton.GetComponent<PlayPause>().playing = true;
-                if (dropdown.GetComponentInChildren<TextMeshProUGUI>().text != "Default")
-                {
-                    volume2.GetComponent<LoadVolumes>().play = true;
-                }
-                volume.GetComponent<LoadVolumes>().play = true;
+                StartCoroutine(Play());
             }
             else 
             {
                 playing = false;
                 referenceButton.GetComponent<PlayPause>().playing = false;
-                if (dropdown.GetComponentInChildren<TextMeshProUGUI>().text != "Default")
-                {
-                    volume2.GetComponent<LoadVolumes>().play = false;
-                }
-                volume.GetComponent<LoadVolumes>().play = false;
             }
-            transform.gameObject.SetActive(false);
-            referenceButton.SetActive(true);
+
+            GetComponent<UnityEngine.UI.Button>().enabled = false;
+            GetComponent<UnityEngine.UI.Image>().enabled = false;
+            referenceButton.GetComponent<UnityEngine.UI.Button>().enabled = true;
+            referenceButton.GetComponent<UnityEngine.UI.Image>().enabled = true;
+        }
+
+        IEnumerator Play()
+        {
+            while (playing)
+            {
+                volume.GetComponent<LoadVolumes>().timestep++;
+                volume2.GetComponent<LoadVolumes>().timestep++;
+                yield return new WaitForSeconds(1);
+            }
         }
     }
 }

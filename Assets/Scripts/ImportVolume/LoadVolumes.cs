@@ -1,11 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using TMPro;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 using UnityVolumeRendering;
 
 namespace ImportVolume
@@ -47,11 +51,17 @@ namespace ImportVolume
 
         public bool forward = true;
         public int timestep = 0;
-    
+
         // Manager class
         public VolumeManager volumeManager;
         public int targetFramerate = 90;
         public bool mainScene;
+        
+        // Show timeStep in UI
+        public GameObject timeStepUI;
+        private TextMeshProUGUI tmpUI;
+        private String cachedText;
+        
         void Awake()
         {
             QualitySettings.vSyncCount = 0;
@@ -68,7 +78,10 @@ namespace ImportVolume
 
             // Render volumes on start 
             RenderOnStart(volumeManager);
-
+            
+            tmpUI = timeStepUI.GetComponent<TMPro.TextMeshProUGUI>();
+            cachedText = tmpUI.text;
+            
             Debug.Log(volumeManager.IsReadingBinary());
         }
 
@@ -80,12 +93,29 @@ namespace ImportVolume
             {
                 volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
             }
+            else
+            {
+                volumeManager.SetVisiblitiesForAttributes(new []{pressure, temperature, water, meteorite});
+            }
+
             volumeManager.SetUsingScale(useScaledVersion);
-        
+            
+            // Set time step in valid interval
+            timestep = Math.Max(0, Math.Min(timestep, volumeManager.GetCount() - 1));
+
+            StartCoroutine(LoadCurrentFrame());
+            
+            // Only change time step in UI if necessary (performance)
+            if (mainScene && cachedText != timestep.ToString())
+            {
+                tmpUI.text = timestep.ToString();
+                cachedText = tmpUI.text;
+            }
+            
+            /*
             // Only execute as often as specified in timesPerSecond
             float dur = 1f / timesPerSecond;
             timePassed += Time.deltaTime;
-        
             if (timePassed >= dur)
             {
                 timePassed -= dur;
@@ -130,11 +160,11 @@ namespace ImportVolume
                     volumeManager.fireOnce = false;
                 }
 
-            }
+            }*/
                         
             if(Application.targetFrameRate != targetFramerate)
                 Application.targetFrameRate = targetFramerate;
-            
+            /*
             // Limit speed of loading the buffer to reduce lag
             float durBuffer = 1f / bufferSpeed;
             timePassedBuffer += Time.deltaTime;
@@ -149,9 +179,35 @@ namespace ImportVolume
                     var t = new Thread(volumeManager.BufferNextFrame);
                     t.Start();
                 }
-            }
+            }*/
         }
 
+        IEnumerator LoadCurrentFrame()
+        {
+            foreach(var volumeAttribute in volumeManager.GetVolumeAttributes())
+            {
+                // Only execute if loaded time step is not the set time step
+                if (!volumeAttribute.loadingFrame && (volumeAttribute.loadedTimeStep != timestep || volumeAttribute.loadedDataSet != datasetName))
+                {
+                    StartCoroutine(volumeAttribute.LoadCurrentFrame(timestep, datasetName));
+                }
+                yield return null;
+            }
+        }
+        
+        IEnumerator LoadCurrentFrameSplit()
+        {
+            foreach(var volumeAttribute in volumeManager.GetVolumeAttributes())
+            {
+                // Only execute if loaded time step is not the set time step
+                if (!volumeAttribute.loadingFrame && (volumeAttribute.loadedTimeStep != timestep || volumeAttribute.loadedDataSet != datasetName))
+                {
+                    StartCoroutine(volumeAttribute.LoadCurrentFrameSplit(timestep, datasetName));
+                }
+                yield return null;
+            }
+        }
+        
         public void SetFrame(int timeStep)
         {
             volumeManager.SetFrame(timeStep);
@@ -265,8 +321,11 @@ namespace ImportVolume
         private readonly Assembly dll;
         private static readonly int DataTex = Shader.PropertyToID("_DataTex");
         private MaterialPropertyBlock materialPropertyBlock;
-
-
+        
+        public int loadedTimeStep = -1;
+        public String loadedDataSet = "";
+        public bool loadingFrame;
+        
         public VolumeAttribute(String path)
         {
             name = new DirectoryInfo(path).Name;
@@ -282,6 +341,54 @@ namespace ImportVolume
             dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
         }
 
+        public IEnumerator LoadCurrentFrameSplit(int timeStep, String dataSet)
+        {
+            if (IsVisible())
+            {
+                loadingFrame = true;
+            
+                for (int i = 0; i < 10; i++)
+                {
+                    String path = filePaths[timeStep * 10 + i];
+                    byte[] split = File.ReadAllBytes(path);
+                    yield return null;
+                    Texture3D currentTexture = (Texture3D) material.GetTexture($"_DataTex{i}");
+                    currentTexture.wrapMode = TextureWrapMode.Clamp;
+                    currentTexture.SetPixelData(split, 0);
+                    yield return null;
+                    currentTexture.Apply();
+                    material.SetTexture($"_DataTex{i}", currentTexture);
+                }
+
+                // Set loaded time step to time step
+                loadedTimeStep = timeStep;
+                loadedDataSet = dataSet;
+                loadingFrame = false;
+            }
+        }
+        
+        public IEnumerator LoadCurrentFrame(int timeStep, String dataSet)
+        {
+            if (IsVisible())
+            {
+                loadingFrame = true;
+
+                String path = filePaths[timeStep];
+                byte[] byteData = File.ReadAllBytes(path);
+                yield return null;
+                Texture3D currentTexture = (Texture3D) material.GetTexture("_DataTex");
+                currentTexture.wrapMode = TextureWrapMode.Clamp;
+                currentTexture.SetPixelData(byteData, 0);
+                yield return null;
+                currentTexture.Apply();
+                material.SetTexture("_DataTex", currentTexture);
+                
+                // Set loaded time step to time step
+                loadedTimeStep = timeStep;
+                loadedDataSet = dataSet;
+                loadingFrame = false;
+            }
+        }
         private String GetVolumePath(int number)
         {
             if (number < 0)
@@ -601,6 +708,14 @@ namespace ImportVolume
         public VolumeAttribute[] GetVolumeAttributes()
         {
             return volumeAttributes;
+        }
+
+        public void SetVisiblitiesForAttributes(bool[] visibilities)
+        {
+            for (var i = 0; i < visibilities.Length; i++)
+            {
+                volumeAttributes[i].SetVisibility(visibilities[i]);
+            }
         }
 
         public void SetVisibilities(bool[] visibilities)
@@ -944,6 +1059,5 @@ namespace ImportVolume
             }
             return minCount;
         }
-
     }
 }
