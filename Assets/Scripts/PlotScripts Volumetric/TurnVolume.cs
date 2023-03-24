@@ -33,7 +33,7 @@ public class TurnVolume : MonoBehaviour
     {
         foreach (var volume in volumes)
         {
-            volume.transform.eulerAngles += new Vector3(0, 90, 0);
+            volume.transform.eulerAngles += new Vector3(0, 45, 0);
         }
     }
 

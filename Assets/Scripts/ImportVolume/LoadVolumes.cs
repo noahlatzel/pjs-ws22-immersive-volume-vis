@@ -392,12 +392,9 @@ namespace ImportVolume
             // Check if textures are buffered
             if (bufferQueue.Count > 0)
             {
-                // Get correct texture format analogue to the Volume Importer
-                TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
-        
-                // Set the current texture to the next texture in the buffer depended on usingScaled
-                Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
-                    new Texture3D(300, 300, 300, texFormat, false);
+                // Get the currently loaded texture
+                Texture3D newTexture = (Texture3D)material.GetTexture("_DataTex");
+                newTexture.wrapMode = TextureWrapMode.Clamp;
 
                 // Save current Texture3D to bufferStack (for PreviousFrame())
                 bufferStack.Push((Texture3D) material.GetTexture("_DataTex"));
@@ -425,12 +422,9 @@ namespace ImportVolume
 
         public void SetFrame(int timestep)
         {
-            // Get correct texture format analogue to the Volume Importer
-            TextureFormat texFormat = SystemInfo.SupportsTextureFormat(TextureFormat.RHalf) ? TextureFormat.RHalf : TextureFormat.RFloat;
-        
-            // Set the current texture to the next texture in the buffer depended on usingScaled
-            Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
-                new Texture3D(300, 300, 300, texFormat, false);
+            // Get the currently loaded texture
+            Texture3D newTexture = (Texture3D)material.GetTexture("_DataTex");
+            newTexture.wrapMode = TextureWrapMode.Clamp;
 
             // Load pixelData from binary file at given position
             int volumeToRender = Math.Max(0,Math.Min(timestep,count));
