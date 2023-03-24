@@ -19,14 +19,8 @@ public class TimestepSetter : MonoBehaviour
         thisButton = gameObject.GetComponent<Button>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ButtonPress(int timeStep)
     {
-        loadVolumes.SetFrame(timeStep);
+        loadVolumes.timestep = timeStep;
     }
 }

@@ -36,7 +36,7 @@ namespace PlotScripts_Volumetric
                     var newTimestep = currComp.timestep + amountOfFrames;
                     if (currComp.getCount() > newTimestep && newTimestep >= 0)
                     {
-                        volumes[i].GetComponent<LoadVolumes>().SetFrame(currComp.timestep + amountOfFrames);
+                        volumes[i].GetComponent<LoadVolumes>().timestep += amountOfFrames;
                         Debug.Log("Neuer Timestep: " + volumes[i].GetComponent<LoadVolumes>().timestep);
                     }
                     else

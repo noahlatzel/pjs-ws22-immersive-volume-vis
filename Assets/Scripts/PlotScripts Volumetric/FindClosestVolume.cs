@@ -39,12 +39,6 @@ namespace PlotScripts_Volumetric
             thisButton = gameObject.GetComponent<Button>();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-
         public void SetClosestVolume()
         {
             var position = cameraPos.transform.position;
@@ -60,7 +54,7 @@ namespace PlotScripts_Volumetric
             {
                 if (uiVolumeToggleComp.volumeVisibility[i])
                 {
-                    volumes[i].GetComponent<LoadVolumes>().SetFrame(closestPointIndex);
+                    volumes[i].GetComponent<LoadVolumes>().timestep = closestPointIndex;
                 }
             }
             
