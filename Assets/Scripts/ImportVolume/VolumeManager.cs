@@ -12,6 +12,7 @@ namespace ImportVolume
         private String dataSetPath;
         private VolumeAttribute[] volumeAttributes;
         public int currentTimeStep;
+        public String dataSetName;
         private bool isReadingBinary;
         private bool forward = true;
         public GameObject referencedGameObject;
@@ -20,6 +21,7 @@ namespace ImportVolume
         public VolumeManager(String dataSetName)
         {
             dataSetPath = $"Assets/Datasets/{dataSetName}";
+            this.dataSetName = dataSetName;
             AddVolumeAttributes();
         }
     
@@ -128,10 +130,8 @@ namespace ImportVolume
             if (dataSetPath != $"Assets/Datasets/{newDatasetName}")
             {
                 dataSetPath = $"Assets/Datasets/{newDatasetName}";
-                currentTimeStep = 0;
                 AddVolumeAttributes();
                 referencedGameObject.GetComponent<LoadVolumes>().ChangeAttributeNames(this);
-                RefreshCurrentState();
                 GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanel>().Start();
             }
         }

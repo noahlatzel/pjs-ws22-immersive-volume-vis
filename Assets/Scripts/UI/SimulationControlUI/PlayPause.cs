@@ -12,12 +12,16 @@ namespace UI.SimulationControlUI
         public GameObject volume;
         public GameObject volume2;
         public GameObject referenceButton;
+        private GameObject speedSliderGameObject;
+        private UnityEngine.UI.Slider speedSlider;
     
         // Start is called before the first frame update
         void Start()
         {
             volume = GameObject.Find("RenderedVolume");
             volume2 = GameObject.Find("RenderedVolume2");
+            speedSliderGameObject = GameObject.Find("PlaySpeed");
+            speedSlider = speedSliderGameObject.GetComponent<UnityEngine.UI.Slider>();
         }
 
         public void ChangeStartStop()
@@ -46,7 +50,7 @@ namespace UI.SimulationControlUI
             {
                 volume.GetComponent<LoadVolumes>().timestep++;
                 volume2.GetComponent<LoadVolumes>().timestep++;
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1 / speedSlider.value);
             }
         }
     }

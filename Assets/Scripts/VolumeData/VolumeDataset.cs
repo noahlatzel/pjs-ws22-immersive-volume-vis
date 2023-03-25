@@ -145,6 +145,7 @@ namespace UnityVolumeRendering
                     for (int iData = 0; iData < data.Length; iData++)
                         pixelBytes[iData] = Mathf.FloatToHalf((float)(data[iData] - minValue) / maxRange);
                     texture.SetPixelData(pixelBytes, 0);
+                    File.WriteAllBytes("Assets/Datasets/test.bin", texture.GetPixelData<byte>(0).ToArray());
                 }
                 else
                 {

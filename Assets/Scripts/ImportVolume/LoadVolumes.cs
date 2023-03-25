@@ -23,22 +23,6 @@ namespace ImportVolume
         [Tooltip("Show/Hide meteorite volume.")]
         public bool meteorite;
 
-        [Tooltip("Start/Stop the animation.")]
-        [SerializeField] public bool play;
-    
-        [Tooltip("Specify the frames per second of the animation.")]
-        [SerializeField]
-        public int timesPerSecond = 1;
-    
-        [Tooltip("Start/Stop the buffer.")]
-        public bool isBuffering;
-
-        public bool useScaledVersion;
-    
-        [Tooltip("Adjust the buffer speed (buffer per second)")]
-        public int bufferSpeed = 5;
-
-        public bool forward = true;
         public int timestep = 0;
 
         // Manager class
@@ -50,6 +34,7 @@ namespace ImportVolume
         public GameObject timeStepUI;
         private TextMeshProUGUI tmpUI;
         private String cachedText;
+        private bool changingDataset;
         
         void Awake()
         {
@@ -70,8 +55,6 @@ namespace ImportVolume
             
             tmpUI = timeStepUI.GetComponent<TextMeshProUGUI>();
             cachedText = tmpUI.text;
-            
-            Debug.Log(volumeManager.IsReadingBinary());
         }
 
         // Update is called once per frame
@@ -188,6 +171,7 @@ namespace ImportVolume
                 transform.GetChild(i).name = refVolumeManager.GetVolumeAttributes()[i].GetName();
                 refVolumeManager.GetVolumeAttributes()[i].SetMeshRendererReference(transform.GetChild(i).gameObject.GetComponentInChildren<MeshRenderer>());
                 refVolumeManager.GetVolumeAttributes()[i].SetMaterialReference(transform.GetChild(i).gameObject.GetComponentInChildren<MeshRenderer>().material);
+                Debug.Log("HERE");
             }
         }
 

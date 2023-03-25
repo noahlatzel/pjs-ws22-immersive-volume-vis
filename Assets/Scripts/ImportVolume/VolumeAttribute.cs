@@ -10,16 +10,16 @@ namespace ImportVolume
 {
     public class VolumeAttribute
     {
-        private readonly String name;
+        private String name;
         private bool active;
-        private readonly String[] filePaths;
+        private String[] filePaths;
         private readonly String[] filePathsScaled;
         private Material material;
         private MeshRenderer meshRenderer;
         private readonly Queue<byte[]> bufferQueue;
         private readonly LimitedStack<Texture3D> bufferStack;
-        private readonly int count;
-        private readonly String originalPath;
+        private int count;
+        private String originalPath;
         private bool usingScaled = false;
         private readonly Assembly dll;
         private static readonly int DataTex = Shader.PropertyToID("_DataTex");
@@ -74,14 +74,39 @@ namespace ImportVolume
         {
             if (IsVisible())
             {
+                if (loadedDataSet != dataSet)
+                {
+                    Debug.Log(dataSet);
+                    filePaths = Directory.GetFiles("Assets/Datasets/" + dataSet + "/" + name + "_bin/", "*.bin")
+                        .Where(filePath => !filePath.EndsWith("_sub.bin")).ToArray();
+                    count = filePaths.Length;
+                    timeStep = Math.Min(timeStep, count - 1);
+                }
+
                 loadingFrame = true;
 
                 String path = filePaths[timeStep];
-                byte[] byteData = File.ReadAllBytes(path);
+                ushort[] ushortData = {};
+                byte[] byteData = {};
+                if (Path.GetFileNameWithoutExtension(path).Contains("ushort"))
+                {
+                    ushortData = ReadUShortArray(path);
+                }
+                else
+                {
+                    byteData = File.ReadAllBytes(path);
+                }
                 yield return null;
                 Texture3D currentTexture = (Texture3D) material.GetTexture(DataTex);
                 currentTexture.wrapMode = TextureWrapMode.Clamp;
-                currentTexture.SetPixelData(byteData, 0);
+                if (byteData.Length != 0)
+                {
+                    currentTexture.SetPixelData(byteData, 0);
+                }
+                else
+                {
+                    currentTexture.SetPixelData(ushortData, 0);
+                }
                 yield return null;
                 currentTexture.Apply();
                 material.SetTexture(DataTex, currentTexture);
@@ -92,6 +117,34 @@ namespace ImportVolume
                 loadingFrame = false;
             }
         }
+        
+        private ushort[] ReadUShortArray(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Path cannot be null or empty.", nameof(path));
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("File not found at the specified path.", path);
+            }
+
+            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (BinaryReader binaryReader = new BinaryReader(fileStream))
+            {
+                int numberOfUShorts = (int)(fileStream.Length / sizeof(ushort));
+                ushort[] ushortArray = new ushort[numberOfUShorts];
+
+                for (int i = 0; i < numberOfUShorts; i++)
+                {
+                    ushortArray[i] = binaryReader.ReadUInt16();
+                }
+
+                return ushortArray;
+            }
+        }
+        
         private String GetVolumePath(int number)
         {
             if (number < 0)
