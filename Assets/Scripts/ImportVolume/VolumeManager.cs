@@ -11,7 +11,6 @@ namespace ImportVolume
     {
         private String dataSetPath;
         private VolumeAttribute[] volumeAttributes;
-        public int currentTimeStep;
         public String dataSetName;
         private bool isReadingBinary;
         private bool forward = true;
@@ -22,13 +21,6 @@ namespace ImportVolume
         {
             dataSetPath = $"Assets/Datasets/{dataSetName}";
             this.dataSetName = dataSetName;
-            AddVolumeAttributes();
-        }
-    
-        public VolumeManager(String dataSetName, GameObject referencedGameObject)
-        {
-            dataSetPath = $"Assets/Datasets/{dataSetName}";
-            this.referencedGameObject = referencedGameObject;
             AddVolumeAttributes();
         }
 
@@ -100,31 +92,7 @@ namespace ImportVolume
                 Debug.Log("LoadVolumes.SetVisibilities: Kein VolumeAttribute gefunden!");
             }
         }
-
-        public void NextFrame()
-        {
-            bool active = false;
-            foreach (var volumeAttribute in volumeAttributes)
-            {
-                if (volumeAttribute.IsVisible())
-                {
-                    volumeAttribute.NextFrame();
-                    active = true;
-                }
-            }
-
-            if (active)
-            {
-                currentTimeStep++;
-            }
-        }
-
-
-        public bool IsReadingBinary()
-        {
-            return isReadingBinary;
-        }
-
+        
         public void SetDataset(String newDatasetName)
         {
             if (dataSetPath != $"Assets/Datasets/{newDatasetName}")
@@ -135,24 +103,7 @@ namespace ImportVolume
                 GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanel>().Start();
             }
         }
-
-        public void RefreshCurrentState()
-        {
-            foreach (var volumeAttribute in volumeAttributes)
-            {
-                volumeAttribute.ClearBufferQueue();
-                if (forward)
-                {
-                    volumeAttribute.BufferNextFrame(currentTimeStep - 1);
-                }
-                else
-                {
-                    volumeAttribute.BufferNextFrameReverse(currentTimeStep + 1);
-                }
-                NextFrame();
-            }
-        }
-
+        
         public int GetCount()
         {
             int minCount = -1;

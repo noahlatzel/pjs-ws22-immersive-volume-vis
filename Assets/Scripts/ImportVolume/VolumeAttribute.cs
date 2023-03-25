@@ -16,12 +16,9 @@ namespace ImportVolume
         private readonly String[] filePathsScaled;
         private Material material;
         private MeshRenderer meshRenderer;
-        private readonly Queue<byte[]> bufferQueue;
-        private readonly LimitedStack<Texture3D> bufferStack;
         private int count;
         private String originalPath;
         private bool usingScaled = false;
-        private readonly Assembly dll;
         private static readonly int DataTex = Shader.PropertyToID("_DataTex");
         private MaterialPropertyBlock materialPropertyBlock;
         
@@ -37,11 +34,6 @@ namespace ImportVolume
             filePathsScaled = Directory.GetFiles(path + "_bin/", "*_sub.bin");
             count = filePaths.Length;
             originalPath = path;
-            bufferQueue = new Queue<byte[]>();
-            bufferStack = new LimitedStack<Texture3D>(10);
-    
-            // Load the DLL into the Assembly object
-            dll = Assembly.LoadFrom("Assets/DLLs/ThreadedBinaryReader.dll");
         }
 
         public IEnumerator LoadCurrentFrameSplit(int timeStep, String dataSet)
@@ -102,34 +94,7 @@ namespace ImportVolume
                 loadingFrame = false;
             }
         }
-        
-        private ushort[] ReadUShortArray(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentException("Path cannot be null or empty.", nameof(path));
-            }
 
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException("File not found at the specified path.", path);
-            }
-
-            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (BinaryReader binaryReader = new BinaryReader(fileStream))
-            {
-                int numberOfUShorts = (int)(fileStream.Length / sizeof(ushort));
-                ushort[] ushortArray = new ushort[numberOfUShorts];
-
-                for (int i = 0; i < numberOfUShorts; i++)
-                {
-                    ushortArray[i] = binaryReader.ReadUInt16();
-                }
-
-                return ushortArray;
-            }
-        }
-        
         private String GetVolumePath(int number)
         {
             if (number < 0)
@@ -171,91 +136,9 @@ namespace ImportVolume
             active = visibility;
         }
 
-        public bool IsVisible()
+        private bool IsVisible()
         {
             return active;
-        }
-
-        public void NextFrame()
-        {
-            // Check if textures are buffered
-            if (bufferQueue.Count > 0)
-            {
-                // Set the current texture to the next texture in the buffer depended on usingScaled
-                //Texture3D newTexture = usingScaled ? new Texture3D(100, 100, 100, texFormat, false) : 
-                //    new Texture3D(300, 300, 300, texFormat, false);
-            
-                // Get the currently loaded texture
-                Texture3D currentTexture = (Texture3D) material.GetTexture(DataTex);
-            
-                // Save current Texture3D to bufferStack (for PreviousFrame())
-                bufferStack.Push(currentTexture);
-
-                // Set pixel data from bufferQueue
-                currentTexture.SetPixelData(bufferQueue.Dequeue(), 0);
-
-                // Set _DataTex texture of material to newly loaded texture
-                material.SetTexture(DataTex, currentTexture);
-
-                // Upload new texture to GPU -> major bottleneck, can not be called async/in coroutine/ in
-                // a separate thread
-                currentTexture.Apply();
-            }
-        }
-
-        public void ClearBufferQueue()
-        {
-            bufferQueue.Clear();
-        }
-
-        // Loads the binary from the specified path and stores the loaded byte array in a queue.
-        // Loading the binary has to be separated from the main function because Unity functions classes
-        // may not be called in other threads than the main thread but we want to load our data in a separate 
-        // thread to reduce lag.
-        public void BufferNextFrame(int currentTimeStep)
-        {
-            // Restrict buffer size
-            if (bufferQueue.Count <= 10)
-            {
-                // Load pixelData from binary file at next position
-                int nextVolumeToBuffer = (currentTimeStep + 1 + bufferQueue.Count) % count;
-            
-                dll.GetType("ThreadedBinaryReader.FileReader").GetMethod("ReadFileInThread")
-                    ?.Invoke(null, new object[] { GetVolumePath(nextVolumeToBuffer), bufferQueue });
-            }
-        }
-    
-        // Loads the binary from the specified path and stores the loaded byte array in a queue.
-        // Loading the binary has to be separated from the main function because Unity functions classes
-        // may not be called in other threads than the main thread but we want to load our data in a separate 
-        // thread to reduce lag.
-        public void BufferNextFrameReverse(int currentTimeStep)
-        {
-            // Restrict buffer size
-            if (bufferQueue.Count <= 10)
-            {
-                // Load pixelData from binary file at next position
-                int nextVolumeToBuffer = (currentTimeStep - 1 - bufferQueue.Count) % count;
-                dll.GetType("ThreadedBinaryReader.FileReader").GetMethod("ReadFileInThread")
-                    ?.Invoke(null, new object[] { GetVolumePath(nextVolumeToBuffer), bufferQueue });
-            }
-        }
-
-        public void SetUsingScale(bool usage)
-        {
-            // Check if scale was changed during runtime
-            if (usingScaled != usage)
-            {
-                // Clear bufferQueue during runtime
-                bufferQueue.Clear();
-            
-                // Clear bufferStack during runtime
-                while (bufferStack.Count() > 0)
-                {
-                    bufferStack.Pop();
-                }
-            }
-            usingScaled = usage;
         }
     }
 }
