@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Preprocesser/1.0.0": {
+        "dependencies": {
+          "Nifti.NET": "1.1.4.0"
+        },
+        "runtime": {
+          "Preprocesser.dll": {}
+        }
+      },
+      "Nifti.NET/1.1.4.0": {
+        "runtime": {
+          "Nifti.NET.dll": {
+            "assemblyVersion": "1.1.4.0",
+            "fileVersion": "1.1.4.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Preprocesser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Nifti.NET/1.1.4.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

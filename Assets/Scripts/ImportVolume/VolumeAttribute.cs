@@ -86,27 +86,12 @@ namespace ImportVolume
                 loadingFrame = true;
 
                 String path = filePaths[timeStep];
-                ushort[] ushortData = {};
                 byte[] byteData = {};
-                if (Path.GetFileNameWithoutExtension(path).Contains("ushort"))
-                {
-                    ushortData = ReadUShortArray(path);
-                }
-                else
-                {
-                    byteData = File.ReadAllBytes(path);
-                }
+                byteData = File.ReadAllBytes(path);
                 yield return null;
                 Texture3D currentTexture = (Texture3D) material.GetTexture(DataTex);
                 currentTexture.wrapMode = TextureWrapMode.Clamp;
-                if (byteData.Length != 0)
-                {
-                    currentTexture.SetPixelData(byteData, 0);
-                }
-                else
-                {
-                    currentTexture.SetPixelData(ushortData, 0);
-                }
+                currentTexture.SetPixelData(byteData, 0);
                 yield return null;
                 currentTexture.Apply();
                 material.SetTexture(DataTex, currentTexture);
