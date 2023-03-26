@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ImportVolume;
 using TMPro;
 using UnityEngine;
 
@@ -8,12 +9,13 @@ namespace PlotScripts_Volumetric
     {
         public GameObject uiVolumeToggle;
         private EnableVols uiVolumeToggleComp;
-        
+        public GameObject volumeTransformer;
         [Tooltip("Assign plotObject.")] public GameObject plotGameObject;
 
         private CreatePlot createPlot;
         private int visibleLayer;
-
+        private GameObject[] volumes;
+        
         private TMP_Dropdown thisDropdown;
 
         private GameObject selectedVolume;
@@ -31,6 +33,17 @@ namespace PlotScripts_Volumetric
             
             selectedVolume = GameObject.Find("yB11");
             
+            volumes = new GameObject[volumeTransformer.transform.childCount];
+
+            for (int i = 0; i < volumes.Length; i++)
+            {
+                volumes[i] = volumeTransformer.transform.GetChild(i).gameObject;
+                if (volumeTransformer.transform.GetChild(i).childCount > 0)
+                {
+                    selectedVolume = volumeTransformer.transform.GetChild(i).gameObject;
+                }
+            }
+
             // Clear option list
             gameObject.GetComponent<TMP_Dropdown>().options = new List<TMP_Dropdown.OptionData>();
             
@@ -61,6 +74,17 @@ namespace PlotScripts_Volumetric
             createPlot.SetVisibilities();
             
             uiVolumeToggleComp.SetLayerVisibility();
+
+            foreach (var volume in volumes)
+            {
+                if (volume.transform.childCount > 0)
+                {
+                    volume.GetComponent<LoadVolumes>().pressure = 0 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().temperature = 1 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().water = 2 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().meteorite = 3 == thisDropdown.value;
+                }
+            }
         }
     }
 }

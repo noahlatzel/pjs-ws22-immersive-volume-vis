@@ -68,7 +68,6 @@ namespace ImportVolume
             {
                 if (loadedDataSet != dataSet)
                 {
-                    Debug.Log(dataSet);
                     filePaths = Directory.GetFiles("Assets/Datasets/" + dataSet + "/" + name + "_bin/", "*.bin")
                         .Where(filePath => !filePath.EndsWith("_sub.bin")).ToArray();
                     count = filePaths.Length;
@@ -78,8 +77,7 @@ namespace ImportVolume
                 loadingFrame = true;
 
                 String path = filePaths[timeStep];
-                byte[] byteData = {};
-                byteData = File.ReadAllBytes(path);
+                byte[] byteData = File.ReadAllBytes(path);
                 yield return null;
                 Texture3D currentTexture = (Texture3D) material.GetTexture(DataTex);
                 currentTexture.wrapMode = TextureWrapMode.Clamp;

@@ -50,13 +50,18 @@ namespace PlotScripts_Volumetric
                 
             demoSphere.transform.position = closestPoint;
             
-            for (int i = 0; i < uiVolumeToggleComp.volumeVisibility.Length; i++)
+            foreach (var volumeAttribute in volumes)
+            {
+                volumeAttribute.GetComponent<LoadVolumes>().timestep = closestPointIndex;
+            }
+            
+            /*for (int i = 0; i < uiVolumeToggleComp.volumeVisibility.Length; i++)
             {
                 if (uiVolumeToggleComp.volumeVisibility[i])
                 {
                     volumes[i].GetComponent<LoadVolumes>().timestep = closestPointIndex;
                 }
-            }
+            }*/
             
             Debug.Log("Position: "+ closestPoint + ", Timestep: " + closestPointIndex);
         }

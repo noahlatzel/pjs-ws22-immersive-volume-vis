@@ -49,7 +49,10 @@ namespace ImportVolume
         {
             // Create manager class
             volumeManager = new VolumeManager(datasetName);
-
+            
+            // Set name of game object
+            gameObject.name = datasetName;
+            
             // Render volumes on start 
             RenderOnStart(volumeManager);
             
@@ -74,13 +77,17 @@ namespace ImportVolume
             timestep = Math.Max(0, Math.Min(timestep, volumeManager.GetCount() - 1));
 
             StartCoroutine(LoadCurrentFrame());
-            
+
             // Only change time step in UI if necessary (performance)
             if (mainScene && cachedText != timestep.ToString())
             {
                 tmpUI.text = timestep.ToString();
                 cachedText = tmpUI.text;
             }
+            
+            // Set game object name
+            if (gameObject.name != datasetName)
+                gameObject.name = datasetName;
             
             // Set frame rate
             if(Application.targetFrameRate != targetFramerate)

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityVolumeRendering;
@@ -9,6 +10,7 @@ namespace UI
     public class TransferFunctionPanelMainScene : MonoBehaviour
     {
         private GameObject selectedVolume;
+        public GameObject allVolumes;
         private GameObject dropdownMenu;
         private GameObject colorView;
         private GameObject alphaView;
@@ -26,7 +28,7 @@ namespace UI
         public void Start()
         {
             dropdownMenu = GameObject.Find("DropdownAttributeSelector");
-            selectedVolume = GameObject.Find("RenderedVolume");
+            selectedVolume = allVolumes.transform.GetChild(0).gameObject;
             colorView = GameObject.Find("TransferFuncColor");
             alphaView = GameObject.Find("TransferFuncAlpha");
 
@@ -54,11 +56,15 @@ namespace UI
             activeAttribute = value;
             TransferFunction transferFunction =
                 selectedVolume.transform.GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction;
-        
+
             // Set transfer function for other volume
-            GameObject.Find("RenderedVolume2").transform.GetChild(value).GetComponent<VolumeRenderedObject>()
-                .transferFunction = transferFunction;
-        
+            for (int i = 0; i < allVolumes.transform.childCount; i++)
+            {
+                if (allVolumes.transform.GetChild(i).childCount > 0) 
+                    allVolumes.transform.GetChild(i).GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction =
+                        transferFunction;
+            }
+
             Texture2D transferFuncTex = transferFunction.GetTexture();
             alphaView.GetComponent<RawImage>().texture = transferFuncTex;
         
@@ -175,12 +181,14 @@ namespace UI
             Vector3 imagePos = texture.position;
             //Vector3 inputPos = Input.mousePosition; // Desktop use
             Vector3 inputPos = GameObject.Find("Right Grab Ray").GetComponent<LineRenderer>().GetPosition(1); // For VR use only
+            //Vector3 transformedInputPos = texture.InverseTransformPoint(inputPos);
+            //Debug.Log(transformedInputPos);
             float globalPosX = inputPos.x - imagePos.x;
             float globalPosY = inputPos.y - imagePos.y;
             int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width) / 0.827); // factor considering stretch hard coded
             int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height) / 0.38);
             Color c = refSprite.GetPixel(localPosX, localPosY);
-        
+            //Color c = refSprite.GetPixel((int)transformedInputPos.x, (int)transformedInputPos.y);
             TransferFunction transferFunction =
                 selectedVolume.transform.GetChild(activeAttribute).GetComponent<VolumeRenderedObject>().transferFunction;
             TFColourControlPoint oldCp = transferFunction.colourControlPoints[selectedColourControlPointIndex];

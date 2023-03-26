@@ -29,7 +29,12 @@ namespace PlotScripts_Volumetric
 
         public void skipFrames()
         {
-            for (var i = 0; i < uiVolumeToggleComp.volumeVisibility.Length; i++)
+            foreach (var volumeAttribute in volumes)
+            {
+                volumeAttribute.GetComponent<LoadVolumes>().timestep += amountOfFrames;
+            }
+
+            /*for (var i = 0; i < uiVolumeToggleComp.volumeVisibility.Length; i++)
                 if (uiVolumeToggleComp.volumeVisibility[i])
                 {
                     var currComp = volumes[i].GetComponent<LoadVolumes>();
@@ -41,7 +46,7 @@ namespace PlotScripts_Volumetric
                     }
                     else
                         Debug.Log("Frameskip nicht möglich, Out of Bounds.");
-                }
+                }*/
         }
     }
 }
