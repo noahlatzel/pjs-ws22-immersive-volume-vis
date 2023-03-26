@@ -1,0 +1,3 @@
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\win-x86\app.publish\Preprocesser.pdb
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\win-x86\app.publish\Nifti.NET.pdb
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\win-x86\app.publish\Preprocesser.exe

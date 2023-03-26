@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "VnCF6V9Mz7VelBwDBQ4Frg48oYL/PRhrvKOsBFuR/LpSc3kIjTKBHx38wt6HtNz+aS5oMT0Ba3wdShyp9S39+g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\noahj\\source\\repos\\Preprocesser\\Preprocesser\\Preprocesser.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\noahj\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\6.0.15\\microsoft.netcore.app.runtime.win-x86.6.0.15.nupkg.sha512",
+    "C:\\Users\\noahj\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\6.0.15\\microsoft.windowsdesktop.app.runtime.win-x86.6.0.15.nupkg.sha512",
+    "C:\\Users\\noahj\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\6.0.15\\microsoft.aspnetcore.app.runtime.win-x86.6.0.15.nupkg.sha512"
+  ],
+  "logs": []
+}

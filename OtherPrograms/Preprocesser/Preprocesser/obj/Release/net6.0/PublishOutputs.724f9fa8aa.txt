@@ -1,0 +1,7 @@
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Preprocesser.exe
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Preprocesser.dll
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Preprocesser.deps.json
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Preprocesser.runtimeconfig.json
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Preprocesser.pdb
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Nifti.NET.dll
+C:\Users\noahj\source\repos\Preprocesser\Preprocesser\bin\Release\net6.0\publish\Nifti.NET.pdb
