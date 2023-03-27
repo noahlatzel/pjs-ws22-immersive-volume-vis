@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityVolumeRendering;
@@ -8,16 +9,19 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
     private GameObject alphaView;
-    
+    private UI.TransferFunctionPanelMainScene transferFuncManager;
+
     // Set in TransferFunctionPanel.cs
     public TFAlphaControlPoint controlPoint;
     public TransferFunction transferFunction;
     public int index;
+
     
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         alphaView = GameObject.Find("TransferFuncAlpha");
+        transferFuncManager = GameObject.Find("TransferFunctionPanel").GetComponent<TransferFunctionPanelMainScene>();
     }
     
     public void OnDrag(PointerEventData eventData)
@@ -59,7 +63,9 @@ public class UIDraggableAlpha : MonoBehaviour, IDragHandler, IEndDragHandler
         controlPoint.dataValue = rectTransform.anchoredPosition.x / (maxWidth- myMaxWidth);
         transferFunction.alphaControlPoints[index] = controlPoint;
 
-        transferFunction.GenerateTexture();
+        
+        //transferFunction.GenerateTexture();
+        transferFuncManager.GenerateTexture();
     }
 
     public void OnEndDrag(PointerEventData pointerEventData) {

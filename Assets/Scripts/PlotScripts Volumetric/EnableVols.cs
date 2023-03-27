@@ -107,6 +107,8 @@ namespace PlotScripts_Volumetric
                 minus10.SetActive(false);
                 minus1.SetActive(false);
             }
+
+            //PositionVolumes();
         }
 
         public void SetLayerVisibility()
@@ -143,7 +145,7 @@ namespace PlotScripts_Volumetric
                 }
             }
             
-            PositionVolumes();
+            //PositionVolumes();
         }
 
         public void PositionVolumes()

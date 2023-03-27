@@ -50,7 +50,16 @@ namespace UI
             // Initialize transfer function window
             DropDownValueChanged(0);
         }
-
+        public void GenerateTexture() {
+            // Set transfer function for other volume
+            for (int i = 0; i < allVolumes.transform.childCount; i++)
+            {
+                if (allVolumes.transform.GetChild(i).childCount > 0)
+                {
+                    allVolumes.transform.GetChild(i).GetChild(dropdownMenu.GetComponent<TMP_Dropdown>().value).GetComponent<VolumeRenderedObject>().transferFunction.GenerateTexture();
+                }
+            }
+        }
         void DropDownValueChanged(int value)
         {
             activeAttribute = value;
@@ -60,9 +69,11 @@ namespace UI
             // Set transfer function for other volume
             for (int i = 0; i < allVolumes.transform.childCount; i++)
             {
-                if (allVolumes.transform.GetChild(i).childCount > 0) 
-                    allVolumes.transform.GetChild(i).GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction =
-                        transferFunction;
+                if (allVolumes.transform.GetChild(i).childCount > 0) {
+                    allVolumes.transform.GetChild(i).GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction.colourControlPoints = transferFunction.colourControlPoints;
+                    allVolumes.transform.GetChild(i).GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction.alphaControlPoints = transferFunction.alphaControlPoints;
+                    allVolumes.transform.GetChild(i).GetChild(value).GetComponent<VolumeRenderedObject>().transferFunction.GenerateTexture();
+                }
             }
 
             Texture2D transferFuncTex = transferFunction.GetTexture();
@@ -200,6 +211,7 @@ namespace UI
         
             secondaryTransferFunction.GenerateTexture();
             transferFunction.GenerateTexture();
+            GenerateTexture();
         }
 
         public void OnClickColorPicker()
