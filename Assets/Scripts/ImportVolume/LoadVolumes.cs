@@ -66,11 +66,11 @@ namespace ImportVolume
             // Update volume visibility according to public variables
             if (!mainScene)
             {
-                volumeManager.SetVisibilities(new []{pressure, temperature, water, meteorite});
+                volumeManager.SetVisibilities(new []{ meteorite, pressure, temperature, water});
             }
             else
             {
-                volumeManager.SetVisiblitiesForAttributes(new []{pressure, temperature, water, meteorite});
+                volumeManager.SetVisiblitiesForAttributes(new []{ meteorite, pressure, temperature, water });
             }
 
             // Set time step in valid interval

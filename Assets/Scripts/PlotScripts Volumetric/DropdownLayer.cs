@@ -79,10 +79,10 @@ namespace PlotScripts_Volumetric
             {
                 if (volume.transform.childCount > 0)
                 {
-                    volume.GetComponent<LoadVolumes>().pressure = 0 == thisDropdown.value;
-                    volume.GetComponent<LoadVolumes>().temperature = 1 == thisDropdown.value;
-                    volume.GetComponent<LoadVolumes>().water = 2 == thisDropdown.value;
-                    volume.GetComponent<LoadVolumes>().meteorite = 3 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().meteorite = 0 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().pressure = 1 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().temperature = 2 == thisDropdown.value;
+                    volume.GetComponent<LoadVolumes>().water = 3 == thisDropdown.value;
                 }
             }
         }

@@ -4387,13 +4387,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 429856368}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a2dbc29ac75554c83a324132a1f514, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftTeleportation: {fileID: 1092416084}
-  rightTeleportation: {fileID: 1736027990}
+  leftTeleportation: {fileID: 1575477347}
+  rightTeleportation: {fileID: 1279102694}
   leftActivate:
     m_UseReference: 1
     m_Action:
@@ -4446,8 +4446,8 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
-  leftRay: {fileID: 0}
-  rightRay: {fileID: 0}
+  leftRay: {fileID: 1092416089}
+  rightRay: {fileID: 1736027995}
 --- !u!1 &440023052
 GameObject:
   m_ObjectHideFlags: 0
