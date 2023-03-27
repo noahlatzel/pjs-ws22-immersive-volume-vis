@@ -3827,8 +3827,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1290221658}
-        m_TargetAssemblyTypeName: TransferFunctionPanel, Assembly-CSharp
+      - m_Target: {fileID: 1290221659}
+        m_TargetAssemblyTypeName: UI.TransferFunctionPanelMainScene, Assembly-CSharp
         m_MethodName: AddColourControlPoint
         m_Mode: 1
         m_Arguments:
@@ -17712,8 +17712,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1290221658}
-        m_TargetAssemblyTypeName: TransferFunctionPanel, Assembly-CSharp
+      - m_Target: {fileID: 1290221659}
+        m_TargetAssemblyTypeName: UI.TransferFunctionPanelMainScene, Assembly-CSharp
         m_MethodName: AddAlphaControlPoint
         m_Mode: 1
         m_Arguments:

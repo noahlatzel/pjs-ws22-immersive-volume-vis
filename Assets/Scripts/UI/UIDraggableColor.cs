@@ -61,7 +61,10 @@ public class UIDraggableColor : MonoBehaviour, IDragHandler, IPointerClickHandle
         // Add changes to secondary transfer function
         secondaryTransferFunction.colourControlPoints =
             new List<TFColourControlPoint>(transferFunction.colourControlPoints);
+
         
+        secondaryTransferFunction.GenerateTexture();
+
         //secondaryTransferFunction.GenerateTexture();
         transferFuncManager.GenerateTexture();
         
