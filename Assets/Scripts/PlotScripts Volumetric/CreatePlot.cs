@@ -14,7 +14,7 @@ namespace PlotScripts_Volumetric
         public int visibleLayer;
 
         //Names of all the layers as array
-        private readonly string[] layers = { "Pressure", "Temperature", "Water", "Meteorite" };
+        private readonly string[] layers = { "Meteorite", "Pressure", "Temperature", "Water" };
 
         //List of lists to store multiple sets of points, each representing a separate graph
         public List<List<List<Vector3>>> pointsList;
