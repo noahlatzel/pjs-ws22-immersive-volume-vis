@@ -18,8 +18,6 @@ namespace UI.SimulationControlUI
         // Start is called before the first frame update
         void Start()
         {
-            volume = GameObject.Find("RenderedVolume");
-            volume2 = GameObject.Find("RenderedVolume2");
             speedSliderGameObject = GameObject.Find("PlaySpeed");
             speedSlider = speedSliderGameObject.GetComponent<UnityEngine.UI.Slider>();
         }

@@ -870,8 +870,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playing: 0
-  volume: {fileID: 0}
-  volume2: {fileID: 0}
+  volume: {fileID: 960917538}
+  volume2: {fileID: 1939657203}
   referenceButton: {fileID: 1670640145}
 --- !u!114 &81377606
 MonoBehaviour:
@@ -15669,8 +15669,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playing: 0
-  volume: {fileID: 0}
-  volume2: {fileID: 0}
+  volume: {fileID: 960917538}
+  volume2: {fileID: 1939657203}
   referenceButton: {fileID: 81377603}
 --- !u!114 &1670640148
 MonoBehaviour:
