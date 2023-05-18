@@ -9,6 +9,9 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/MonoBleedingEdge/
+/Volume-base_BurstDebugInformation_DoNotShip/
+/Volume-base_Data/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -54,6 +57,11 @@ ExportedObj/
 
 # Unity3D generated file on crash reports
 sysinfo.txt
+
+# Generated
+UnityCrashHandler64.exe
+UnityPlayer.dll
+Volume-base.exe
 
 # Builds
 *.apk
